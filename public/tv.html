@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand N'importe Quiz — écran TV</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/tv.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+</head>
+<body>
+<div id="stage">
+  <!-- LOBBY -->
+  <section id="lobby" class="hidden">
+    <div class="lobby-left">
+      <div class="logo"><span>Le grand</span><b>N'importe Quiz</b></div>
+      <p class="tagline">Culture, blind tests, coups bas et mauvaise foi.</p>
+      <div class="join-box">
+        <div id="qr"></div>
+        <div class="join-text">
+          <span class="muted">Scannez ou allez sur</span>
+          <b id="joinUrl"></b>
+          <span class="muted">Code de la partie</span>
+          <b id="roomCode" class="code"></b>
+        </div>
+      </div>
+    </div>
+    <div class="lobby-right">
+      <h2 class="display">Les équipes</h2>
+      <div id="lobbyTeams"></div>
+      <div class="lobby-ctrl host-only">
+        <label class="muted">Durée de la partie
+          <select id="duration"><option value="45">45 min</option><option value="60">1 h</option><option value="90">1 h 30</option><option value="120" selected>2 h</option><option value="150">2 h 30</option></select>
+        </label>
+        <button id="startBtn" class="big-btn">Lancer la partie</button>
+        <button id="fsBtn" class="ghost-btn">Plein écran</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTIE -->
+  <section id="game" class="hidden">
+    <div id="board"></div>
+    <div id="overlay" class="hidden"></div>
+    <aside id="side">
+      <div class="side-head"><span class="display">Classement</span><span id="clock" class="muted"></span></div>
+      <div id="scores"></div>
+      <div id="ticker"></div>
+      <div id="hostbar" class="host-only"></div>
+    </aside>
+  </section>
+
+  <!-- FIN -->
+  <section id="end" class="hidden"></section>
+
+  <div id="toasts" class="toasts"></div>
+  <div id="conn" class="hidden">Connexion perdue… on se reconnecte</div>
+  <div id="notHost" class="hidden">Écran spectateur (les commandes sont sur l'écran qui a créé la partie)</div>
+</div>
+<script src="/vendor/qrcode.js"></script>
+<script type="module" src="/js/tv.js"></script>
+</body>
+</html>

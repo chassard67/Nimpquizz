@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#160B2E">
+<title>N'importe Quiz — ma manette</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/play.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+</head>
+<body>
+  <header id="hdr"></header>
+  <main id="main"></main>
+  <nav id="tabs" class="hidden">
+    <button data-sheet="jokers">🃏 Jokers <span id="jkCount"></span></button>
+    <button data-sheet="taunt">😈 Chambrer</button>
+  </nav>
+  <div id="sheet" class="hidden"><div class="sheet-in"><button class="close" aria-label="Fermer">✕</button><div id="sheetBody"></div></div></div>
+  <div id="toasts" class="toasts"></div>
+  <div id="conn" class="hidden">Connexion perdue… reconnexion</div>
+  <script type="module" src="/js/play.js"></script>
+</body>
+</html>

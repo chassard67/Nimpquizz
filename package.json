@@ -1,0 +1,16 @@
+{
+  "name": "nimpquizz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Le Grand N'importe Quiz — jeu de plateau quiz / blind test, TV + téléphones",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/engine.test.mjs",
+    "sim": "node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

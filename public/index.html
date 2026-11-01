@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand N'importe Quiz</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<style>
+  body { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .box { max-width: 560px; width: 100%; display: flex; flex-direction: column; gap: 22px; text-align: center; }
+  .logo { transform: rotate(-3deg); }
+  .logo span { font-family: var(--display); font-size: 28px; display: block; }
+  .logo b { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 12vw, 84px); line-height: .95; color: var(--yellow); text-shadow: 6px 6px 0 var(--bt); display: block; }
+  a.btn, button.btn { display: block; text-decoration: none; background: var(--yellow); color: var(--bg); font-family: var(--display); font-size: 22px; padding: 20px; border-radius: 18px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2); width: 100%; }
+  .alt { background: var(--panel) !important; color: var(--ink) !important; }
+  .row { display: flex; gap: 10px; }
+  .row input { text-align: center; font-family: var(--display); font-size: 30px; letter-spacing: 8px; text-transform: uppercase; }
+  .row button { width: 140px; }
+  p { color: var(--muted); margin: 0; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo"><span>Le grand</span><b>N'importe Quiz</b></div>
+  <p>Culture générale, blind tests, coups bas et mauvaise foi.</p>
+  <a class="btn" href="/tv">📺 Créer une partie (sur l'écran télé)</a>
+  <p>ou rejoindre avec le code affiché à l'écran</p>
+  <form class="row" onsubmit="event.preventDefault(); const c=this.code.value.trim().toUpperCase(); if(/^[A-Z]{4}$/.test(c)) location.href='/play?room='+c;">
+    <input name="code" maxlength="4" placeholder="CODE" autocapitalize="characters" autocomplete="off">
+    <button class="btn alt">📱 Go</button>
+  </form>
+</div>
+</body>
+</html>
