@@ -484,6 +484,30 @@ export const MILLIONS = [
   ]
 ];
 
+// ─── PHRASE À DOUBLE SENS : une phrase qui marche dans les deux situations. Chacun écrit, on vote.
+export const DOUBLESENS = [
+  { a: "un repas de famille", b: "une soirée échangiste", ex: "« C'est toi qui as farci la dinde ? »" },
+  { a: "la messe du dimanche", b: "une boîte de nuit à 4 h du matin" },
+  { a: "chez le boucher", b: "une première nuit ensemble" },
+  { a: "un cours de gym", b: "la chambre à coucher" },
+  { a: "chez le garagiste", b: "chez le gynécologue" },
+  { a: "une réunion de travail", b: "un enterrement de vie de garçon" },
+  { a: "un concours de pâtisserie", b: "une nuit de noces" },
+  { a: "un déjeuner chez la belle-mère", b: "un club libertin" },
+  { a: "un cours de cuisine", b: "un sex-shop" },
+  { a: "un atelier jardinage", b: "un premier rendez-vous Tinder" },
+  { a: "le contrôle technique", b: "une soirée tupperware coquine" },
+  { a: "une partie de pétanque", b: "un tournage de film pour adultes" }
+];
+
+// ─── TITRE DÉBILE : ajoutez UN mot au titre pour le rendre débile. Chacun écrit, on vote.
+//  Exemples : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes
+export const TITRES = [
+  "Star Wars", "Autant en emporte le vent", "Le Seigneur des anneaux", "Titanic", "Le Parrain",
+  "La Grande Vadrouille", "Les Bronzés font du ski", "Le Roi Lion", "Retour vers le futur", "Le Silence des agneaux",
+  "Harry Potter à l'école des sorciers", "Le Dîner de cons", "Jurassic Park", "Les Visiteurs", "Pirates des Caraïbes"
+];
+
 // ─── MÉDIAS : à préparer. Les réponses sont déjà là, il ne manque que les fichiers.
 //  Déposez le fichier dans public/media/ et remplacez src: null par le chemin, ex. src: "/media/queen.mp3".
 //  Une entrée sans fichier est ignorée. Si une case n'a aucun fichier, elle donne une question de Culture G.

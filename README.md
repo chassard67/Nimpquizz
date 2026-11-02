@@ -26,11 +26,11 @@ Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte su
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
 
-- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse (on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
-- **Blind tests** : actuel ×2, intemporel, séries, films · N'oubliez pas les paroles · À l'envers · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
+- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse, Double sens et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
+- **Blind tests** : actuel, intemporel, séries, films · N'oubliez pas les paroles · À l'envers · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
 - **Visuel** : Pochette floutée · Affiche mystère (indices un par un) · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
 - **Buzzers** : Buzzer 10 s · Famille en or
-- **Pièges** : Duel · Vol de points ×2 · Échange de place · Malédiction
+- **Pièges** : Duel · Vol de points · Échange de place · Malédiction
 - Repasser par **Départ** rapporte 2 pts. Sur les blind tests, l'animateur peut valider « ✓ + bonus » (+1) si l'équipe donne aussi l'année ou le réalisateur.
 
 **Jokers** (une fois chacun, depuis le téléphone) : Points ×2, Relancer le dé, Voleur (3 pts), Blocage (l'équipe saute son tour), Bouclier, 50/50.

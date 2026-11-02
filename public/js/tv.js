@@ -288,7 +288,7 @@ const RENDER = {
       ${q.f ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(q.f)}</div>` : ''}${revFooter(ch)}`, ''];
   },
   open(ch, rev) {
-    const q = `<div class="question" style="font-size:42px">${esc(ch.q.q)}</div>`;
+    const q = `<div class="question" style="font-size:${ch.type === 'titredebile' ? 64 : 42}px">${esc(ch.q.q)}</div>${ch.q.sub && !rev ? `<div class="rule" style="font-size:26px">${esc(ch.q.sub)}</div>` : ''}`;
     if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div>${q}<div class="big-center"><div class="mid">✍️ Écrivez votre meilleure connerie sur les téléphones</div></div>`, answeredSide(ch).join('')];
     const ids = Object.keys(ch.answers);
     const order = [...ids].sort((a, b) => (ch.answers[a].v || '').length - (ch.answers[b].v || '').length);

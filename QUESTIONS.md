@@ -20,9 +20,9 @@
 | 10 | N'oubliez pas les paroles | 26 | Réplique culte |
 | 11 | Malédiction | 27 | Sans réponse |
 | 12 | Burger Quiz | 28 | Couche par couche |
-| 13 | Grand mensonge | 29 | Vol de points |
+| 13 | Grand mensonge | 29 | Double sens |
 | 14 | BT Intemporel | 30 | À la noix |
-| 15 | Vidéo culte | 31 | BT Actuel |
+| 15 | Vidéo culte | 31 | Titre débile |
 
 ## Culture G — Duo, carré ou cash (72 questions)
 
@@ -644,6 +644,43 @@ _Pas de bonne réponse : écrivez la plus drôle, puis votez. La plus votée pre
 16. Quel est le mot de passe Wi-Fi de Dieu ?
 17. Qu'est-ce qu'on trouve dans l'historique de navigation du Père Noël ?
 18. Quelle serait la pire application de rencontre possible ?
+
+## Double sens (12 questions)
+
+_Une phrase qui marche dans les deux situations. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts._
+
+1. Une phrase qui marche à **un repas de famille** et à **une soirée échangiste** _(ex. « C'est toi qui as farci la dinde ? »)_
+2. Une phrase qui marche à **la messe du dimanche** et à **une boîte de nuit à 4 h du matin**
+3. Une phrase qui marche à **chez le boucher** et à **une première nuit ensemble**
+4. Une phrase qui marche à **un cours de gym** et à **la chambre à coucher**
+5. Une phrase qui marche à **chez le garagiste** et à **chez le gynécologue**
+6. Une phrase qui marche à **une réunion de travail** et à **un enterrement de vie de garçon**
+7. Une phrase qui marche à **un concours de pâtisserie** et à **une nuit de noces**
+8. Une phrase qui marche à **un déjeuner chez la belle-mère** et à **un club libertin**
+9. Une phrase qui marche à **un cours de cuisine** et à **un sex-shop**
+10. Une phrase qui marche à **un atelier jardinage** et à **un premier rendez-vous Tinder**
+11. Une phrase qui marche à **le contrôle technique** et à **une soirée tupperware coquine**
+12. Une phrase qui marche à **une partie de pétanque** et à **un tournage de film pour adultes**
+
+## Titre débile (15 questions)
+
+_Ajoutez UN mot au titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts._ Ex. : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes.
+
+1. Star Wars
+2. Autant en emporte le vent
+3. Le Seigneur des anneaux
+4. Titanic
+5. Le Parrain
+6. La Grande Vadrouille
+7. Les Bronzés font du ski
+8. Le Roi Lion
+9. Retour vers le futur
+10. Le Silence des agneaux
+11. Harry Potter à l'école des sorciers
+12. Le Dîner de cons
+13. Jurassic Park
+14. Les Visiteurs
+15. Pirates des Caraïbes
 
 ## Une famille en or (12 questions)
 

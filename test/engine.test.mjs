@@ -52,7 +52,7 @@ function playChallenge() {
     check(v.ch.duo[ids[0]] && v.ch.duo[ids[0]].length === 2 && Object.keys(v.ch.duo).length === 1, 'duo : 2 propositions, visibles seulement par l\'équipe');
     send(pidOf(ids[0]), { t: 'answer', value: s.ch.duo[ids[0]][0] });
     send(pidOf(ids[1]), { t: 'answer', value: s.ch.q.a });
-    send(pidOf(ids[2]), { t: 'answer', value: s.ch.q.o[s.ch.q.a].toUpperCase() + 's' });
+    send(pidOf(ids[2]), { t: 'answer', value: s.ch.q.o[s.ch.q.a].toUpperCase() + (s.ch.q.o[s.ch.q.a].length >= 5 ? 's' : '') });
     check(s.phase === 'reveal' && s.ch.ok[ids[2]] === true, 'cash : réponse tapée approximative acceptée');
     const before = s.teams.find(t => t.id === ids[2]).score;
     check(host({ action: 'cashToggle', teamId: ids[2] }) === null && s.teams.find(t => t.id === ids[2]).score < before, 'animateur peut refuser un cash');
