@@ -22,24 +22,33 @@ Chaque `git push` sur `main` redéploie automatiquement.
 
 Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte sur la même partie est simple spectatrice.
 
-## Les cases (26)
+## Les cases (32)
 
-Départ · Culture G ×2 · À la noix · Emojis · Grand mensonge · Plus ou moins · Sans réponse (on vote) · Le Bac · Famille en or · Buzzer 10 s · Duel · Vol de points ×2 · Échange de place · Malédiction · Blind tests (actuel ×2, intemporel ×2, séries, films) · N'oubliez pas les paroles · À l'envers · Réplique culte · Pochette floutée.
+Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
+
+- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse (on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
+- **Blind tests** : actuel ×2, intemporel, séries, films · N'oubliez pas les paroles · À l'envers · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
+- **Visuel** : Pochette floutée · Affiche mystère (indices un par un) · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
+- **Buzzers** : Buzzer 10 s · Famille en or
+- **Pièges** : Duel · Vol de points ×2 · Échange de place · Malédiction
+- Repasser par **Départ** rapporte 2 pts. Sur les blind tests, l'animateur peut valider « ✓ + bonus » (+1) si l'équipe donne aussi l'année ou le réalisateur.
 
 **Jokers** (une fois chacun, depuis le téléphone) : Points ×2, Relancer le dé, Voleur (3 pts), Blocage (l'équipe saute son tour), Bouclier, 50/50.
 
 ## Modifier le contenu
 
-Tout est dans [`src/content.js`](src/content.js) : questions, sondages, catégories du Bac, malédictions, vannes, noms d'équipes.
+Tout est dans [`src/content.js`](src/content.js). Le jeu mélange l'ordre des propositions : on peut toujours écrire la bonne réponse en premier. Après une modification, `npm run questions` régénère `QUESTIONS.md`.
 
-**Blind tests et pochettes** (à remplir) : déposer les fichiers dans `public/media/` puis les déclarer dans `MEDIA` :
+**Cases média** : les réponses sont déjà écrites, il ne manque que les fichiers. Déposer le fichier dans `public/media/` et remplacer `src: null` par son chemin :
 
 ```js
-bt_actuel: [{ src: '/media/titre.mp3', answer: 'Titre — Artiste', start: 30 }],
-pochette:  [{ img: '/media/album.jpg', answer: 'Album — Artiste' }],
+bt_actuel:   [{ src: '/media/flowers.mp3', answer: 'Flowers — Miley Cyrus', start: 30, bonus: '2023' }],
+pochette:    [{ img: '/media/thriller.jpg', answer: 'Thriller — Michael Jackson' }],
+instruments: [{ layers: ['/media/bj-batterie.mp3', '/media/bj-basse.mp3', '/media/bj-reste.mp3', '/media/bj-voix.mp3'], answer: 'Billie Jean' }],
+video:       [{ src: '/media/midi.mp4', start: 12, stop: 19.5, label: '…', qs: [ /* questions */ ] }],
 ```
 
-Tant qu'une liste est vide, la case donne une question de Culture G « de consolation ». Le son sort de l'ordi relié à la télé ; le premier qui buzze coupe la musique, l'animateur valide ✓ ou ✗.
+Tant qu'une case n'a aucun fichier, elle donne une question de Culture G « de consolation ». Pour « Couche par couche », les pistes séparées s'obtiennent avec un outil gratuit comme Demucs. Le son et la vidéo sortent de l'ordi relié à la télé.
 
 ## Développement
 
@@ -48,6 +57,7 @@ npm install
 npm run dev        # http://localhost:8787
 npm test           # simulation du moteur (toutes les cases, jokers, fin de partie)
 npm run sim        # partie complète à 3 équipes contre le serveur local (wrangler dev doit tourner)
+npm run questions  # régénère QUESTIONS.md depuis src/content.js
 ```
 
 Structure :

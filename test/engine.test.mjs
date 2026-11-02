@@ -44,6 +44,48 @@ function playChallenge() {
       let a = Math.floor(rng() * ch.q.o.length); while (banned.includes(a)) a = (a + 1) % ch.q.o.length;
       if (s.phase === 'challenge') send(pidOf(id), { t: 'answer', value: a });
     }
+  } else if (ch.kind === 'dcc') {
+    const modes = ['duo', 'carre', 'cash'];
+    ids.forEach((id, i) => check(send(pidOf(id), { t: 'mode', mode: modes[i % 3] }) === null, 'choix duo/carré/cash'));
+    check(s.ch.stage === 'q', 'dcc : passage à la question');
+    const v = G.view(s, { pid: pidOf(ids[0]), role: 'phone' });
+    check(v.ch.duo[ids[0]] && v.ch.duo[ids[0]].length === 2 && Object.keys(v.ch.duo).length === 1, 'duo : 2 propositions, visibles seulement par l\'équipe');
+    send(pidOf(ids[0]), { t: 'answer', value: s.ch.duo[ids[0]][0] });
+    send(pidOf(ids[1]), { t: 'answer', value: s.ch.q.a });
+    send(pidOf(ids[2]), { t: 'answer', value: s.ch.q.o[s.ch.q.a].toUpperCase() + 's' });
+    check(s.phase === 'reveal' && s.ch.ok[ids[2]] === true, 'cash : réponse tapée approximative acceptée');
+    const before = s.teams.find(t => t.id === ids[2]).score;
+    check(host({ action: 'cashToggle', teamId: ids[2] }) === null && s.teams.find(t => t.id === ids[2]).score < before, 'animateur peut refuser un cash');
+  } else if (ch.kind === 'series') {
+    if (ch.stage === 'theme') {
+      check(send(pidOf(ids.find(i => i !== ch.teamId)), { t: 'theme', i: 0 }) !== null, 'seule l\'équipe qui joue choisit le thème');
+      check(ch.themes.length === 3 && ch.themes.filter(t => t.taré).length === 1, 'burger : 3 thèmes dont 1 taré');
+      send(pidOf(ch.teamId), { t: 'theme', i: 2 });
+    }
+    let guard = 0;
+    while (s.phase === 'challenge' && guard++ < 6) {
+      now = s.ch.startsAt;
+      const v = G.view(s, { pid: 'p2', role: 'phone' });
+      check(!v.ch.qs && v.ch.q && v.ch.q.a === undefined, 'série : questions suivantes et réponse cachées');
+      for (const id of ids) send(pidOf(id), { t: 'answer', value: s.ch.q.n !== undefined ? 100 : Math.floor(rng() * s.ch.q.o.length) });
+    }
+    check(s.ch.res.length === 3, 'burger : 3 questions jouées');
+  } else if (ch.kind === 'millions') {
+    check(send(pidOf(ids.find(i => i !== ch.teamId)), { t: 'answer', value: 0 }) !== null, 'millionnaire : seule l\'équipe qui joue répond');
+    let lvl = 0;
+    while (s.phase === 'challenge' && lvl < 3) {
+      now = s.ch.startsAt;
+      send(pidOf(ch.teamId), { t: 'answer', value: s.ch.q.a }); lvl++;
+      if (s.ch.stage === 'decide') send(pidOf(ch.teamId), { t: 'decide', go: lvl < 3 });
+    }
+    check(s.phase === 'reveal' && s.ch.bank === 3 && s.ch.end === 'stop', 'millionnaire : arrêt après 3 bonnes réponses = 3 pts');
+  } else if (ch.kind === 'affiche') {
+    const vp = G.view(s, { pid: 'p2', role: 'phone' }), vt = G.view(s, { role: 'tv', host: true });
+    check(!vp.ch.q.clues && vt.ch.q.clues, 'affiche : indices visibles seulement sur la télé');
+    send(pidOf(ids[0]), { t: 'answer', value: ch.q.a });
+    now += 15000; send(pidOf(ids[1]), { t: 'answer', value: ch.q.a });
+    now += 15000; send(pidOf(ids[2]), { t: 'answer', value: (ch.q.a + 1) % 4 });
+    check(s.ch.seen[ids[0]] === 1 && s.ch.seen[ids[1]] === 3, 'affiche : nombre d\'indices vus');
   } else if (ch.kind === 'number') {
     for (const id of ids) send(pidOf(id), { t: 'answer', value: String(Math.round(ch.q.a * (0.5 + rng()))) });
   } else if (ch.kind === 'open') {

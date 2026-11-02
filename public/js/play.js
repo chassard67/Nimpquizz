@@ -62,7 +62,7 @@ function keyOf() {
   const k = [S.phase, t ? t.id : '-', S.turn, S.move && S.move.n, S.move && S.move.roll];
   if (!t) k.push(JSON.stringify(S.teams.map(x => [x.id, x.name, S.players[x.id]])));
   if (ch) k.push(ch.type, ch.stage, ch.cell, ch.target, ch.buzzer, (ch.excluded || []).length, ch.answers && t && ch.answers[t.id] ? 'A' : '', ch.votes && t && ch.votes[t.id] ? 'V' : '',
-    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', serverNow() >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && serverNow() >= ch.goAt ? 'G' : '');
+    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', serverNow() >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && serverNow() >= ch.goAt ? 'G' : '');
   if (S.phase === 'end') k.push(JSON.stringify(S.ranking));
   return k.join('|');
 }
@@ -148,20 +148,71 @@ function renderChallenge() {
   const wait = (txt, emoji = '⏳') => html(`<div class="center"><div class="big">${emoji}</div><h1>${txt}</h1><p class="msg">${timer}</p></div>`);
   const participant = !ch.participants || ch.participants.includes(t.id);
 
-  if (ch.kind === 'qcm' || (ch.kind === 'duel' && ch.stage === 'q')) {
-    if (!participant) return wait(`Duel en cours entre ${esc(team(ch.participants[0]).name)} et ${esc(team(ch.participants[1]).name)}`, '🍿');
-    if (answered) return wait('Réponse envoyée ! Croisez les doigts 🤞', '✅');
+  // Écran QCM réutilisable : only = indices autorisés (duo), head = texte au-dessus
+  const qcmUI = ({ only = null, head = '', label = 'Valider', fifty = true } = {}) => {
     const q = ch.q, banned = (ch.fifty && ch.fifty[t.id]) || [];
     const isEmoji = ch.type === 'emojis';
-    const qtxt = q.q ? q.q : 'Lequel est le mensonge ?';
-    return html(`<div class="qtext ${isEmoji ? 'emoji' : ''}">${esc(qtxt)}</div>
-      <div class="opts">${q.o.map((o, i) => `<button class="opt" data-o="${i}" ${banned.includes(i) ? 'disabled' : ''}><span class="L" style="background:${OPT_COLORS[i]}">${LETTERS[i]}</span>${esc(o)}</button>`).join('')}</div>
-      <button class="btn" id="val" disabled>Valider ${timer}</button>
-      ${t.jokers.fifty && q.o.length === 4 && !banned.length ? `<button class="btn alt small" id="ff">✂️ Joker 50/50</button>` : ''}`, () => {
+    const qtxt = q.q ? (ch.type === 'contrario' ? `« ${q.q} » à l'endroit, ça donne… ?` : q.q) : ch.type === 'affiche' ? 'Quel est ce film ? Les indices sont sur la télé 📺' : 'Lequel est le mensonge ?';
+    const idx = only || q.o.map((_, i) => i);
+    return html(`${head}<div class="qtext ${isEmoji ? 'emoji' : ''}">${esc(qtxt)}</div>
+      <div class="opts">${idx.map(i => `<button class="opt" data-o="${i}" ${banned.includes(i) ? 'disabled' : ''}><span class="L" style="background:${OPT_COLORS[i]}">${LETTERS[i]}</span>${esc(q.o[i])}</button>`).join('')}</div>
+      <button class="btn" id="val" disabled>${label} ${timer}</button>
+      ${fifty && !only && t.jokers.fifty && q.o.length === 4 && !banned.length ? `<button class="btn alt small" id="ff">✂️ Joker 50/50</button>` : ''}`, () => {
       main.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { selOpt = Number(b.dataset.o); main.querySelectorAll('.opt').forEach(x => x.classList.toggle('sel', x === b)); $('#val').disabled = false; buzz(20); });
       $('#val').onclick = () => { if (selOpt !== null) send({ t: 'answer', value: selOpt }); };
       const ff = $('#ff'); if (ff) ff.onclick = () => send({ t: 'joker', kind: 'fifty' });
     });
+  };
+  const numberUI = () => html(`<div class="qtext">${esc(ch.q.q)}</div><label class="f">Votre réponse (${esc(ch.q.u || 'nombre')})
+      <input id="num" inputmode="decimal" autocomplete="off" placeholder="Ex : 1 234" data-auto="number"></label>
+      <button class="btn" id="val">Valider ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
+
+  if (ch.kind === 'dcc') {
+    const mode = ch.modes[t.id];
+    if (ch.stage === 'mode') {
+      if (mode) return wait(`${{ duo: 'Duo', carre: 'Carré', cash: 'CASH' }[mode]} ! On attend les autres…`, mode === 'cash' ? '💰' : '👍');
+      return html(`<h2>Duo, carré ou cash ?</h2><div class="qtext" style="color:var(--ink);font-size:20px">${esc(ch.q.q)}</div>
+        <div class="dcc"><button class="btn alt" data-mode="duo"><b>Duo</b> 2 propositions · 1 pt</button>
+        <button class="btn alt" data-mode="carre"><b>Carré</b> 4 propositions · 2 pts</button>
+        <button class="btn" data-mode="cash"><b>CASH</b> sans filet · 4 pts</button></div><p class="msg">${timer}</p>`,
+        () => main.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { buzz(40); send({ t: 'mode', mode: b.dataset.mode }); }));
+    }
+    if (answered) return wait('Réponse envoyée ! Croisez les doigts 🤞', '✅');
+    if (mode === 'cash') return html(`<h2>💰 Cash : tapez la réponse</h2><div class="qtext" style="color:var(--ink);font-size:20px">${esc(ch.q.q)}</div>
+      <input id="cash" autocomplete="off" autocapitalize="sentences" placeholder="Votre réponse" data-auto="cash"><button class="btn" id="val">C'est mon dernier mot ${timer}</button>`,
+      () => { $('#val').onclick = () => submitAuto(); });
+    return qcmUI({ only: mode === 'duo' ? ch.duo[t.id] : null, head: `<h2>${mode === 'duo' ? 'Duo · 1 pt' : 'Carré · 2 pts'}</h2>` });
+  }
+  if (ch.kind === 'series') {
+    if (ch.stage === 'theme') {
+      if (ch.teamId !== t.id) return wait(`${esc(team(ch.teamId).name)} choisit son menu… 🍔`, '🍔');
+      return html(`<h1>Choisissez votre menu 🍔</h1><div class="teams">${ch.themes.map((th, i) => `<button class="teamBtn" data-th="${i}">${esc(th.name)}</button>`).join('')}</div><p class="msg">Trois questions pour tout le monde. ${timer}</p>`,
+        () => main.querySelectorAll('[data-th]').forEach(b => b.onclick = () => send({ t: 'theme', i: Number(b.dataset.th) })));
+    }
+    if (ch.stage === 'video') return wait('Regardez bien la vidéo… 📺', '🎬');
+    if (answered) return wait(ch.type === 'burger' && ch.i < 2 ? 'Envoyé ! Question suivante dans un instant…' : 'Réponse envoyée ! Croisez les doigts 🤞', '✅');
+    if (ch.q.isNumber) return numberUI();
+    return qcmUI({ head: `<h2>${ch.type === 'video' ? (ch.i ? 'Bonus · 1 pt' : 'Question') : `Question ${ch.i + 1} / 3 · ${esc(ch.theme || '')}`}</h2>` });
+  }
+  if (ch.kind === 'millions') {
+    const mine = ch.teamId === t.id;
+    if (!mine) return wait(`${esc(team(ch.teamId).name)} joue pour ${S.meta.ladder[ch.level] || ''} pts. Profitez du spectacle 🍿 (et chambrez)`, '💸');
+    if (ch.stage === 'decide') return html(`<div class="center"><div class="big">💰 ${ch.bank}</div><h1>Bonne réponse !</h1>
+      <p class="msg">Prochaine question : ${S.meta.ladder[ch.level]} pts. En cas d'erreur : ${ch.level > 1 ? S.meta.ladder[1] + ' pts' : 'zéro'}.</p>
+      <button class="btn green" id="go">Je continue ! ${timer}</button><button class="btn alt" id="stop">Je m'arrête avec ${ch.bank} pt${ch.bank > 1 ? 's' : ''}</button></div>`,
+      () => { $('#go').onclick = () => send({ t: 'decide', go: true }); $('#stop').onclick = () => send({ t: 'decide', go: false }); });
+    if (answered) return wait('C\'est votre dernier mot… 🥁', '😬');
+    return qcmUI({ head: `<h2>Question ${ch.level + 1} · ${S.meta.ladder[ch.level]} pt${S.meta.ladder[ch.level] > 1 ? 's' : ''}</h2>`, label: "C'est mon dernier mot" });
+  }
+  if (ch.kind === 'affiche') {
+    if (answered) return wait('Réponse envoyée ! On verse les points à la fin.', '🎬');
+    const k = Math.min(4, 1 + Math.floor(Math.max(0, serverNow() - ch.startsAt) / S.meta.timers.clue));
+    return qcmUI({ head: `<h2 id="affpts">Répondez vite : ${5 - k} pts maintenant</h2>` });
+  }
+  if (ch.kind === 'qcm' || (ch.kind === 'duel' && ch.stage === 'q')) {
+    if (!participant) return wait(`Duel en cours entre ${esc(team(ch.participants[0]).name)} et ${esc(team(ch.participants[1]).name)}`, '🍿');
+    if (answered) return wait('Réponse envoyée ! Croisez les doigts 🤞', '✅');
+    return qcmUI();
   }
   if (ch.kind === 'number') {
     if (answered) return wait('Nombre envoyé. Les maths vont trancher.', '🔢');
@@ -220,7 +271,8 @@ function renderChallenge() {
 
 function submitAuto() {
   const ch = S.ch; if (!ch) return;
-  if (ch.kind === 'number') { const v = $('#num')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
+  if (ch.kind === 'number' || (ch.q && ch.q.isNumber)) { const v = $('#num')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
+  if (ch.kind === 'dcc') { const v = $('#cash')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
   if (ch.kind === 'open') { const v = $('#txt')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
   if (ch.kind === 'bac') send({ t: 'answer', value: [...main.querySelectorAll('[data-bac]')].map(i => i.value) });
   if (ch.kind === 'famille') { const v = [...main.querySelectorAll('[data-fam]')].map(i => i.value).filter(Boolean); if (v.length) send({ t: 'answer', value: v }); }
@@ -262,6 +314,7 @@ function renderSheet() {
       double: !t.armed.double, bouclier: !t.armed.shield, vol: true, blocage: true,
       relance: S.phase === 'rolled' && isMyTurn(),
       fifty: S.phase === 'challenge' && ch && ch.q && ch.q.o && ch.q.o.length === 4 && (!ch.participants || ch.participants.includes(t.id)) && ch.answers && ch.answers[t.id] === undefined
+        && (ch.kind !== 'dcc' || (ch.stage === 'q' && ch.modes[t.id] === 'carre')) && (!['series', 'millions'].includes(ch.kind) || ch.stage === 'q')
     };
     const ingame = S.phase !== 'lobby' && S.phase !== 'end';
     body.innerHTML = `<h1>Vos jokers</h1><p class="msg">Chacun ne sert qu'une fois. Choisissez bien, ou n'importe comment.</p>` +
@@ -300,6 +353,8 @@ setInterval(() => {
   const now = serverNow();
   document.querySelectorAll('[data-dl]').forEach(el => { const s = fmtSec(Number(el.dataset.dl) - now); el.textContent = `⏱ ${s} s`; });
   if (keyOf() !== screenKey) render();
+  const ap = document.getElementById('affpts');
+  if (ap && S.ch && S.ch.kind === 'affiche') { const k = Math.min(4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue)); ap.textContent = `Répondez vite : ${5 - k} pt${k < 4 ? 's' : ''} maintenant`; }
   // envoi automatique de ce qui est tapé juste avant la fin du chrono
   const ch = S.ch, t = me();
   if (S.phase === 'challenge' && ch && t && ch.deadline - now < 1500 && ch.answers && ch.answers[t.id] === undefined && main.querySelector('[data-auto]')) {

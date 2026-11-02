@@ -71,3 +71,7 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 14px; colo
 .tauntList button { background: var(--panel); color: var(--ink); font-family: var(--body); font-weight: 800; font-size: 16px; text-align: left; border-radius: 14px; padding: 12px 14px; min-height: 48px; }
 #toasts { left: 12px; right: 12px; top: calc(10px + env(safe-area-inset-top)); font-size: 17px; }
 #conn { position: fixed; top: 0; left: 0; right: 0; background: var(--ko); color: var(--bg); text-align: center; padding: 8px; font-weight: 900; z-index: 60; }
+
+.dcc { display: flex; flex-direction: column; gap: 12px; }
+.dcc .btn { display: flex; flex-direction: column; gap: 2px; font-family: var(--body); font-weight: 900; font-size: 15px; min-height: 76px; }
+.dcc .btn b { font-family: var(--display); font-weight: 400; font-size: 26px; }

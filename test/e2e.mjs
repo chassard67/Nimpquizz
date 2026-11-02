@@ -32,6 +32,7 @@ function client(name, hello) {
 }
 
 const tv = client('TV', { role: 'tv', hostKey: 'cle-secrete-test' });
+await tv.ready; await sleep(300); // la télé qui crée la partie se connecte en premier
 const spy = client('TV-espion', { role: 'tv', hostKey: 'pas-la-bonne' });
 const phones = ['Moules', 'Castors', 'Licornes', 'Castors-bis'].map((n, i) => client(n, { role: 'phone', pid: 'pid-' + i }));
 await Promise.all([tv.ready, spy.ready, ...phones.map(p => p.ready)]);
@@ -81,6 +82,13 @@ function bot(c) {
     let a = Math.floor(Math.random() * ch.q.o.length); while (banned.includes(a)) a = (a + 1) % ch.q.o.length;
     once(c, 'a' + k, () => setTimeout(() => c.send({ t: 'answer', value: a }), 200 + Math.random() * 1500));
   }
+  if (ch.kind === 'dcc' && ch.stage === 'mode' && !ch.modes[my]) once(c, 'm' + k, () => c.send({ t: 'mode', mode: ['duo', 'carre', 'cash'][Math.floor(Math.random() * 3)] }));
+  if (ch.kind === 'dcc' && ch.stage === 'q' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.modes[my] === 'cash' ? 'Paris' : ch.modes[my] === 'duo' ? ch.duo[my][0] : Math.floor(Math.random() * 4) }));
+  if (ch.kind === 'series' && ch.stage === 'theme' && ch.teamId === my) once(c, 'th' + k, () => c.send({ t: 'theme', i: Math.floor(Math.random() * 3) }));
+  if (ch.kind === 'series' && ch.stage === 'q' && !answered) once(c, 'a' + k + ch.i, () => c.send({ t: 'answer', value: ch.q.isNumber ? 100 : Math.floor(Math.random() * ch.q.o.length) }));
+  if (ch.kind === 'millions' && ch.teamId === my && ch.stage === 'q' && !answered) once(c, 'a' + k + ch.level, () => c.send({ t: 'answer', value: Math.floor(Math.random() * 4) }));
+  if (ch.kind === 'millions' && ch.teamId === my && ch.stage === 'decide') once(c, 'd' + k + ch.level, () => c.send({ t: 'decide', go: Math.random() < .6 }));
+  if (ch.kind === 'affiche' && !answered) once(c, 'a' + k, () => setTimeout(() => c.send({ t: 'answer', value: Math.floor(Math.random() * 4) }), Math.random() * 9000));
   if (ch.kind === 'number' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: String(Math.floor(Math.random() * 2000)) }));
   if (ch.kind === 'open' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: `${c.name} propose : une saucisse en tutu` }));
   if (ch.kind === 'open' && ch.stage === 'vote' && !ch.votes[my]) once(c, 'v' + k, () => { const o = Object.keys(ch.answers).filter(id => id !== my); if (o.length) c.send({ t: 'vote', teamId: o[0] }); });
@@ -133,7 +141,7 @@ console.log('Vannes reçues :', taunted.length ? taunted.join(' | ') : 'aucune')
 console.log('Fil (extrait) :\n   ' + s.feed.filter(f => f.k !== 'info').slice(-8).map(f => f.text).join('\n   '));
 console.log('États reçus par téléphone :', phones.map(p => `${p.name}=${p.states}`).join(' '));
 // courses normales : deux téléphones d'une même équipe, ou une réponse qui arrive après la clôture
-const expected = /Pas maintenant|pas le moment|Trop tard|Déjà|déjà|Pas de question en cours|Rien à buzzer|Pas de vote|Pas de cible/i;
+const expected = /Pas maintenant|pas le moment|Trop tard|Déjà|déjà|Pas de question en cours|Rien à buzzer|Pas de vote|Pas de cible|Pas encore de question|Pas de thème|Vous ne participez pas|Attendez|éliminée/i;
 const unexpected = errors.filter(e => !expected.test(e) && !e.startsWith('TV-espion'));
 console.log('Écran espion refusé comme animateur :', spyRefused ? 'oui ✅' : 'NON ❌');
 console.log('Fuites de réponses :', leaks.length ? [...new Set(leaks)].join(' | ') : 'aucune ✅');

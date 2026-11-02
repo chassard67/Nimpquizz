@@ -293,17 +293,328 @@ export const TEAM_NAMES = [
   "Les Mamies Rebelles", "Les Kebabs Tristes", "Les Loutres en Rut", "Les Perceuses"
 ];
 
-// ─── BLIND TESTS / POCHETTES : à remplir plus tard.
-//  Audio : { src: "/media/xxx.mp3" (ou URL), answer: "Titre — Artiste", start: 0 }
-//  Pochette floutée : { img: "/media/xxx.jpg", answer: "Album — Artiste" }
-//  Tant qu'une liste est vide, la case donne une question de Culture G de consolation.
+// ═════════════════════════════════════════════════════════════
+//  NOUVELLES CATÉGORIES (v2)
+//  Rappel : le jeu MÉLANGE l'ordre des réponses à chaque fois.
+//  On peut donc toujours écrire la bonne réponse en premier (a: 0).
+// ═════════════════════════════════════════════════════════════
+
+// ─── CULTURE G PAR THÈMES (en plus de QCM.culture, thème « Général »)
+//  Le jeu fait tourner les thèmes pour ne pas enchaîner trois fois le même.
+export const CULTURE_THEMES = {
+  manga: { label: 'Manga', q: [
+    { q: "Dans One Piece, quel est le rêve de Monkey D. Luffy ?", o: ["Devenir le roi des pirates", "Trouver l'All Blue", "Devenir le meilleur bretteur du monde", "Manger toute la viande du monde"], a: 0, f: "Le roi des pirates. Manger toute la viande du monde, c'est le plan B." },
+    { q: "Comment s'appelle le premier fils de Son Goku ?", o: ["Son Gohan", "Son Goten", "Trunks", "Krilin junior"], a: 0, f: "Gohan, du nom du grand-père adoptif de Goku." },
+    { q: "Dans Naruto, quelle créature est scellée dans le corps de Naruto ?", o: ["Le renard à neuf queues", "Le tanuki à une queue", "Un dragon à huit têtes", "Un pigeon possédé"], a: 0, f: "Kurama, le renard à neuf queues. Ça explique les moustaches." },
+    { q: "Dans Les Chevaliers du Zodiaque, sous quelle constellation est placé Seiya ?", o: ["Pégase", "Le Dragon", "Le Cygne", "Andromède"], a: 0 },
+    { q: "Dans Death Note, que se passe-t-il si on écrit le nom de quelqu'un dans le cahier ?", o: ["Il meurt", "Il tombe amoureux", "Il perd la mémoire", "Il devient chauve"], a: 0 },
+    { q: "Dans le dessin animé Pokémon, quel est le premier Pokémon de Sacha ?", o: ["Pikachu", "Salamèche", "Carapuce", "Évoli"], a: 0 },
+    { q: "Sous quel nom City Hunter est-il connu en France ?", o: ["Nicky Larson", "Cobra", "Ken le Survivant", "Max et Compagnie"], a: 0, f: "Nicky Larson : obsédé notoire, régulièrement assommé par la massue de Laura." },
+    { q: "Dans quel manga des géants dévorent-ils les humains derrière des murs ?", o: ["L'Attaque des Titans", "Fullmetal Alchemist", "One Punch Man", "Bleach"], a: 0 }
+  ] },
+  da: { label: 'Dessins animés', q: [
+    { q: "Comment s'appellent les trois neveux de Donald ?", o: ["Riri, Fifi et Loulou", "Tic, Tac et Toc", "Pif, Paf et Pouf", "Zip, Zap et Zop"], a: 0 },
+    { q: "Qui est l'ennemi juré des Schtroumpfs ?", o: ["Gargamel", "Azraël", "Le Grand Schtroumpf", "Satanas"], a: 0, f: "Gargamel. Azraël, c'est son chat." },
+    { q: "Dans Les Simpson, quel est le métier d'Homer ?", o: ["Inspecteur de la sécurité à la centrale nucléaire", "Barman", "Policier", "Chauffeur de bus"], a: 0, f: "Inspecteur de la sécurité. À la centrale nucléaire. Dormez tranquilles." },
+    { q: "Dans la version française d'Inspecteur Gadget, comment s'appelle sa nièce ?", o: ["Sophie", "Penny", "Lisa", "Gadgetine"], a: 0, f: "Sophie en VF (Penny en VO), avec son chien Finot." },
+    { q: "Dans Le Roi Lion, comment s'appelle le père de Simba ?", o: ["Mufasa", "Scar", "Rafiki", "Zazu"], a: 0 },
+    { q: "Dans Ulysse 31, comment s'appelle le petit robot ?", o: ["Nono", "Bubo", "Robby", "R2"], a: 0 },
+    { q: "Où habite Bob l'éponge ?", o: ["Dans un ananas", "Dans une noix de coco", "Dans une boîte de conserve", "Chez sa mère"], a: 0 },
+    { q: "Dans Tom et Jerry, qui est la souris ?", o: ["Jerry", "Tom", "Speedy", "Mickey"], a: 0, f: "Jerry. Si vous avez hésité, on a un vrai sujet." }
+  ] },
+  chfr: { label: 'Chanson française', q: [
+    { q: "Qui chante « Alexandrie Alexandra » ?", o: ["Claude François", "Michel Sardou", "Johnny Hallyday", "Joe Dassin"], a: 0, f: "Claude François, single sorti juste après sa mort en 1978." },
+    { q: "Quel artiste a sorti l'album « Racine carrée » ?", o: ["Stromae", "Orelsan", "Angèle", "Maître Gims"], a: 0 },
+    { q: "Qui chante « Les Lacs du Connemara » ?", o: ["Michel Sardou", "Jean-Jacques Goldman", "Francis Cabrel", "Renaud"], a: 0, f: "Hymne officiel de toutes les fins de mariage." },
+    { q: "Quel groupe chante « L'Aventurier » ?", o: ["Indochine", "Téléphone", "Noir Désir", "Les Rita Mitsouko"], a: 0 },
+    { q: "Qui chante « La Bohème » ?", o: ["Charles Aznavour", "Jacques Brel", "Édith Piaf", "Serge Gainsbourg"], a: 0 },
+    { q: "Qui chante « Djadja » ?", o: ["Aya Nakamura", "Angèle", "Wejdene", "Clara Luciani"], a: 0 },
+    { q: "Qui chante « Le Sud » ?", o: ["Nino Ferrer", "Hugues Aufray", "Michel Fugain", "Gérard Lenorman"], a: 0 }
+  ] },
+  chet: { label: 'Chanson étrangère', q: [
+    { q: "Quel groupe chante « Bohemian Rhapsody » ?", o: ["Queen", "The Beatles", "Pink Floyd", "Led Zeppelin"], a: 0 },
+    { q: "Qui est surnommé le « King of Pop » ?", o: ["Michael Jackson", "Elvis Presley", "Prince", "Justin Bieber"], a: 0, f: "Elvis, lui, c'est le King tout court." },
+    { q: "Qui chante « Despacito » (avec Daddy Yankee) ?", o: ["Luis Fonsi", "Enrique Iglesias", "Ricky Martin", "Shakira"], a: 0 },
+    { q: "Quel groupe suédois a gagné l'Eurovision 1974 avec « Waterloo » ?", o: ["ABBA", "Roxette", "Ace of Base", "Europe"], a: 0, f: "Waterloo. Encore une défaite française chantée par les autres." },
+    { q: "Quelle chanteuse a sorti l'album « 21 » ?", o: ["Adele", "Amy Winehouse", "Taylor Swift", "Rihanna"], a: 0 },
+    { q: "Quel est l'album le plus vendu de l'histoire ?", o: ["Thriller", "Back in Black", "The Dark Side of the Moon", "Le best-of de Patrick Sébastien"], a: 0 },
+    { q: "De quel pays vient le groupe U2 ?", o: ["Irlande", "Royaume-Uni", "États-Unis", "Australie"], a: 0 }
+  ] },
+  paillarde: { label: 'Chansons paillardes', q: [
+    { q: "Dans quel port breton vivent les célèbres filles de la chanson paillarde ?", o: ["Camaret", "Brest", "Quimper", "Lorient"], a: 0, f: "Les Filles de Camaret. On ne détaillera pas leurs mœurs, il y a peut-être des enfants." },
+    { q: "« La Digue du cul » commence en revenant de quelle ville ?", o: ["Nantes", "Lyon", "Brest", "Marseille"], a: 0, f: "De Nantes à Montaigu. La digue du cul !" },
+    { q: "Dans « Jeanneton prend sa faucille », combien de jeunes gens croise-t-elle ?", o: ["Quatre", "Deux", "Trois", "Toute une caserne"], a: 0, f: "Quatre. La morale change selon le taux d'alcoolémie de la tablée." },
+    { q: "Dans « Chevaliers de la Table ronde », que vont-ils goûter ?", o: ["Le vin", "La bière", "Le cidre", "L'eau de Vichy"], a: 0 },
+    { q: "Quelle chanson de Brassens, où un primate s'en prend à un juge, fut interdite d'antenne à sa sortie ?", o: ["Le Gorille", "La Mauvaise Réputation", "Les Copains d'abord", "Le Parapluie"], a: 0 }
+  ] },
+  cine: { label: 'Ciné & séries', q: [
+    { q: "Dans « Le Dîner de cons », comment s'appelle le personnage de Jacques Villeret ?", o: ["François Pignon", "Pierre Brochant", "Juste Leblanc", "Lucien Cheval"], a: 0, f: "François Pignon. Juste Leblanc, lui, a un prénom : Juste." },
+    { q: "Dans quel film Jacquouille la Fripouille débarque-t-il au XXe siècle ?", o: ["Les Visiteurs", "Kaamelott", "La Grande Vadrouille", "Astérix et Obélix"], a: 0 },
+    { q: "Dans « Friends », quel est le métier de Ross ?", o: ["Paléontologue", "Chef cuisinier", "Masseur", "Acteur"], a: 0 },
+    { q: "Combien de saisons compte « Game of Thrones » ?", o: ["8", "6", "7", "Une de trop"], a: 0, f: "8. La dernière, on n'en parle pas." },
+    { q: "Quel acteur joue Forrest Gump ?", o: ["Tom Hanks", "Kevin Costner", "Robin Williams", "Bill Murray"], a: 0 }
+  ] }
+};
+
+// ─── A CONTRARIO : titre ou expression inversé, retrouvez l'original
+export const CONTRARIO = [
+  { q: "Le Bruit des moutons", o: ["Le Silence des agneaux", "La Mélodie du bonheur", "Le Cri du loup", "Les Moutons de Panurge"], a: 0 },
+  { q: "Petit-déjeuner chez les génies", o: ["Le Dîner de cons", "Les Visiteurs", "La Cité de la peur", "Le Père Noël est une ordure"], a: 0 },
+  { q: "Le Petit Bleu", o: ["Le Grand Bleu", "Le Petit Prince", "Le Grand Blond avec une chaussure noire", "Les Schtroumpfs"], a: 0 },
+  { q: "Papa, j'ai eu le train", o: ["Maman, j'ai raté l'avion", "Y a-t-il un pilote dans l'avion ?", "Le Crime de l'Orient-Express", "Taxi"], a: 0 },
+  { q: "Le Paysan des carrés", o: ["Le Seigneur des anneaux", "Le Roi Lion", "Le Hobbit", "Le Cercle des poètes disparus"], a: 0 },
+  { q: "Une nuit avec fin", o: ["Un jour sans fin", "La Nuit au musée", "28 jours plus tard", "Le Jour le plus long"], a: 0 },
+  { q: "Noire-Pluie et les sept géants", o: ["Blanche-Neige et les sept nains", "Les Sept Mercenaires", "Le Géant de fer", "Cendrillon"], a: 0 },
+  { q: "Les Pâlots font du surf", o: ["Les Bronzés font du ski", "Point Break", "Brice de Nice", "Camping"], a: 0 },
+  { q: "La Petite Immobilité", o: ["La Grande Vadrouille", "Le Petit Baigneur", "La Grande Évasion", "Les Grandes Gueules"], a: 0 },
+  { q: "Monter dans les poires (expression)", o: ["Tomber dans les pommes", "Poireauter", "Ramener sa fraise", "Avoir la pêche"], a: 0 },
+  { q: "Avoir le foie sous le pied (expression)", o: ["Avoir le cœur sur la main", "Casser les pieds", "Avoir la main verte", "Se faire du mauvais sang"], a: 0 }
+];
+
+// ─── AFFICHE MYSTÈRE : les indices tombent un par un, moins on en voit, plus ça rapporte
+export const AFFICHES = [
+  { clues: ["Un fond vert qui défile", "Une pilule rouge", "Une pilule bleue", "Des lunettes noires et un long manteau"], o: ["Matrix", "Men in Black", "Inception", "Tron"], a: 0 },
+  { clues: ["Un paquebot", "Un iceberg", "Un dessin au fusain", "Une porte qui flotte (avec de la place pour deux)"], o: ["Titanic", "Poséidon", "Le Grand Bleu", "La Croisière s'amuse"], a: 0 },
+  { clues: ["Un squelette géant", "Une Jeep", "Un moustique dans de l'ambre", "Un verre d'eau qui tremble"], o: ["Jurassic Park", "King Kong", "Godzilla", "La Nuit au musée"], a: 0 },
+  { clues: ["Un rocher au lever du soleil", "Un bébé brandi devant la foule", "Un babouin", "Un phacochère qui pète"], o: ["Le Roi Lion", "Le Livre de la jungle", "Madagascar", "Tarzan"], a: 0 },
+  { clues: ["Des traces de pneus en feu", "Une horloge de mairie", "Un skateboard", "Une voiture aux portes papillon"], o: ["Retour vers le futur", "Fast & Furious", "Taxi", "Back to School"], a: 0 },
+  { clues: ["Une nageuse vue d'en dessous", "Un aileron", "Une plage américaine", "Un maire qui refuse de fermer la plage"], o: ["Les Dents de la mer", "Le Monde de Nemo", "Alerte à Malibu", "Sharknado"], a: 0 },
+  { clues: ["Du vert et du rouge partout", "Une frange brune", "Un nain de jardin qui voyage", "Une crème brûlée"], o: ["Le Fabuleux Destin d'Amélie Poulain", "Les Choristes", "La Haine", "Intouchables"], a: 0 },
+  { clues: ["Un vélo devant la pleine lune", "Un doigt qui s'allume", "Un placard plein de peluches", "Un téléphone bricolé"], o: ["E.T. l'extra-terrestre", "Rencontres du troisième type", "Super 8", "Les Goonies"], a: 0 },
+  { clues: ["Un anneau doré", "Un volcan", "Des pieds très poilus", "Un magicien à barbe grise"], o: ["Le Seigneur des anneaux", "Harry Potter", "Game of Thrones", "Le Monde de Narnia"], a: 0 },
+  { clues: ["Une mallette qui brille", "Un concours de twist", "Un milkshake à 5 dollars", "Une seringue plantée dans le cœur"], o: ["Pulp Fiction", "Reservoir Dogs", "Kill Bill", "Grease"], a: 0 },
+  { clues: ["Des combinaisons de ski fluo", "Un télésiège", "Un refuge de montagne", "Une liqueur d'échalote"], o: ["Les Bronzés font du ski", "Les Visiteurs", "Le Père Noël est une ordure", "Camping"], a: 0 }
+];
+
+// ─── BURGER QUIZ : 3 thèmes tirés au sort (dont 1 taré), l'équipe choisit, 3 questions
+//  d = description affichée (pour les thèmes tarés, plus c'est n'importe quoi, mieux c'est)
+export const BURGER = [
+  { name: "Les fromages qui puent", qs: [
+    { q: "De quelle région vient le maroilles ?", o: ["Le Nord", "La Normandie", "L'Alsace", "La Savoie"], a: 0 },
+    { q: "Le munster est une spécialité…", o: ["Alsacienne et vosgienne", "Bretonne", "Auvergnate", "Corse"], a: 0 },
+    { q: "Avec quel fromage fait-on la vraie tartiflette ?", o: ["Le reblochon", "Le comté", "La raclette", "Le brie"], a: 0 } ] },
+  { name: "Les années 80", qs: [
+    { q: "Quel personnage jaune passe sa vie à manger des pac-gommes ?", o: ["Pac-Man", "Mario", "Sonic", "Kirby"], a: 0 },
+    { q: "En quelle année Marty McFly remonte-t-il depuis 1985 ?", o: ["1955", "1965", "1945", "1975"], a: 0 },
+    { q: "Comment s'appelle la console de salon de Nintendo sortie en Europe en 1986 ?", o: ["La NES", "La Game Boy", "La Master System", "L'Atari 2600"], a: 0 } ] },
+  { name: "Les animaux de la ferme", qs: [
+    { q: "Comment s'appelle le petit de la chèvre ?", o: ["Le chevreau", "L'agneau", "Le poulain", "Le veau"], a: 0 },
+    { q: "Combien de trayons a une vache ?", o: ["4", "2", "6", "8"], a: 0 },
+    { q: "Le foie gras est produit à partir de…", o: ["Canards ou oies", "Poules", "Dindes", "Lapins"], a: 0 } ] },
+  { name: "Le corps humain", qs: [
+    { q: "Quel est le plus grand organe du corps humain ?", o: ["La peau", "Le foie", "Les poumons", "L'intestin"], a: 0 },
+    { q: "Où se trouve l'étrier ?", o: ["Dans l'oreille", "Dans le pied", "Dans le nez", "Dans le genou"], a: 0 },
+    { q: "Combien de cavités compte le cœur humain ?", o: ["4", "2", "3", "5"], a: 0 } ] },
+  { name: "La gastronomie française", qs: [
+    { q: "De quelle ville vient la bouillabaisse ?", o: ["Marseille", "Lyon", "Bordeaux", "Lille"], a: 0 },
+    { q: "Que contient une vraie quiche lorraine ?", o: ["Des lardons", "Du saumon", "Du chèvre", "Du poulet"], a: 0 },
+    { q: "Le kouign-amann est une spécialité…", o: ["Bretonne", "Alsacienne", "Basque", "Savoyarde"], a: 0 } ] },
+  { name: "Les héros Disney", qs: [
+    { q: "Comment s'appelle la fée de Peter Pan ?", o: ["La fée Clochette", "La fée Marraine", "Flora", "La fée Bleue"], a: 0 },
+    { q: "Dans Aladdin, comment s'appelle le singe ?", o: ["Abu", "Rafiki", "Iago", "Pascal"], a: 0 },
+    { q: "Comment s'appelle la Petite Sirène ?", o: ["Ariel", "Ondine", "Marina", "Moana"], a: 0 } ] },
+  { name: "L'espace", qs: [
+    { q: "Quelle planète a les anneaux les plus spectaculaires ?", o: ["Saturne", "Jupiter", "Mars", "Vénus"], a: 0 },
+    { q: "Qui a été le premier homme dans l'espace ?", o: ["Youri Gagarine", "Neil Armstrong", "Buzz Aldrin", "Thomas Pesquet"], a: 0 },
+    { q: "Quelle est la planète la plus proche du Soleil ?", o: ["Mercure", "Vénus", "Mars", "La Terre"], a: 0 } ] },
+  { name: "Le foot", qs: [
+    { q: "Quel pays a remporté la Coupe du monde 2018 ?", o: ["La France", "La Croatie", "La Belgique", "Le Brésil"], a: 0 },
+    { q: "Qui a donné un coup de tête en finale de la Coupe du monde 2006 ?", o: ["Zinédine Zidane", "Thierry Henry", "Franck Ribéry", "Fabien Barthez"], a: 0 },
+    { q: "Combien de temps dure un match de foot, hors prolongations ?", o: ["90 minutes", "80 minutes", "100 minutes", "Jusqu'à ce que la France perde"], a: 0 } ] },
+  { name: "Les choses qui collent quand on transpire du slip", taré: true, qs: [
+    { q: "Avec la résine de pin, on fabrique…", o: ["De la térébenthine", "Du pétrole", "Du caoutchouc", "Du savon"], a: 0 },
+    { q: "Le premier chewing-gum industriel était fait à base de…", o: ["Chiclé, une sève d'arbre", "Pétrole", "Gélatine de porc", "Cire d'abeille"], a: 0 },
+    { q: "Quel animal fabrique un fil collant pour attraper ses proies ?", o: ["L'araignée", "Le ver à soie", "La chenille", "L'escargot"], a: 0 } ] },
+  { name: "Les animaux qui ont manifestement raté leur vie", taré: true, qs: [
+    { q: "Quel animal dort la tête en bas ?", o: ["La chauve-souris", "Le hibou", "Le koala", "Le flamant rose"], a: 0 },
+    { q: "Quel est le mammifère le plus lent du monde ?", o: ["Le paresseux", "Le koala", "Le hérisson", "Le lamantin"], a: 0 },
+    { q: "Quel oiseau de l'Antarctique ne sait pas voler ?", o: ["Le manchot", "Le pingouin", "Le goéland", "Le pétrel"], a: 0, f: "Le manchot. Le pingouin, lui, vole très bien. Piège !" } ] },
+  { name: "Ce que tonton Michel raconte au quatrième pastis", taré: true, qs: [
+    { q: "Quelle plante donne son goût au pastis ?", o: ["L'anis", "La menthe", "Le thym", "Le basilic"], a: 0 },
+    { q: "Combien de temps a réellement duré la guerre de Cent Ans ?", o: ["116 ans", "100 ans", "99 ans", "Cent ans pile, faut pas pinailler"], a: 0, f: "116 ans. Comme les histoires de tonton." },
+    { q: "Le pastis est né dans quelle région ?", o: ["La Provence", "La Bretagne", "L'Alsace", "La Corse"], a: 0 } ] },
+  { name: "Les sujets interdits au repas de Noël chez les Duchmol", taré: true, qs: [
+    { q: "Combien de temps dure le mandat d'un député français ?", o: ["5 ans", "4 ans", "6 ans", "7 ans"], a: 0 },
+    { q: "En quelle année a eu lieu la prise de la Bastille ?", o: ["1789", "1792", "1793", "1815"], a: 0 },
+    { q: "Combien de signes compte le zodiaque occidental ?", o: ["12", "10", "13", "9"], a: 0 } ] }
+];
+
+// ─── QUI VEUT GAGNER DES MILLIONS : 5 paliers de difficulté, l'équipe peut s'arrêter à tout moment
+//  Gains : 1, 2, 3, 5, 8 pts. Palier assuré après la 2e question.
+export const MILLIONS = [
+  [ // niveau 1
+    { q: "De quelle couleur est le cheval blanc d'Henri IV ?", o: ["Blanc", "Noir", "Gris", "Alezan"], a: 0 },
+    { q: "Combien de jours compte une année bissextile ?", o: ["366", "365", "364", "367"], a: 0 },
+    { q: "Quel animal est le symbole de la France ?", o: ["Le coq", "L'aigle", "Le lion", "Le lapin"], a: 0 },
+    { q: "Qui est le compagnon de route de Tintin, capitaine de son état ?", o: ["Haddock", "Obélix", "Spirou", "Gaston"], a: 0 },
+    { q: "Dans quel pays se trouve la tour de Pise ?", o: ["L'Italie", "L'Espagne", "La Grèce", "La France"], a: 0 },
+    { q: "Combien y a-t-il de minutes dans une heure ?", o: ["60", "100", "30", "90"], a: 0, f: "60. Pas 100, monsieur du forain." }
+  ],
+  [ // niveau 2
+    { q: "Quel est l'ingrédient principal du guacamole ?", o: ["L'avocat", "Le concombre", "Le petit pois", "La courgette"], a: 0 },
+    { q: "Quel est le plus long fleuve de France ?", o: ["La Loire", "La Seine", "Le Rhône", "La Garonne"], a: 0 },
+    { q: "Qui a écrit « Le Petit Prince » ?", o: ["Antoine de Saint-Exupéry", "Jules Verne", "Albert Camus", "Marcel Pagnol"], a: 0 },
+    { q: "Combien de cordes a une guitare classique ?", o: ["6", "4", "7", "12"], a: 0 },
+    { q: "Quel gaz les plantes absorbent-elles pour la photosynthèse ?", o: ["Le dioxyde de carbone", "L'oxygène", "L'azote", "L'hélium"], a: 0 },
+    { q: "Quelle est la capitale du Canada ?", o: ["Ottawa", "Toronto", "Montréal", "Vancouver"], a: 0 }
+  ],
+  [ // niveau 3
+    { q: "Quel peintre s'est tranché une partie de l'oreille ?", o: ["Vincent van Gogh", "Pablo Picasso", "Claude Monet", "Salvador Dalí"], a: 0 },
+    { q: "Combien d'étoiles compte le drapeau européen ?", o: ["12", "15", "27", "10"], a: 0 },
+    { q: "Quel est le plus grand désert chaud du monde ?", o: ["Le Sahara", "Le Gobi", "Le Kalahari", "L'Atacama"], a: 0 },
+    { q: "Quel compositeur était devenu sourd ?", o: ["Beethoven", "Mozart", "Bach", "Chopin"], a: 0 },
+    { q: "Quel élément chimique a pour symbole Fe ?", o: ["Le fer", "Le fluor", "Le fermium", "Le phosphore"], a: 0 },
+    { q: "Quel pays compte le plus de fuseaux horaires, territoires d'outre-mer compris ?", o: ["La France", "La Russie", "Les États-Unis", "La Chine"], a: 0, f: "La France, avec 12 fuseaux grâce à ses territoires d'outre-mer." }
+  ],
+  [ // niveau 4
+    { q: "En quelle année Christophe Colomb atteint-il l'Amérique ?", o: ["1492", "1515", "1453", "1498"], a: 0 },
+    { q: "Quel est le plus petit pays indépendant d'Amérique du Sud ?", o: ["Le Suriname", "L'Uruguay", "Le Guyana", "L'Équateur"], a: 0 },
+    { q: "Qui a peint « Guernica » ?", o: ["Pablo Picasso", "Salvador Dalí", "Joan Miró", "Francisco de Goya"], a: 0 },
+    { q: "Quel est le plus petit os du corps humain ?", o: ["L'étrier", "Le marteau", "L'enclume", "La phalange du petit orteil"], a: 0 },
+    { q: "Qui a écrit « Je pense, donc je suis » ?", o: ["René Descartes", "Blaise Pascal", "Voltaire", "Jean-Jacques Rousseau"], a: 0 },
+    { q: "Quelle est la monnaie de la Suisse ?", o: ["Le franc suisse", "L'euro", "La couronne", "Le mark"], a: 0 }
+  ],
+  [ // niveau 5
+    { q: "En quelle année est mort Napoléon Ier ?", o: ["1821", "1815", "1830", "1804"], a: 0 },
+    { q: "Quel est le seul mammifère capable de vraiment voler ?", o: ["La chauve-souris", "L'écureuil volant", "Le colugo", "Le phalanger volant"], a: 0, f: "La chauve-souris. Les autres planent, ce qui n'est pas pareil." },
+    { q: "Quel est le plus haut sommet d'Afrique ?", o: ["Le Kilimandjaro", "Le mont Kenya", "Le Toubkal", "Le Ruwenzori"], a: 0 },
+    { q: "Combien de symphonies Beethoven a-t-il achevées ?", o: ["9", "5", "12", "7"], a: 0 },
+    { q: "Quelle planète tourne sur elle-même dans le sens inverse de la Terre ?", o: ["Vénus", "Mars", "Jupiter", "Neptune"], a: 0 },
+    { q: "Quel est l'animal le plus rapide en piqué ?", o: ["Le faucon pèlerin", "L'aigle royal", "Le guépard", "Le martinet"], a: 0, f: "Le faucon pèlerin, plus de 300 km/h en piqué." }
+  ]
+];
+
+// ─── MÉDIAS : à préparer. Les réponses sont déjà là, il ne manque que les fichiers.
+//  Déposez le fichier dans public/media/ et remplacez src: null par le chemin, ex. src: "/media/queen.mp3".
+//  Une entrée sans fichier est ignorée. Si une case n'a aucun fichier, elle donne une question de Culture G.
+//    audio      : { src, answer, start (s), bonus }       bonus = info pour le +1 (année, réalisateur…)
+//    pochette   : { img, answer }
+//    une note   : { src, answer }                          extrait d'une seule note / d'un seul accord
+//    couche     : { layers: [src batterie, src basse, src guitare/clavier, src voix], answer }
+//                 (pistes séparées avec un outil comme Demucs, toutes de même durée)
+//    vidéo      : { src, start, stop, qs: [question, question bonus facultative] }
 export const MEDIA = {
-  bt_actuel: [],
-  bt_intemporel: [],
-  bt_series: [],
-  bt_films: [],
-  paroles: [],
-  envers: [],
-  replique: [],
-  pochette: []
+  bt_actuel: [
+    { src: null, answer: "Flowers — Miley Cyrus", bonus: "2023" },
+    { src: null, answer: "Blinding Lights — The Weeknd", bonus: "2019" },
+    { src: null, answer: "As It Was — Harry Styles", bonus: "2022" },
+    { src: null, answer: "Bad Guy — Billie Eilish", bonus: "2019" },
+    { src: null, answer: "Tout oublier — Angèle feat. Roméo Elvis", bonus: "2018" },
+    { src: null, answer: "Djadja — Aya Nakamura", bonus: "2018" },
+    { src: null, answer: "Calm Down — Rema & Selena Gomez", bonus: "2022" },
+    { src: null, answer: "Shape of You — Ed Sheeran", bonus: "2017" },
+    { src: null, answer: "Papaoutai — Stromae", bonus: "2013" },
+    { src: null, answer: "Espresso — Sabrina Carpenter", bonus: "2024" }
+  ],
+  bt_intemporel: [
+    { src: null, answer: "Bohemian Rhapsody — Queen", bonus: "1975" },
+    { src: null, answer: "Billie Jean — Michael Jackson", bonus: "1983" },
+    { src: null, answer: "Hotel California — Eagles", bonus: "1976" },
+    { src: null, answer: "Smells Like Teen Spirit — Nirvana", bonus: "1991" },
+    { src: null, answer: "Hey Jude — The Beatles", bonus: "1968" },
+    { src: null, answer: "Le Sud — Nino Ferrer", bonus: "1975" },
+    { src: null, answer: "Les Champs-Élysées — Joe Dassin", bonus: "1969" },
+    { src: null, answer: "I Will Survive — Gloria Gaynor", bonus: "1978" },
+    { src: null, answer: "Africa — Toto", bonus: "1982" },
+    { src: null, answer: "Sweet Dreams — Eurythmics", bonus: "1983" }
+  ],
+  bt_series: [
+    { src: null, answer: "Friends" }, { src: null, answer: "Game of Thrones" }, { src: null, answer: "Les Simpson" },
+    { src: null, answer: "Stranger Things" }, { src: null, answer: "Dallas" }, { src: null, answer: "X-Files" },
+    { src: null, answer: "Kaamelott" }, { src: null, answer: "Plus belle la vie" }, { src: null, answer: "Mission impossible (la série)" },
+    { src: null, answer: "Les Mystères de l'Ouest" }
+  ],
+  bt_films: [
+    { src: null, answer: "Star Wars", bonus: "1977 · George Lucas" },
+    { src: null, answer: "Les Dents de la mer", bonus: "1975 · Steven Spielberg" },
+    { src: null, answer: "Titanic", bonus: "1997 · James Cameron" },
+    { src: null, answer: "Le Bon, la Brute et le Truand", bonus: "1966 · Sergio Leone" },
+    { src: null, answer: "Pirates des Caraïbes", bonus: "2003 · Gore Verbinski" },
+    { src: null, answer: "Rocky", bonus: "1976 · John G. Avildsen" },
+    { src: null, answer: "Le Parrain", bonus: "1972 · Francis Ford Coppola" },
+    { src: null, answer: "Indiana Jones (Les Aventuriers de l'arche perdue)", bonus: "1981 · Steven Spielberg" },
+    { src: null, answer: "Le Fabuleux Destin d'Amélie Poulain", bonus: "2001 · Jean-Pierre Jeunet" },
+    { src: null, answer: "SOS Fantômes", bonus: "1984 · Ivan Reitman" }
+  ],
+  paroles: [
+    { src: null, answer: "Les Lacs du Connemara — Michel Sardou" },
+    { src: null, answer: "Alexandrie Alexandra — Claude François" },
+    { src: null, answer: "Femme Like U — K-Maro" },
+    { src: null, answer: "L'Aventurier — Indochine" },
+    { src: null, answer: "Les Démons de minuit — Images" },
+    { src: null, answer: "Je l'aime à mourir — Francis Cabrel" },
+    { src: null, answer: "Foule sentimentale — Alain Souchon" },
+    { src: null, answer: "Tous les mêmes — Stromae" },
+    { src: null, answer: "Ça plane pour moi — Plastic Bertrand" },
+    { src: null, answer: "Les Sardines — Patrick Sébastien" }
+  ],
+  envers: [
+    { src: null, answer: "Gangnam Style — PSY" }, { src: null, answer: "Macarena — Los del Río" },
+    { src: null, answer: "YMCA — Village People" }, { src: null, answer: "La Danse des canards — J.J. Lionel" },
+    { src: null, answer: "Billie Jean — Michael Jackson" }, { src: null, answer: "Despacito — Luis Fonsi" },
+    { src: null, answer: "Wannabe — Spice Girls" }, { src: null, answer: "Happy — Pharrell Williams" },
+    { src: null, answer: "Asereje (The Ketchup Song) — Las Ketchup" }, { src: null, answer: "Mambo No. 5 — Lou Bega" }
+  ],
+  replique: [
+    { src: null, answer: "Les Visiteurs", bonus: "1993 · Jean-Marie Poiré" },
+    { src: null, answer: "Le Dîner de cons", bonus: "1998 · Francis Veber" },
+    { src: null, answer: "La Cité de la peur", bonus: "1994 · Alain Berbérian" },
+    { src: null, answer: "OSS 117 : Le Caire, nid d'espions", bonus: "2006 · Michel Hazanavicius" },
+    { src: null, answer: "Bienvenue chez les Ch'tis", bonus: "2008 · Dany Boon" },
+    { src: null, answer: "Le Père Noël est une ordure", bonus: "1982 · Jean-Marie Poiré" },
+    { src: null, answer: "Astérix & Obélix : Mission Cléopâtre", bonus: "2002 · Alain Chabat" },
+    { src: null, answer: "Les Tontons flingueurs", bonus: "1963 · Georges Lautner" },
+    { src: null, answer: "Kaamelott (série)", bonus: "2005 · Alexandre Astier" },
+    { src: null, answer: "La Haine", bonus: "1995 · Mathieu Kassovitz" }
+  ],
+  pochette: [
+    { img: null, answer: "Thriller — Michael Jackson" }, { img: null, answer: "Abbey Road — The Beatles" },
+    { img: null, answer: "Nevermind — Nirvana" }, { img: null, answer: "The Dark Side of the Moon — Pink Floyd" },
+    { img: null, answer: "Racine carrée — Stromae" }, { img: null, answer: "Back in Black — AC/DC" },
+    { img: null, answer: "21 — Adele" }, { img: null, answer: "Brol — Angèle" },
+    { img: null, answer: "Random Access Memories — Daft Punk" }, { img: null, answer: "Rumours — Fleetwood Mac" }
+  ],
+  unenote: [
+    { src: null, answer: "Seven Nation Army — The White Stripes" }, { src: null, answer: "A Hard Day's Night — The Beatles (l'accord d'ouverture)" },
+    { src: null, answer: "Billie Jean — Michael Jackson" }, { src: null, answer: "Another One Bites the Dust — Queen" },
+    { src: null, answer: "Highway to Hell — AC/DC" }, { src: null, answer: "Smoke on the Water — Deep Purple" },
+    { src: null, answer: "Sweet Child O' Mine — Guns N' Roses" }, { src: null, answer: "Smells Like Teen Spirit — Nirvana" },
+    { src: null, answer: "Satisfaction — The Rolling Stones" }, { src: null, answer: "Thunderstruck — AC/DC" }
+  ],
+  instruments: [
+    { layers: null, answer: "Billie Jean — Michael Jackson" }, { layers: null, answer: "Seven Nation Army — The White Stripes" },
+    { layers: null, answer: "Another One Bites the Dust — Queen" }, { layers: null, answer: "Get Lucky — Daft Punk" },
+    { layers: null, answer: "Uptown Funk — Mark Ronson & Bruno Mars" }, { layers: null, answer: "Hotel California — Eagles" },
+    { layers: null, answer: "Wonderwall — Oasis" }, { layers: null, answer: "Stand by Me — Ben E. King" },
+    { layers: null, answer: "Happy — Pharrell Williams" }, { layers: null, answer: "Zombie — The Cranberries" }
+  ],
+  // Vidéos cultes : la vidéo s'arrête à « stop », puis les questions s'enchaînent (la 2e vaut 1 pt bonus).
+  // Questions : QCM { q, o, a } ou nombre { q, n: réponse, u: unité }
+  video: [
+    { src: null, start: 0, stop: null, label: "Le gilet jaune « Macron destitution… »", qs: [
+      { q: "« Macron destitution, Macron… » ? Quel est le mot suivant ?", o: ["Décapitation", "Démission", "Dégage", "Délocalisation"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "Le drapeau « quadricolore »", qs: [
+      { q: "Combien y a-t-il réellement de couleurs primaires ?", o: ["3", "4", "2", "7"], a: 0, f: "Trois : rouge, vert, bleu pour la lumière ; cyan, magenta, jaune en imprimerie. Bleu-blanc-rouge, non." } ] },
+    { src: null, start: 0, stop: null, label: "Au forain : « 2 minutes, c'est 100 secondes »", qs: [
+      { q: "Combien y a-t-il de secondes dans une journée ?", n: 86400, u: "secondes", f: "86 400 (24 × 60 × 60). Selon le monsieur du forain : 240 000." } ] },
+    { src: null, start: 0, stop: null, label: "Reportage sur la Fistinière", qs: [
+      { q: "Quel membre de sa famille la dame veut-elle… inviter ?", o: ["[À COMPLÉTER : la bonne réponse]", "Sa belle-mère", "Son beau-frère", "Le chien"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "« Midi, c'est midi ! Comment elles font les autres ? »", qs: [
+      { q: "Pourquoi madame est-elle furieuse contre son mari ?", o: ["Le repas n'est pas à l'heure", "Il a oublié son anniversaire", "Il a vendu la voiture", "Il ronfle"], a: 0 },
+      { q: "BONUS : de quelle émission vient cet extrait ?", o: ["Confessions intimes", "Zone interdite", "C'est mon choix", "Tous ensemble"], a: 0, f: "À vérifier sur l'extrait." } ] },
+    { src: null, start: 0, stop: null, label: "Nabilla : « Allô ? Non mais allô… »", qs: [
+      { q: "« Non mais allô, quoi. T'es une fille et t'as pas de… » ?", o: ["Shampoing", "Rouge à lèvres", "Téléphone", "Mascara"], a: 0 },
+      { q: "BONUS : dans quelle émission ?", o: ["Les Anges de la téléréalité", "Secret Story", "Loft Story", "L'Île de la tentation"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "Nicolas Sarkozy : « Casse-toi, pauvre con »", qs: [
+      { q: "Où a été filmée la scène ?", o: ["Au Salon de l'agriculture", "Au Tour de France", "À l'Élysée", "Au Salon de l'auto"], a: 0 },
+      { q: "BONUS : en quelle année ?", o: ["2008", "2007", "2010", "2012"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "Ségolène Royal invente la « bravitude »", qs: [
+      { q: "Où prononce-t-elle ce mot ?", o: ["Sur la Grande Muraille de Chine", "Au Machu Picchu", "Devant les pyramides", "Au sommet de la tour Eiffel"], a: 0 },
+      { q: "BONUS : en quelle année ?", o: ["2007", "2005", "2012", "2002"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "Emmanuel Macron : « C'est notre projet ! »", qs: [
+      { q: "Complétez : « Parce que c'est notre… » ?", o: ["Projet", "Destin", "Pays", "Avenir"], a: 0 },
+      { q: "BONUS : en quelle année ?", o: ["2016", "2017", "2014", "2019"], a: 0 } ] },
+    { src: null, start: 0, stop: null, label: "Jean-Claude Van Damme est « aware »", qs: [
+      { q: "Quel mot anglais JCVD utilise-t-il pour dire qu'il est conscient ?", o: ["Aware", "Ready", "Awake", "Alive"], a: 0 } ] }
+  ]
 };

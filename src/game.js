@@ -2,17 +2,26 @@
 //  LE GRAND N'IMPORTE QUIZ — moteur de jeu (pur, sans réseau)
 //  L'état est un objet JSON. handle() applique un message, tick() gère les chronos.
 // ─────────────────────────────────────────────────────────────
-import { QCM, NUMBERS, OPEN, BAC, FAMILLE, CURSES, MEDIA, TAUNTS, TEAM_NAMES } from './content.js';
+import { QCM, NUMBERS, OPEN, BAC, FAMILLE, CURSES, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS } from './content.js';
 
+// 32 cases : 10 en haut, 6 à droite, 10 en bas, 6 à gauche
 export const BOARD = [
-  'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_films', 'plusoumoins', 'buzz10', 'pochette',
-  'paroles', 'malediction', 'mensonge', 'bt_intemporel', 'famille', 'duel', 'bt_series', 'bac',
-  'envers', 'echange', 'culture', 'replique', 'sansreponse', 'bt_actuel', 'vol', 'noix', 'bt_intemporel'
+  'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_films', 'plusoumoins', 'millions', 'buzz10', 'pochette',
+  'paroles', 'malediction', 'burger', 'mensonge', 'bt_intemporel', 'video',
+  'famille', 'duel', 'affiche', 'bt_series', 'contrario', 'bac', 'envers', 'echange', 'culture', 'unenote',
+  'replique', 'sansreponse', 'instruments', 'vol', 'noix', 'bt_actuel'
 ];
 
 export const TYPES = {
   depart:        { label: 'Départ', group: 'dep', kind: 'info' },
-  culture:       { label: 'Culture G', group: 'q', kind: 'qcm', rule: 'Tout le monde répond. Bonne réponse : 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
+  culture:       { label: 'Culture G', group: 'q', kind: 'dcc', rule: 'Duo, carré ou cash ? Choisissez avant de voir les réponses : duo 1 pt, carré 2 pts, cash 4 pts. +1 pour l\'équipe qui joue.' },
+  contrario:     { label: 'A contrario', group: 'q', kind: 'qcm', rule: 'Titre ou expression à l\'envers : retrouvez l\'original. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
+  burger:        { label: 'Burger Quiz', group: 'q', kind: 'series', rule: 'L\'équipe qui joue choisit un thème parmi 3. Trois questions, tout le monde répond : 2 pts / 1 pt chacune.' },
+  millions:      { label: 'Millionnaire', group: 'q', kind: 'millions', rule: 'Cinq questions de plus en plus dures, seule l\'équipe qui joue répond. 1, 2, 3, 5 puis 8 pts. On peut s\'arrêter à tout moment ; palier assuré à 2 pts.' },
+  affiche:       { label: 'Affiche mystère', group: 'v', kind: 'affiche', rule: 'Les indices de l\'affiche tombent un par un. Répondez tôt : 4 pts au 1er indice, 3, 2, puis 1. +1 pour l\'équipe qui joue.' },
+  video:         { label: 'Vidéo culte', group: 'v', kind: 'series', media: 'video', rule: 'Regardez bien… La vidéo s\'arrête, puis les questions tombent. 2 pts / 1 pt, question bonus 1 pt.' },
+  unenote:       { label: 'Une seule note', group: 'bt', kind: 'media', media: 'audio', rule: 'Une note. Une seule. Buzzez si vous reconnaissez : 3 pts.' },
+  instruments:   { label: 'Couche par couche', group: 'bt', kind: 'media', media: 'layers', rule: 'Batterie, puis basse, puis le reste… Buzzez tôt : 4 pts, puis 3, 2, 1.' },
   noix:          { label: 'À la noix', group: 'q', kind: 'qcm', rule: 'Question absurde, mais vraie réponse. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
   emojis:        { label: 'Emojis', group: 'q', kind: 'qcm', rule: 'Devinez le titre ou l\'expression. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
@@ -49,8 +58,13 @@ export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#
 export const T = {
   grace: 2500, rolled: 12000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
   bac: 75000, review: 120000, famille: 45000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
-  media: 45000, mediaAnswer: 15000, reveal: 120000
+  media: 45000, mediaAnswer: 15000, reveal: 120000,
+  mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000
 };
+
+export const LADDER = [1, 2, 3, 5, 8];   // gains du Millionnaire
+const LADDER_SAFE = 1;                  // palier assuré : après la 2e question
+const DCC_PTS = { duo: 1, carre: 2, cash: 4 };
 
 const MAX_TEAMS = 6;
 
@@ -58,8 +72,16 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, buzzMax: 20000 }
+  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000 },
+  ladder: LADDER, dcc: DCC_PTS,
+  cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
+
+// Banques de questions à choix multiples par type de case
+const POOLS = {
+  noix: QCM.noix, emojis: QCM.emojis, mensonge: QCM.mensonge, contrario: CONTRARIO
+};
+const CULTURE_ALL = { gen: QCM.culture, ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.q])) };
 
 // ─── utilitaires ─────────────────────────────────────────────
 export function norm(s) {
@@ -80,6 +102,41 @@ function pickIndex(s, key, len, rng) {
   const i = free[Math.floor(rng() * free.length)];
   s.used[key] = [...used, i];
   return i;
+}
+
+// Mélange les propositions d'une question (la bonne réponse peut être écrite en premier dans content.js)
+function shuffleQ(q, rng) {
+  if (!q || !Array.isArray(q.o)) return { ...q };
+  const idx = q.o.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  return { ...q, o: idx.map(i => q.o[i]), a: idx.indexOf(q.a) };
+}
+
+// Culture G : on fait tourner les thèmes (pas deux fois le même d'affilée)
+function culturePick(s, rng) {
+  const themes = Object.keys(CULTURE_ALL).filter(k => CULTURE_ALL[k].length);
+  const recent = s.used.cultRecent || [];
+  let cand = themes.filter(k => !recent.includes(k));
+  if (!cand.length) cand = themes;
+  const th = cand[Math.floor(rng() * cand.length)];
+  s.used.cultRecent = [...recent, th].slice(-Math.min(3, themes.length - 1));
+  const i = pickIndex(s, 'c_' + th, CULTURE_ALL[th].length, rng);
+  return { ...shuffleQ(CULTURE_ALL[th][i], rng), theme: th };
+}
+
+// Réponse libre (cash) : tolère les fautes de frappe et les articles
+function lev(a, b) {
+  const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]);
+  for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[m][n];
+}
+const STOP = /^(le|la|les|l|un|une|des|du|de|d|the) /;
+export function cashMatch(given, q) {
+  const g = norm(given).replace(STOP, '');
+  if (!g) return false;
+  const targets = [q.o[q.a], ...(q.k || [])].map(x => norm(x).replace(STOP, ''));
+  return targets.some(c => g === c || (c.length >= 4 && g.length >= 3 && (g.includes(c) || (c.includes(g) && g.length >= c.length * 0.6))) || lev(g, c) <= Math.floor(c.length / 5));
 }
 
 function feed(s, k, text, extra = {}) {
@@ -203,6 +260,9 @@ export function handle(s, msg, ctx) {
   if (t === 'answer') return answer(s, myTeam, msg.value, ctx, rng);
   if (t === 'vote') return vote(s, myTeam, msg.teamId, ctx, rng);
   if (t === 'buzz') return buzz(s, myTeam, ctx, rng);
+  if (t === 'mode') return chooseMode(s, myTeam, msg.mode, ctx, rng);
+  if (t === 'theme') return chooseTheme(s, myTeam, Number(msg.i), ctx, rng);
+  if (t === 'decide') return millionsDecide(s, myTeam, !!msg.go, ctx, rng);
   return 'Message inconnu.';
 }
 
@@ -268,7 +328,24 @@ function hostAction(s, msg, ctx, rng) {
   if (a === 'judge') {
     const ch = s.ch;
     if (s.phase !== 'challenge' || !ch || ch.kind !== 'media' || ch.stage !== 'answer') return 'Personne n\'a buzzé.';
+    ch.bonus = !!msg.bonus;
     judgeMedia(s, !!msg.ok, ctx, rng); return null;
+  }
+  if (a === 'mediaDone') {
+    const ch = s.ch;
+    if (s.phase !== 'challenge' || !ch || ch.stage !== 'video') return null;
+    startSeriesQ(s, 0, ctx); return null;
+  }
+  if (a === 'cashToggle') {
+    const ch = s.ch;
+    if (s.phase !== 'reveal' || !ch || ch.kind !== 'dcc' || !ch.ok || ch.modes[msg.teamId] !== 'cash' || !ch.answers[msg.teamId]) return 'Rien à corriger.';
+    const tm = team(s, msg.teamId);
+    const pts = DCC_PTS.cash + (tm.id === ch.teamId ? 1 : 0);
+    ch.ok[tm.id] = !ch.ok[tm.id];
+    const d = ch.ok[tm.id] ? pts : -Math.min(pts, tm.score);
+    tm.score += d; ch.gains[tm.id] = (ch.gains[tm.id] || 0) + d;
+    feed(s, 'points', `L'animateur ${ch.ok[tm.id] ? 'accepte' : 'refuse'} la réponse cash de ${tm.name} (${d > 0 ? '+' : ''}${d}).`);
+    return null;
   }
   return 'Action inconnue.';
 }
@@ -307,21 +384,44 @@ function startCell(s, type, ctx, rng, gains = {}) {
     s.ch = { ...base, text: 'Pause pipi ! Il ne se passe rien. Profitez-en pour remplir les verres. 🍻' };
     return toReveal(s, ctx, s.ch.text);
   }
-  if (meta.kind === 'media') {
-    const pool = MEDIA[type] || [];
+  if (meta.media) {
+    const pool = (MEDIA[type] || []).filter(x => x.src || x.img || (Array.isArray(x.layers) && x.layers.length));
     if (!pool.length) {
-      const i = pickIndex(s, 'culture', QCM.culture.length, rng);
-      s.ch = { ...base, kind: 'qcm', fallback: type, q: { ...QCM.culture[i] }, participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm,
-        rule: 'Le contenu de ce blind test n\'est pas encore chargé. Question de consolation, 2 pts / 1 pt.' };
+      s.ch = { ...base, kind: 'qcm', fallback: type, q: culturePick(s, rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm,
+        rule: 'Le contenu de cette case n\'est pas encore chargé. Question de consolation, 2 pts / 1 pt.' };
       s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
     }
     const i = pickIndex(s, 'm_' + type, pool.length, rng);
-    s.ch = { ...base, media: meta.media, item: { ...pool[i] }, stage: 'play', buzzer: null, excluded: [], deadline: now + T.grace + T.media };
+    const item = JSON.parse(JSON.stringify(pool[i]));
+    if (meta.kind === 'series') {
+      // vidéo culte : la vidéo d'abord, les questions ensuite
+      const dur = item.stop != null ? Math.max(3000, (item.stop - (item.start || 0)) * 1000 + 1500) : T.video;
+      s.ch = { ...base, media: 'video', item, qs: (item.qs || []).map(q => shuffleQ(q, rng)), res: [], stage: 'video', deadline: now + T.grace + dur };
+      s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
+    }
+    s.ch = { ...base, media: meta.media, item, stage: 'play', buzzer: null, excluded: [], deadline: now + T.grace + (meta.media === 'layers' ? Math.max(T.media, item.layers.length * T.layer + 15000) : T.media) };
     s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
   }
   if (meta.kind === 'qcm') {
-    const i = pickIndex(s, type, QCM[type].length, rng);
-    s.ch = { ...base, q: { ...QCM[type][i] }, participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm };
+    const pool = POOLS[type];
+    const i = pickIndex(s, type, pool.length, rng);
+    s.ch = { ...base, q: shuffleQ(pool[i], rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm };
+  } else if (meta.kind === 'dcc') {
+    s.ch = { ...base, q: culturePick(s, rng), stage: 'mode', modes: {}, duo: {}, participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.mode };
+  } else if (meta.kind === 'series') {
+    // Burger Quiz : 2 thèmes normaux + 1 taré, dans le désordre
+    const normal = BURGER.map((b, i) => i).filter(i => !BURGER[i].taré);
+    const tare = BURGER.map((b, i) => i).filter(i => BURGER[i].taré);
+    const pickFrom = (arr, key) => { const used = s.used[key] || []; let free = arr.filter(i => !used.includes(i)); if (!free.length) { free = arr; s.used[key] = []; } const i = free[Math.floor(rng() * free.length)]; s.used[key] = [...(s.used[key] || []), i]; return i; };
+    const a = pickFrom(normal, 'burgerN'); let b = pickFrom(normal, 'burgerN'); if (b === a) b = normal.find(i => i !== a);
+    const themes = [a, b, pickFrom(tare, 'burgerT')].sort(() => rng() - 0.5);
+    s.ch = { ...base, stage: 'theme', themes: themes.map(i => ({ i, name: BURGER[i].name, taré: !!BURGER[i].taré })), res: [], deadline: now + T.grace + T.pick };
+  } else if (meta.kind === 'millions') {
+    const ladder = MILLIONS.map((lvl, k) => shuffleQ(lvl[pickIndex(s, 'mil' + k, lvl.length, rng)], rng));
+    s.ch = { ...base, ladder, level: 0, bank: 0, hist: [], q: ladder[0], stage: 'q', participants: [tm.id], answers: {}, fifty: {}, deadline: now + T.grace + T.millions };
+  } else if (meta.kind === 'affiche') {
+    const i = pickIndex(s, type, AFFICHES.length, rng);
+    s.ch = { ...base, q: shuffleQ(AFFICHES[i], rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + AFFICHES[i].clues.length * T.clue + 8000 };
   } else if (meta.kind === 'number') {
     const i = pickIndex(s, type, NUMBERS.length, rng);
     s.ch = { ...base, q: { ...NUMBERS[i] }, participants: all, answers: {}, deadline: now + T.grace + T.number };
@@ -359,7 +459,26 @@ function answer(s, tm, value, ctx, rng) {
   if (!isParticipant(ch, tm.id)) return 'Vous ne participez pas à celle-là.';
   if (ch.answers[tm.id] !== undefined) return 'Votre équipe a déjà répondu.';
 
-  if (ch.kind === 'qcm' || (ch.kind === 'duel' && ch.stage === 'q')) {
+  if (ch.kind === 'dcc') {
+    if (ch.stage !== 'q') return 'Choisissez d\'abord duo, carré ou cash.';
+    if (ch.modes[tm.id] === 'cash') {
+      const v = clampText(value, 60);
+      if (!v) return 'Tapez une réponse.';
+      ch.answers[tm.id] = { v, cash: true };
+    } else {
+      const v = Number(value);
+      const allowed = ch.modes[tm.id] === 'duo' ? ch.duo[tm.id] : [0, 1, 2, 3];
+      if (!allowed.includes(v)) return 'Réponse invalide.';
+      if (ch.fifty[tm.id] && ch.fifty[tm.id].includes(v)) return 'Cette réponse a été éliminée.';
+      ch.answers[tm.id] = { v };
+    }
+  } else if ((ch.kind === 'series' || ch.kind === 'millions') && ch.stage !== 'q') {
+    return 'Pas encore de question.';
+  } else if (ch.kind === 'series' && ch.q.n !== undefined) {
+    const v = Number(String(value).replace(/\s/g, '').replace(',', '.'));
+    if (!Number.isFinite(v)) return 'Il faut un nombre.';
+    ch.answers[tm.id] = { v };
+  } else if (ch.kind === 'qcm' || ch.kind === 'series' || ch.kind === 'millions' || ch.kind === 'affiche' || (ch.kind === 'duel' && ch.stage === 'q')) {
     const v = Number(value);
     if (!(v >= 0 && v < ch.q.o.length)) return 'Réponse invalide.';
     if (ch.fifty && ch.fifty[tm.id] && ch.fifty[tm.id].includes(v)) return 'Cette réponse a été éliminée.';
@@ -391,6 +510,8 @@ function answer(s, tm, value, ctx, rng) {
 
 function closeAnswers(s, ctx, rng) {
   const ch = s.ch;
+  if (ch.kind === 'series') return closeSeriesQ(s, ctx, rng);
+  if (ch.kind === 'millions') return millionsAnswered(s, ctx, rng);
   if (ch.kind === 'open' && ch.stage === 'write') {
     const n = Object.keys(ch.answers).length;
     if (n >= 2) { ch.stage = 'vote'; ch.deadline = ctx.now + T.vote; s.deadline = ch.deadline; return; }
@@ -419,6 +540,115 @@ function vote(s, tm, target, ctx, rng) {
   const voters = s.teams.filter(x => Object.keys(ch.answers).some(id => id !== x.id));
   if (voters.every(x => ch.votes[x.id])) resolve(s, ctx, rng);
   return null;
+}
+
+// ─── Duo, carré ou cash ──────────────────────────────────────
+function chooseMode(s, tm, mode, ctx, rng) {
+  const ch = s.ch;
+  if (s.phase !== 'challenge' || !ch || ch.kind !== 'dcc' || ch.stage !== 'mode') return 'Trop tard pour choisir.';
+  if (!DCC_PTS[mode]) return 'Duo, carré ou cash, rien d\'autre.';
+  if (ch.modes[tm.id]) return 'Déjà choisi.';
+  ch.modes[tm.id] = mode;
+  if (ch.participants.every(id => ch.modes[id])) dccToQuestion(s, ctx, rng);
+  return null;
+}
+function dccToQuestion(s, ctx, rng) {
+  const ch = s.ch;
+  for (const id of ch.participants) {
+    if (!ch.modes[id]) ch.modes[id] = 'carre';
+    if (ch.modes[id] === 'duo') {
+      const wrong = [0, 1, 2, 3].filter(i => i !== ch.q.a);
+      const pair = [ch.q.a, wrong[Math.floor(rng() * wrong.length)]];
+      ch.duo[id] = rng() < 0.5 ? pair : pair.reverse();
+    }
+  }
+  ch.stage = 'q'; ch.startsAt = ctx.now; ch.deadline = ctx.now + T.qcm; s.deadline = ch.deadline;
+}
+
+// ─── Burger Quiz et vidéo culte : plusieurs questions à la suite ───
+function chooseTheme(s, tm, i, ctx, rng) {
+  const ch = s.ch;
+  if (s.phase !== 'challenge' || !ch || ch.kind !== 'series' || ch.stage !== 'theme') return 'Pas de thème à choisir.';
+  if (ch.teamId !== tm.id) return 'C\'est l\'équipe qui joue qui choisit.';
+  const th = ch.themes[i]; if (!th) return 'Thème inconnu.';
+  doTheme(s, th, ctx, rng);
+  return null;
+}
+function doTheme(s, th, ctx, rng) {
+  const ch = s.ch;
+  ch.theme = th.name; ch.themeTare = th.taré;
+  ch.qs = BURGER[th.i].qs.map(q => shuffleQ(q, rng));
+  feed(s, 'info', `🍔 ${team(s, ch.teamId).name} choisit « ${th.name} »`);
+  startSeriesQ(s, 0, ctx);
+}
+function startSeriesQ(s, i, ctx) {
+  const ch = s.ch;
+  if (!ch.qs || i >= ch.qs.length) return toRevealSeries(s, ctx);
+  ch.i = i; ch.q = ch.qs[i]; ch.stage = 'q';
+  ch.participants = s.teams.map(x => x.id); ch.answers = {}; ch.fifty = {};
+  ch.startsAt = ctx.now + (i ? 1200 : T.grace);
+  ch.deadline = ch.startsAt + (ch.q.n !== undefined ? T.number : T.series); s.deadline = ch.deadline;
+}
+function closeSeriesQ(s, ctx) {
+  const ch = s.ch, q = ch.q;
+  const isBonus = ch.type === 'video' && ch.i > 0;
+  const r = { q, answers: ch.answers, ok: [], gains: {} };
+  const give = (id, p) => { const real = award(s, team(s, id), p); r.gains[id] = real; };
+  if (q.n !== undefined) {
+    const e = Object.entries(ch.answers).map(([id, a]) => [id, Math.abs(a.v - q.n)]);
+    if (e.length) { const best = Math.min(...e.map(x => x[1])); r.ok = e.filter(x => x[1] === best).map(x => x[0]); r.ok.forEach(id => give(id, isBonus ? 1 : best === 0 ? 3 : 2)); }
+  } else {
+    r.ok = Object.entries(ch.answers).filter(([, a]) => a.v === q.a).map(([id]) => id);
+    r.ok.forEach(id => give(id, isBonus ? 1 : id === ch.teamId ? 2 : 1));
+  }
+  ch.res.push(r);
+  startSeriesQ(s, ch.i + 1, ctx);
+}
+function toRevealSeries(s, ctx) {
+  const ch = s.ch;
+  const tot = {};
+  ch.res.forEach(r => r.ok.forEach(id => { tot[id] = (tot[id] || 0) + 1; }));
+  const best = Object.entries(tot).sort((a, b) => b[1] - a[1])[0];
+  ch.q = null;
+  toReveal(s, ctx, best ? `${team(s, best[0]).name} s'en sort le mieux (${best[1]}/${ch.res.length}).` : 'Zéro bonne réponse. Collectivement. Bravo.');
+}
+
+// ─── Qui veut gagner des millions ────────────────────────────
+function millionsAnswered(s, ctx) {
+  const ch = s.ch;
+  const a = ch.answers[ch.teamId];
+  const ok = a && a.v === ch.q.a;
+  ch.hist.push({ q: ch.q, v: a ? a.v : null, ok, level: ch.level });
+  if (ok) {
+    ch.bank = LADDER[ch.level];
+    ch.level += 1;
+    if (ch.level >= LADDER.length) return millionsEnd(s, ctx, 'top');
+    ch.stage = 'decide'; ch.deadline = ctx.now + T.decide; s.deadline = ch.deadline;
+    return;
+  }
+  ch.bank = ch.level > LADDER_SAFE ? LADDER[LADDER_SAFE] : 0;
+  millionsEnd(s, ctx, a ? 'wrong' : 'time');
+}
+function millionsDecide(s, tm, go, ctx) {
+  const ch = s.ch;
+  if (s.phase !== 'challenge' || !ch || ch.kind !== 'millions' || ch.stage !== 'decide') return 'Pas maintenant.';
+  if (ch.teamId !== tm.id) return 'Ce n\'est pas votre partie.';
+  if (!go) return millionsEnd(s, ctx, 'stop'), null;
+  ch.q = ch.ladder[ch.level]; ch.answers = {}; ch.fifty = {}; ch.stage = 'q';
+  ch.startsAt = ctx.now + 1000; ch.deadline = ch.startsAt + T.millions; s.deadline = ch.deadline;
+  return null;
+}
+function millionsEnd(s, ctx, why) {
+  const ch = s.ch, tm = team(s, ch.teamId);
+  ch.end = why;
+  if (ch.bank) award(s, tm, ch.bank);
+  const msg = {
+    top: `${tm.name} va au bout ! 8 points, Jean-Pierre en pleure. 🏆`,
+    stop: `${tm.name} s'arrête et repart avec ${ch.bank} pt${ch.bank > 1 ? 's' : ''}. Prudent… ou lâche.`,
+    wrong: `Mauvaise réponse ! ${tm.name} ${ch.bank ? `retombe au palier : ${ch.bank} pts` : 'repart avec rien du tout'}.`,
+    time: `Trop lent ! ${tm.name} ${ch.bank ? `garde le palier : ${ch.bank} pts` : 'repart les mains vides'}.`
+  }[why];
+  toReveal(s, ctx, msg);
 }
 
 function buzz(s, tm, ctx, rng) {
@@ -470,9 +700,7 @@ function doPick(s, target, ctx, rng) {
   const tm = active(s);
   ch.target = target.id;
   if (ch.type === 'duel') {
-    const pool = [...QCM.culture, ...QCM.noix];
-    const i = pickIndex(s, 'duel', pool.length, rng);
-    ch.stage = 'q'; ch.q = { ...pool[i] }; ch.participants = [tm.id, target.id]; ch.answers = {}; ch.fifty = {};
+    ch.stage = 'q'; ch.q = culturePick(s, rng); ch.participants = [tm.id, target.id]; ch.answers = {}; ch.fifty = {};
     ch.startsAt = ctx.now + T.grace; ch.deadline = ch.startsAt + T.duel; s.deadline = ch.deadline;
     feed(s, 'info', `⚔️ DUEL : ${tm.name} défie ${target.name} !`);
     return;
@@ -553,6 +781,8 @@ function useJoker(s, tm, msg, ctx, rng) {
     }
   } else if (k === 'fifty') {
     if (s.phase !== 'challenge' || !ch || !ch.q || !ch.q.o || ch.q.o.length !== 4 || !isParticipant(ch, tm.id)) return 'Seulement pendant un QCM à 4 choix.';
+    if (ch.kind === 'dcc' && (ch.stage !== 'q' || ch.modes[tm.id] !== 'carre')) return 'En duo ou cash, le 50/50 ne sert à rien. Choisissez carré.';
+    if ((ch.kind === 'series' || ch.kind === 'millions') && ch.stage !== 'q') return 'Attendez la question.';
     if (ch.answers[tm.id] !== undefined) return 'Vous avez déjà répondu.';
     const wrong = [0, 1, 2, 3].filter(i => i !== ch.q.a).sort(() => rng() - 0.5).slice(0, 2);
     ch.fifty[tm.id] = wrong;
@@ -568,7 +798,24 @@ function resolve(s, ctx, rng) {
   const tm = active(s);
   let summary = '';
 
-  if (ch.kind === 'qcm') {
+  if (ch.kind === 'dcc') {
+    ch.ok = {};
+    for (const [id, a] of Object.entries(ch.answers)) {
+      ch.ok[id] = a.cash ? cashMatch(a.v, ch.q) : a.v === ch.q.a;
+      if (ch.ok[id]) award(s, team(s, id), DCC_PTS[ch.modes[id]] + (id === tm.id ? 1 : 0));
+    }
+    const ok = Object.keys(ch.ok).filter(id => ch.ok[id]);
+    const cashers = ok.filter(id => ch.modes[id] === 'cash');
+    summary = cashers.length ? `CASH ! ${cashers.map(id => team(s, id).name).join(', ')} ${cashers.length > 1 ? 'ont' : 'a'} tout misé et gagné. 💰` : ok.length ? `Bonne réponse pour ${ok.map(id => team(s, id).name).join(', ')}.` : 'Personne n\'a trouvé. Ni en duo, ni en carré, ni en rien.';
+  } else if (ch.kind === 'affiche') {
+    const n = ch.q.clues.length;
+    const ok = Object.entries(ch.answers).filter(([, a]) => a.v === ch.q.a);
+    ch.seen = {};
+    for (const [id, a] of Object.entries(ch.answers)) ch.seen[id] = Math.min(n, 1 + Math.floor(Math.max(0, a.at) / T.clue));
+    for (const [id] of ok) award(s, team(s, id), Math.max(1, n + 1 - ch.seen[id]) + (id === tm.id ? 1 : 0));
+    const fast = ok.sort((x, y) => x[1].at - y[1].at)[0];
+    summary = fast ? `${team(s, fast[0]).name} a trouvé dès le ${ch.seen[fast[0]] === 1 ? '1er' : ch.seen[fast[0]] + 'e'} indice !` : 'Personne n\'a reconnu l\'affiche. Allez au cinéma, de temps en temps.';
+  } else if (ch.kind === 'qcm') {
     const ok = Object.entries(ch.answers).filter(([, a]) => a.v === ch.q.a).map(([id]) => id);
     for (const id of ok) award(s, team(s, id), id === tm.id ? 2 : 1);
     summary = ok.length ? `Bonne réponse pour ${ok.map(id => team(s, id).name).join(', ')}.` : 'Personne n\'a trouvé. Magnifique.';
@@ -640,7 +887,13 @@ function resolve(s, ctx, rng) {
       summary = `${ch.winners.map(id => team(s, id).name).join(' et ')} ${best <= 150 ? '— une horloge suisse !' : 'a le meilleur métronome interne.'}`;
     } else summary = 'Personne n\'a buzzé correctement. Le temps, c\'est relatif.';
   } else if (ch.kind === 'media') {
-    if (ch.winner) { const w = team(s, ch.winner); award(s, w, 2); summary = `${w.name} a trouvé !`; }
+    if (ch.winner) {
+      const w = team(s, ch.winner);
+      let pts = ch.type === 'unenote' ? 3 : 2;
+      if (ch.media === 'layers') { const n = ch.item.layers.length; ch.layerAt = Math.min(n, 1 + Math.floor((ch.buzzAt - ch.startsAt) / T.layer)); pts = Math.max(1, n + 1 - ch.layerAt); }
+      award(s, w, pts + (ch.bonus ? 1 : 0));
+      summary = `${w.name} a trouvé${ch.bonus ? ', avec le bonus en prime' : ''} !`;
+    }
     else summary = 'Personne n\'a trouvé. Vous n\'avez aucune culture.';
   }
   toReveal(s, ctx, summary);
@@ -694,6 +947,12 @@ function timeout(s, ctx, rng) {
     return doPick(s, opts[Math.floor(rng() * opts.length)], ctx, rng);
   }
   if (ch.kind === 'buzz10' && ch.stage === 'ready') { ch.stage = 'running'; s.deadline = ch.deadline; return; }
+  if (ch.kind === 'dcc' && ch.stage === 'mode') return dccToQuestion(s, ctx, rng);
+  if (ch.kind === 'series' && ch.stage === 'theme') { feed(s, 'info', 'Trop lent ! Le hasard choisit le thème.'); return doTheme(s, ch.themes[Math.floor(rng() * ch.themes.length)], ctx, rng); }
+  if (ch.kind === 'series' && ch.stage === 'video') return startSeriesQ(s, 0, ctx);
+  if (ch.kind === 'series') return closeSeriesQ(s, ctx, rng);
+  if (ch.kind === 'millions' && ch.stage === 'decide') return millionsEnd(s, ctx, 'stop');
+  if (ch.kind === 'millions') return millionsAnswered(s, ctx, rng);
   if (ch.kind === 'media' && ch.stage === 'answer') return judgeMedia(s, false, ctx, rng);
   if (ch.kind === 'open' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
   if (ch.kind === 'bac' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
@@ -729,8 +988,12 @@ export function view(s, viewer = {}) {
   v.players = Object.values(s.players).reduce((acc, p) => { acc[p.teamId] = (acc[p.teamId] || 0) + 1; return acc; }, {});
   const ch = v.ch;
   if (ch && s.phase === 'challenge') {
-    if (ch.q) { delete ch.q.a; delete ch.q.f; if (ch.q.r) ch.q.r = ch.q.r.map(() => null); }
-    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, start: ch.item.start };
+    if (ch.q) { delete ch.q.a; delete ch.q.f; delete ch.q.k; delete ch.q.n; if (ch.q.r) ch.q.r = ch.q.r.map(() => null); }
+    if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
+    delete ch.qs; delete ch.ladder;
+    if (ch.q && ch.q.clues && viewer.role !== 'tv') delete ch.q.clues;
+    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label };
+    if (ch.duo && me) ch.duo = { [me.teamId]: ch.duo[me.teamId] }; else if (ch.duo) ch.duo = {};
     const hideOthers = ch.kind !== 'bac' || ch.stage === 'write';
     if (ch.answers && !(ch.kind === 'open' && ch.stage === 'vote') && hideOthers) {
       for (const id of Object.keys(ch.answers)) if (!me || me.teamId !== id) ch.answers[id] = { hidden: true };

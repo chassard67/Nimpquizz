@@ -88,7 +88,9 @@ $('#fsBtn').addEventListener('click', () => { audioUnlock(); document.documentEl
 addEventListener('click', audioUnlock, { once: true });
 
 // ── PLATEAU ──────────────────────────────────────────────────
-const posToGrid = i => i <= 8 ? [i + 1, 1] : i <= 13 ? [9, i - 7] : i <= 21 ? [22 - i, 6] : [1, 27 - i];
+// Plateau 32 cases sur une grille 10 × 8 : haut (0-9), droite (10-15), bas (16-25), gauche (26-31)
+const posToGrid = i => i <= 9 ? [i + 1, 1] : i <= 15 ? [10, i - 8] : i <= 25 ? [26 - i, 8] : [1, 33 - i];
+const N = () => S.meta.board.length;
 let boardBuilt = false;
 function buildBoard() {
   const b = $('#board');
@@ -104,7 +106,7 @@ function syncPawns(first) {
   for (const t of S.teams) {
     if (disp[t.id] === undefined || first) { disp[t.id] = t.pos; continue; }
     if (disp[t.id] === t.pos) continue;
-    const fwd = (t.pos - disp[t.id] + 26) % 26;
+    const fwd = (t.pos - disp[t.id] + N()) % N();
     if (S.move && S.move.done && S.move.teamId === t.id && fwd > 0 && fwd <= 12) animatePawn(t.id, t.pos);
     else disp[t.id] = t.pos;
   }
@@ -112,7 +114,7 @@ function syncPawns(first) {
 function animatePawn(id, to) {
   clearInterval(animating);
   animating = setInterval(() => {
-    disp[id] = (disp[id] + 1) % 26; sfx.tick(); renderPawns();
+    disp[id] = (disp[id] + 1) % N(); sfx.tick(); renderPawns();
     if (disp[id] === to) { clearInterval(animating); animating = null; }
   }, 260);
 }
@@ -186,11 +188,15 @@ function renderHostbar() {
   if (S.phase === 'rolled') b.push(`<button class="main" data-h="next">Avancer le pion ▶</button>`);
   if (S.phase === 'challenge') {
     if (ch.kind === 'bac' && ch.stage === 'review') b.push(`<button class="main" data-h="bacValidate">Valider les points ✓</button><span class="hint">Cliquez sur un mot pour le valider / refuser.</span>`);
-    else if (ch.kind === 'media' && ch.stage === 'answer') b.push(`<button class="ok" data-h="judge" data-ok="1">✓ Bonne réponse</button><button class="ko" data-h="judge" data-ok="0">✗ Raté</button>`);
+    else if (ch.kind === 'media' && ch.stage === 'answer') b.push(`<button class="ok" data-h="judge" data-ok="1">✓ Bonne réponse</button><button class="ok" data-h="judge" data-ok="1" data-bonus="1">✓ + bonus</button><button class="ko" data-h="judge" data-ok="0">✗ Raté</button><span class="hint">Bonus +1 : l'année ou le réalisateur en plus.</span>`);
+    else if (ch.stage === 'video') b.push(`<button class="main" data-h="mediaDone">Questions ! ▶</button>`);
     else b.push(`<button class="main" data-h="next">Stop, on révèle ⏱</button>`);
     b.push(`<button data-h="skip">Passer l'épreuve ⏭</button>`);
   }
-  if (S.phase === 'reveal') b.push(`<button class="main" data-h="next">Tour suivant ▶</button>`);
+  if (S.phase === 'reveal') {
+    b.push(`<button class="main" data-h="next">Tour suivant ▶</button>`);
+    if (ch && ch.kind === 'dcc' && Object.values(ch.modes || {}).includes('cash')) b.push(`<span class="hint">Cliquez sur une réponse cash pour l'accepter ou la refuser.</span>`);
+  }
   b.push(`<button data-h="end">Fin de partie 🏁</button>`);
   b.push(`<span class="hint">Espace = action principale · survol d'une équipe = ±1 pt</span>`);
   $('#hostbar').innerHTML = b.join('');
@@ -199,7 +205,7 @@ $('#hostbar').addEventListener('click', e => {
   const btn = e.target.closest('[data-h]'); if (!btn) return;
   const a = btn.dataset.h;
   if (a === 'end' && !confirm('Terminer la partie maintenant ?')) return;
-  host(a, a === 'judge' ? { ok: btn.dataset.ok === '1' } : {});
+  host(a, a === 'judge' ? { ok: btn.dataset.ok === '1', bonus: btn.dataset.bonus === '1' } : {});
 });
 addEventListener('keydown', e => {
   if (!S || !S.host || e.target.tagName === 'INPUT') return;
@@ -221,9 +227,9 @@ const statusList = (ids, isDone, title = 'Sur les téléphones') => `<div class=
 function renderOverlay(stateChanged) {
   const ov = $('#overlay');
   const ch = S.ch;
-  const show = ch && (S.phase === 'challenge' || S.phase === 'reveal') && ch.kind && serverNow() >= (ch.startsAt || 0) - 300 && !animating;
+  const show = ch && (S.phase === 'challenge' || S.phase === 'reveal') && ch.kind && (lastOverlayKey !== '' || serverNow() >= (ch.startsAt || 0) - 300) && !animating;
   if (!show) { ov.classList.add('hidden'); lastOverlayKey = ''; return; }
-  const key = JSON.stringify([S.phase, ch.type, ch.stage, ch.cell, S.move && S.move.n]);
+  const key = JSON.stringify([S.phase, ch.type, ch.stage, ch.cell, S.move && S.move.n, ch.i, ch.level, ch.buzzer, (ch.excluded || []).length, JSON.stringify(ch.ok || null)]);
   if (!stateChanged && key === lastOverlayKey) return;
   const appearing = lastOverlayKey === '' || key.split(',')[0] !== lastOverlayKey.split(',')[0];
   if (lastOverlayKey !== key && S.phase === 'reveal') { const gain = Object.values(ch.gains || {}).some(v => v > 0); (gain ? sfx.win : sfx.fail)(); }
@@ -232,7 +238,8 @@ function renderOverlay(stateChanged) {
   if (appearing) { ov.style.animation = 'none'; void ov.offsetWidth; ov.style.animation = ''; }
   const rev = S.phase === 'reveal';
   const t = team(ch.teamId);
-  const pill = ch.fallback ? `Blind test pas encore chargé · question de consolation` : `Case ${ch.cell}`;
+  const themeLbl = ch.q && ch.q.theme && ch.q.theme !== 'gen' ? ` · ${S.meta.cultureThemes[ch.q.theme]}` : '';
+  const pill = ch.fallback ? `Contenu pas encore chargé · question de consolation${themeLbl}` : `Case ${ch.cell}${themeLbl}`;
   const banner = `<div class="banner g-${ch.group}"><span class="t">${esc(ch.fallback ? 'Culture G' : ch.label)}</span><span class="pill c-${ch.group}">${esc(pill)}</span><span class="who">${dot(t.color)}${esc(t.name)} joue</span></div>`;
   let main = '', side = '';
   const R = RENDER[ch.kind] || RENDER.info;
@@ -243,7 +250,7 @@ function renderOverlay(stateChanged) {
 
 function qcmBlock(ch, rev) {
   const q = ch.q;
-  const qtext = ch.type === 'mensonge' || (!q.q && q.o.length === 3) ? 'Deux sont vraies. Laquelle est un gros mensonge ?' : q.q;
+  const qtext = ch.type === 'mensonge' || (!q.q && q.o.length === 3) ? 'Deux sont vraies. Laquelle est un gros mensonge ?' : ch.type === 'contrario' ? `« ${q.q} »` : q.q;
   const isEmoji = ch.type === 'emojis';
   const opts = q.o.map((o, i) => {
     const who = rev ? S.teams.filter(t => ch.answers[t.id] && ch.answers[t.id].v === i).map(t => dot(t.color)).join('') : '';
@@ -253,6 +260,7 @@ function qcmBlock(ch, rev) {
   return `${rev ? '' : `<div class="rule">${esc(ch.rule)}</div>`}
     <div class="question ${isEmoji ? 'emoji' : ''}">${esc(isEmoji ? q.q : qtext)}</div>
     ${isEmoji ? `<div class="rule" style="text-align:center">C'est quel film / quelle expression ?</div>` : ''}
+    ${ch.type === 'contrario' ? `<div class="rule">Remettez-le à l'endroit : c'est quoi, l'original ?</div>` : ''}
     <div class="opts ${q.o.length === 3 ? 'three' : ''}">${opts}</div>
     ${rev && q.f ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(q.f)}</div>` : ''}`;
 }
@@ -345,28 +353,133 @@ const RENDER = {
   },
   media(ch, rev) {
     const bars = Array.from({ length: 30 }, (_, i) => `<i style="background:${OPT_COLORS[i % 4]};animation-delay:${-(i * 137 % 900)}ms"></i>`).join('');
+    const layerNames = ['🥁 Batterie', '🎸 Basse', '🎹 Le reste', '🎤 Voix', '➕', '➕'];
+    const layers = ch.media === 'layers' ? `<div class="layers">${(ch.item.layers || []).map((_, i) => `<span data-layer="${i}" class="${rev ? 'on' : ''}">${layerNames[i] || '➕'}</span>`).join('')}</div>` : '';
     const visual = ch.media === 'image'
       ? `<img class="pochette" id="poch" src="${esc(ch.item.img)}" alt="" style="filter:blur(${rev ? 0 : 40}px)">`
-      : `<div class="media-vis ${ch.stage === 'answer' ? 'paused' : ''}">${bars}</div>`;
+      : `<div class="media-vis ${ch.stage === 'answer' ? 'paused' : ''}">${bars}</div>${layers}`;
     if (rev) return [`<div class="big-center">${visual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${revFooter(ch)}</div>`, ''];
     const buzzer = ch.stage === 'answer' ? team(ch.buzzer) : null;
     const excl = ch.excluded.length ? `<div class="rule">Grillés : ${ch.excluded.map(id => esc(team(id).name)).join(', ')}</div>` : '';
     return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center">${visual}${excl}</div>
       ${buzzer ? `<div class="buzzed"><div class="b" style="background:${buzzer.color}"><div class="x">BUZZ !</div><div class="n">${esc(buzzer.name)}</div><div class="s">On vous écoute… 15 secondes</div></div></div>` : ''}`,
-      ring(ch.deadline, ch.stage === 'answer' ? 15000 : S.meta.timers.media)];
+      ring(ch.deadline, ch.stage === 'answer' ? 15000 : Math.max(S.meta.timers.media, ch.deadline - ch.startsAt))];
   }
 };
-RENDER.target = RENDER.target;
+
+// ── Duo, carré ou cash
+RENDER.dcc = (ch, rev) => {
+  const q = ch.q;
+  const MODE = { duo: 'Duo', carre: 'Carré', cash: 'Cash' };
+  if (!rev && ch.stage === 'mode') {
+    return [`<div class="rule">${esc(ch.rule)}</div><div class="question">${esc(q.q)}</div>
+      <div class="dcc-modes"><div><b>Duo</b><span>2 propositions</span><em>1 pt</em></div><div><b>Carré</b><span>4 propositions</span><em>2 pts</em></div><div class="cash"><b>Cash</b><span>sans propositions</span><em>4 pts</em></div></div>`,
+      [ring(ch.deadline, ch.deadline - ch.startsAt), statusList(ch.participants, id => !!ch.modes[id], 'Choix des équipes')].join('')];
+  }
+  const modes = `<div class="dcc-who">${ch.participants.map(id => { const t = team(id), m = ch.modes[id]; const a = ch.answers[id];
+    const ans = rev && a ? (a.cash ? `« ${esc(a.v)} »` : esc(q.o[a.v])) : '';
+    const ok = rev && ch.ok ? (ch.ok[id] ? 'ok' : 'ko') : '';
+    return `<div class="dw ${ok} ${rev && m === 'cash' && S.host ? 'toggle' : ''}" data-cash="${rev && m === 'cash' ? id : ''}">${dot(t.color)}<span>${esc(t.name)}</span><b class="m-${m}">${MODE[m] || '…'}</b>${ans ? `<i>${ans}</i>` : ''}</div>`; }).join('')}</div>`;
+  if (!rev) return [`<div class="question">${esc(q.q)}</div>${modes}<div class="rule">Les propositions sont sur vos téléphones (sauf pour les fous du cash).</div>`, answeredSide(ch).join('')];
+  return [qcmBlock(ch, true) + modes + revFooter(ch), ''];
+};
+
+// ── Burger Quiz / vidéo culte : questions en série
+RENDER.series = (ch, rev) => {
+  if (!rev && ch.stage === 'theme') {
+    return [`<div class="rule">${esc(ch.rule)}</div><div class="mid">${esc(team(ch.teamId).name)} choisit son menu…</div>
+      <div class="menus">${ch.themes.map((th, i) => `<div class="menu ${th.taré ? 'tare' : ''}"><span>Menu ${['Ketchup', 'Mayo', 'Sel ou poivre'][i]}</span><b>${esc(th.name)}</b></div>`).join('')}</div>`,
+      ring(ch.deadline, ch.deadline - ch.startsAt)];
+  }
+  if (!rev && ch.stage === 'video') {
+    return [`<div class="video-wrap"><video id="vid" playsinline src="${esc(ch.item.src)}"></video></div>`, ''];
+  }
+  const head = ch.theme ? `<div class="burger-theme ${ch.themeTare ? 'tare' : ''}">🍔 ${esc(ch.theme)}</div>` : '';
+  if (!rev) {
+    const total = (ch.res || []).length + 1;
+    const n = ch.type === 'video' ? `${ch.i ? 'Question bonus' : 'Question'}` : `Question ${ch.i + 1} / 3`;
+    if (ch.q.isNumber) return [`${head}<div class="rule">${n}</div><div class="question">${esc(ch.q.q)}</div><div class="rule">Réponse en ${esc(ch.q.u || 'nombre')} sur vos téléphones.</div>`, answeredSide(ch).join('')];
+    return [`${head}<div class="rule">${n}${ch.type === 'video' && ch.i ? ' · 1 pt pour tout le monde' : ''}</div>${qcmBlock({ ...ch, rule: '' }, false).replace('<div class="rule"></div>', '')}`, answeredSide(ch).join('')];
+  }
+  const rows = (ch.res || []).map((r, k) => {
+    const good = r.q.n !== undefined ? r.q.n.toLocaleString('fr-FR') + ' ' + (r.q.u || '') : r.q.o[r.q.a];
+    return `<div class="sres"><div class="sq"><span>${k + 1}</span>${esc(r.q.q)}</div><div class="sa">✓ ${esc(good)}</div>
+      <div class="sw">${r.ok.length ? r.ok.map(id => `${dot(team(id).color)}${esc(team(id).name)}`).join(' ') : '<span class="muted">personne</span>'}</div>${r.q.f ? `<div class="sf">${esc(r.q.f)}</div>` : ''}</div>`;
+  }).join('');
+  const vid = ch.type === 'video' && ch.item && ch.item.src ? `<div class="video-wrap small"><video id="vid" data-resume="1" playsinline src="${esc(ch.item.src)}"></video></div>` : '';
+  return [`${head}${vid}<div class="sresults">${rows}</div>${revFooter(ch)}`, ''];
+};
+
+// ── Qui veut gagner des millions
+RENDER.millions = (ch, rev) => {
+  const ladder = `<div class="ladder">${S.meta.ladder.map((v, i) => `<div class="${i < ch.level ? 'done' : ''} ${i === ch.level && !rev ? 'cur' : ''} ${i === 1 ? 'safe' : ''}"><span>${i + 1}</span><b>${v} pt${v > 1 ? 's' : ''}</b></div>`).reverse().join('')}</div>`;
+  if (rev) {
+    const last = ch.hist[ch.hist.length - 1];
+    return [`${last ? qcmBlock({ ...ch, q: last.q, answers: { [ch.teamId]: { v: last.v } } }, true) : ''}${revFooter(ch)}`, ladder];
+  }
+  if (ch.stage === 'decide') {
+    return [`<div class="big-center"><div class="huge">💰 ${ch.bank}</div><div class="mid">Bonne réponse ! ${esc(team(ch.teamId).name)}, on continue ?</div>
+      <div class="rule">Prochaine marche : ${S.meta.ladder[ch.level]} pts · en cas d'erreur : ${ch.level > 1 ? S.meta.ladder[1] + ' pts (palier)' : 'zéro'}</div></div>`, ladder + ring(ch.deadline, ch.deadline - ch.startsAt)];
+  }
+  return [`<div class="rule">Question ${ch.level + 1} pour ${S.meta.ladder[ch.level]} pt${S.meta.ladder[ch.level] > 1 ? 's' : ''} · seule ${esc(team(ch.teamId).name)} répond… C'est votre dernier mot ?</div>${qcmBlock({ ...ch, rule: '' }, false).replace('<div class="rule"></div>', '')}`,
+    ladder + ring(ch.deadline, ch.deadline - ch.startsAt)];
+};
+
+// ── Affiche mystère : les indices tombent avec le temps
+RENDER.affiche = (ch, rev) => {
+  const clues = (ch.q.clues || []).map((c, i) => `<div class="clue" data-clue="${i}" ${rev ? '' : 'style="visibility:hidden"'}><span>${i + 1}</span>${esc(c)}</div>`).join('');
+  const pts = `<div class="rule" id="affPts"></div>`;
+  return [`${rev ? '' : `<div class="rule">${esc(ch.rule)}</div>`}<div class="clues">${clues}</div>${rev ? '' : pts}
+    <div class="opts">${ch.q.o.map((o, i) => { const who = rev ? S.teams.filter(t => ch.answers[t.id] && ch.answers[t.id].v === i).map(t => `${dot(t.color)}<small>${ch.seen && ch.seen[t.id] ? ch.seen[t.id] + ' ind.' : ''}</small>`).join('') : '';
+      return `<div class="opt ${rev ? (i === ch.q.a ? 'good' : 'bad') : ''}"><span class="L" style="background:${OPT_COLORS[i]}">${LETTERS[i]}</span><span>${esc(o)}</span><span class="who">${who}</span></div>`; }).join('')}</div>${rev ? revFooter(ch) : ''}`,
+    rev ? '' : answeredSide(ch).join('')];
+};
+
 
 // clic animateur sur une case du Bac
 $('#overlay').addEventListener('click', e => {
+  const c = e.target.closest('[data-cash]');
+  if (c && c.dataset.cash && S.host) return host('cashToggle', { teamId: c.dataset.cash });
   const td = e.target.closest('td.toggle'); if (!td || !S.host) return;
   host('bacToggle', { teamId: td.dataset.bt, i: Number(td.dataset.bi) });
 });
 
 // ── son des blind tests ──────────────────────────────────────
+const layerAudio = [];
+let layerKey = '';
+function syncLayers(ch) {
+  const key = ch ? JSON.stringify(ch.item.layers) + ch.cell : '';
+  if (key !== layerKey) {
+    layerAudio.splice(0).forEach(a => a.pause());
+    layerKey = key;
+    if (ch) for (const src of ch.item.layers) { const a = new Audio(new URL(src, location.href).href); a.preload = 'auto'; a.volume = 0; layerAudio.push(a); }
+  }
+  if (!ch) return;
+  const playing = (S.phase === 'challenge' && ch.stage === 'play' && serverNow() >= ch.startsAt) || S.phase === 'reveal';
+  const n = S.phase === 'reveal' ? layerAudio.length : Math.min(layerAudio.length, 1 + Math.floor((serverNow() - ch.startsAt) / S.meta.timers.layer));
+  layerAudio.forEach((a, i) => {
+    a.volume = i < n ? 1 : 0;
+    if (playing && a.paused) { a.currentTime = layerAudio[0].currentTime || 0; a.play().catch(() => {}); }
+    if (!playing && !a.paused) a.pause();
+  });
+  document.querySelectorAll('[data-layer]').forEach(el => el.classList.toggle('on', Number(el.dataset.layer) < n));
+}
+let vidHandled = '';
+function syncVideo(ch) {
+  const v = $('#vid'); if (!v || !ch || !ch.item) return;
+  const tag = ch.cell + S.phase + (v.dataset.resume || '');
+  if (vidHandled === tag) return;
+  vidHandled = tag;
+  const start = ch.item.start || 0, stop = ch.item.stop;
+  if (v.dataset.resume) { v.currentTime = stop != null ? stop : start; v.play().catch(() => {}); return; }
+  v.currentTime = start; v.play().catch(() => {});
+  v.ontimeupdate = () => { if (stop != null && v.currentTime >= stop) { v.pause(); v.ontimeupdate = null; if (S.host) host('mediaDone'); } };
+  v.onended = () => { if (S.host) host('mediaDone'); };
+}
 function syncAudio() {
   const ch = S.ch;
+  syncLayers(ch && ch.kind === 'media' && ch.media === 'layers' && ch.item && ch.item.layers ? ch : null);
+  if (ch && ch.type === 'video') syncVideo(ch);
   if (!ch || ch.kind !== 'media' || ch.media !== 'audio' || !ch.item || !ch.item.src) { if (!audio.paused) audio.pause(); return; }
   const src = new URL(ch.item.src, location.href).href;
   if (audio.src !== src) { audio.src = src; audio.currentTime = ch.item.start || 0; }
@@ -408,6 +521,11 @@ function tickTimers() {
     const goAt = Number(go.dataset.go);
     if (now < goAt) go.textContent = fmtSec(goAt - now);
     else if (go.textContent !== 'GO !') { go.textContent = 'GO !'; $('#b10t').textContent = 'Comptez dans votre tête… pas à voix haute, bande de tricheurs 🤫'; sfx.buzz(); setTimeout(() => { if (go.isConnected) go.textContent = '🤫'; }, 1500); }
+  }
+  if (S.ch && S.ch.kind === 'affiche' && S.phase === 'challenge') {
+    const k = Math.min(S.ch.q.clues ? S.ch.q.clues.length : 4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue));
+    document.querySelectorAll('[data-clue]').forEach(el => { const show = Number(el.dataset.clue) < k; if (show && el.style.visibility === 'hidden') { el.style.visibility = 'visible'; el.classList.add('pop'); sfx.ding(); } });
+    const ap = $('#affPts'); if (ap) ap.textContent = `Indice ${k} sur ${S.ch.q.clues ? S.ch.q.clues.length : 4} · une bonne réponse maintenant vaut ${Math.max(1, (S.ch.q.clues ? S.ch.q.clues.length : 4) + 1 - k)} pt${k < 4 ? 's' : ''}`;
   }
   const p = $('#poch');
   if (p && S.phase === 'challenge' && S.ch && S.ch.stage === 'play') {
