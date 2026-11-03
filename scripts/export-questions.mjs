@@ -49,10 +49,11 @@ C.MILLIONS.forEach((lvl, k) => { out.push(`\n### Niveau ${k + 1} — ${LADDER[k]
 
 h(`Sans réponse possible (${count(C.OPEN)})`); out.push(`_${TYPES.sansreponse.rule}_\n`); C.OPEN.forEach((q, i) => out.push(`${i + 1}. ${q}`));
 
-h(`Double sens (${count(C.DOUBLESENS)})`); out.push(`_${TYPES.doublesens.rule}_\n`);
-C.DOUBLESENS.forEach((d, i) => out.push(`${i + 1}. Une phrase qui marche à **${d.a}** et à **${d.b}**${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
-h(`Invente (${count(C.INVENTE)})`); out.push(`_${TYPES.invente.rule}_\n`);
-C.INVENTE.forEach((d, i) => out.push(`${i + 1}. Inventez une expression pour dire de ${d.q}${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
+h(`Donne-moi l'expression (${C.DOUBLESENS.length + C.INVENTE.length} sujets, 2 cases)`); out.push(`_${TYPES.expression.rule}_ Les deux sortes de sujets tombent en alternance.\n`);
+out.push('### Une phrase qui marche dans les deux situations');
+C.DOUBLESENS.forEach((d, i) => out.push(`${i + 1}. À **${d.a}** et à **${d.b}**${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
+out.push('\n### Une expression pour définir…');
+C.INVENTE.forEach((d, i) => out.push(`${i + 1}. ${d.q}${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
 h(`Titre débile (${count(C.TITRES)})`); out.push(`_${TYPES.titredebile.rule}_ Ex. : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes.\n`);
 C.TITRES.forEach((t, i) => out.push(`${i + 1}. ${t}`));
 

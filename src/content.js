@@ -484,9 +484,10 @@ export const MILLIONS = [
   ]
 ];
 
-// ─── PHRASE À DOUBLE SENS : une phrase qui marche dans les deux situations. Chacun écrit, on vote.
+// ─── DONNE-MOI L'EXPRESSION (1/2) : une phrase qui marche dans les deux situations. Chacun écrit, on vote.
 export const DOUBLESENS = [
   { a: "un repas de famille", b: "une soirée échangiste", ex: "« C'est toi qui as farci la dinde ? »" },
+  { a: "un déménagement", b: "une soirée échangiste" },
   { a: "la messe du dimanche", b: "une boîte de nuit à 4 h du matin" },
   { a: "chez le boucher", b: "une première nuit ensemble" },
   { a: "un cours de gym", b: "la chambre à coucher" },
@@ -508,7 +509,7 @@ export const TITRES = [
   "Harry Potter à l'école des sorciers", "Le Dîner de cons", "Jurassic Park", "Les Visiteurs", "Pirates des Caraïbes"
 ];
 
-// ─── INVENTE : inventez une expression imagée. Chacun écrit, on vote.
+// ─── DONNE-MOI L'EXPRESSION (2/2) : une expression imagée pour définir quelqu'un. Chacun écrit, on vote.
 export const INVENTE = [
   { q: "quelqu'un de con", ex: "« Il n'est pas le couteau le plus aiguisé du tiroir. »" },
   { q: "quelqu'un de radin" },

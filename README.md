@@ -28,7 +28,7 @@ Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte su
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
 
-- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse, Double sens, Invente et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
+- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse, Donne-moi l'expression ×2 et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
 - **Blind tests** : actuel, intemporel, séries, films · N'oubliez pas les paroles · À l'envers · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
 - **Visuel** : Pochette floutée · Affiche mystère (indices un par un) · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
 - **Buzzers** : Buzzer 10 s · Famille en or

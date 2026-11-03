@@ -14,13 +14,13 @@
 | 4 | Vol de points | 20 | A contrario |
 | 5 | BT Films | 21 | Le Bac |
 | 6 | Plus ou moins | 22 | À l'envers |
-| 7 | Millionnaire | 23 | Invente |
+| 7 | Millionnaire | 23 | Donne-moi l'expression |
 | 8 | Buzzer 10 s | 24 | Culture G |
 | 9 | Pochette floutée | 25 | Une seule note |
 | 10 | N'oubliez pas les paroles | 26 | Réplique culte |
 | 11 | Malédiction | 27 | Sans réponse |
 | 12 | Burger Quiz | 28 | Couche par couche |
-| 13 | Grand mensonge | 29 | Double sens |
+| 13 | Grand mensonge | 29 | Donne-moi l'expression |
 | 14 | BT Intemporel | 30 | À la noix |
 | 15 | Vidéo culte | 31 | Titre débile |
 
@@ -645,41 +645,40 @@ _Pas de bonne réponse : écrivez la plus drôle, puis votez. La plus votée pre
 17. Qu'est-ce qu'on trouve dans l'historique de navigation du Père Noël ?
 18. Quelle serait la pire application de rencontre possible ?
 
-## Double sens (12 questions)
+## Donne-moi l'expression (27 sujets, 2 cases)
 
-_Une phrase qui marche dans les deux situations. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts._
+_Chaque équipe propose son expression, puis vote pour la meilleure des autres équipes : 2 pts._ Les deux sortes de sujets tombent en alternance.
 
-1. Une phrase qui marche à **un repas de famille** et à **une soirée échangiste** _(ex. « C'est toi qui as farci la dinde ? »)_
-2. Une phrase qui marche à **la messe du dimanche** et à **une boîte de nuit à 4 h du matin**
-3. Une phrase qui marche à **chez le boucher** et à **une première nuit ensemble**
-4. Une phrase qui marche à **un cours de gym** et à **la chambre à coucher**
-5. Une phrase qui marche à **chez le garagiste** et à **chez le gynécologue**
-6. Une phrase qui marche à **une réunion de travail** et à **un enterrement de vie de garçon**
-7. Une phrase qui marche à **un concours de pâtisserie** et à **une nuit de noces**
-8. Une phrase qui marche à **un déjeuner chez la belle-mère** et à **un club libertin**
-9. Une phrase qui marche à **un cours de cuisine** et à **un sex-shop**
-10. Une phrase qui marche à **un atelier jardinage** et à **un premier rendez-vous Tinder**
-11. Une phrase qui marche à **le contrôle technique** et à **une soirée tupperware coquine**
-12. Une phrase qui marche à **une partie de pétanque** et à **un tournage de film pour adultes**
+### Une phrase qui marche dans les deux situations
+1. À **un repas de famille** et à **une soirée échangiste** _(ex. « C'est toi qui as farci la dinde ? »)_
+2. À **un déménagement** et à **une soirée échangiste**
+3. À **la messe du dimanche** et à **une boîte de nuit à 4 h du matin**
+4. À **chez le boucher** et à **une première nuit ensemble**
+5. À **un cours de gym** et à **la chambre à coucher**
+6. À **chez le garagiste** et à **chez le gynécologue**
+7. À **une réunion de travail** et à **un enterrement de vie de garçon**
+8. À **un concours de pâtisserie** et à **une nuit de noces**
+9. À **un déjeuner chez la belle-mère** et à **un club libertin**
+10. À **un cours de cuisine** et à **un sex-shop**
+11. À **un atelier jardinage** et à **un premier rendez-vous Tinder**
+12. À **le contrôle technique** et à **une soirée tupperware coquine**
+13. À **une partie de pétanque** et à **un tournage de film pour adultes**
 
-## Invente (14 questions)
-
-_Inventez une expression imagée. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts._
-
-1. Inventez une expression pour dire de quelqu'un de con _(ex. « Il n'est pas le couteau le plus aiguisé du tiroir. »)_
-2. Inventez une expression pour dire de quelqu'un de radin
-3. Inventez une expression pour dire de quelqu'un de moche
-4. Inventez une expression pour dire de quelqu'un de complètement bourré
-5. Inventez une expression pour dire de quelqu'un de très paresseux
-6. Inventez une expression pour dire de quelqu'un qui parle trop
-7. Inventez une expression pour dire de quelqu'un de très vieux
-8. Inventez une expression pour dire de quelqu'un de nul au lit
-9. Inventez une expression pour dire de quelqu'un qui pue des pieds
-10. Inventez une expression pour dire de quelqu'un qui est toujours en retard
-11. Inventez une expression pour dire de quelqu'un qui drague lourdement
-12. Inventez une expression pour dire de quelqu'un qui ronfle très fort
-13. Inventez une expression pour dire de quelqu'un qui ment comme il respire
-14. Inventez une expression pour dire de quelqu'un qui ne comprend jamais les blagues
+### Une expression pour définir…
+1. quelqu'un de con _(ex. « Il n'est pas le couteau le plus aiguisé du tiroir. »)_
+2. quelqu'un de radin
+3. quelqu'un de moche
+4. quelqu'un de complètement bourré
+5. quelqu'un de très paresseux
+6. quelqu'un qui parle trop
+7. quelqu'un de très vieux
+8. quelqu'un de nul au lit
+9. quelqu'un qui pue des pieds
+10. quelqu'un qui est toujours en retard
+11. quelqu'un qui drague lourdement
+12. quelqu'un qui ronfle très fort
+13. quelqu'un qui ment comme il respire
+14. quelqu'un qui ne comprend jamais les blagues
 
 ## Titre débile (15 questions)
 

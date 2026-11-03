@@ -235,7 +235,7 @@ function renderChallenge() {
   if (ch.kind === 'open') {
     if (ch.stage === 'write') {
       if (answered) return wait('Proposition envoyée. On espère que c\'est drôle.', '✍️');
-      return html(`<div class="qtext" style="color:var(--ink);font-size:20px">${esc(ch.q.q)}</div>${ch.q.sub ? `<p class="msg">${esc(ch.q.sub)}</p>` : ''}<label class="f">${ch.type === 'titredebile' ? 'Votre titre débile' : ch.type === 'doublesens' ? 'Votre phrase' : ch.type === 'invente' ? 'Votre expression' : 'Votre réponse la plus drôle'}
+      return html(`<div class="qtext" style="color:var(--ink);font-size:20px">${esc(ch.q.q)}</div>${ch.q.sub ? `<p class="msg">${esc(ch.q.sub)}</p>` : ''}<label class="f">${ch.type === 'titredebile' ? 'Votre titre débile' : ch.type === 'expression' ? 'Votre expression' : 'Votre réponse la plus drôle'}
         <textarea id="txt" rows="4" maxlength="140" placeholder="Lâchez-vous…" data-auto="open"></textarea></label>
         <button class="btn" id="val">Envoyer ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
     }
