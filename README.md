@@ -22,6 +22,8 @@ Chaque `git push` sur `main` redéploie automatiquement.
 
 Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte sur la même partie est simple spectatrice.
 
+**Mode test** : on peut lancer la partie avec une seule équipe, ou sans aucune (une « Équipe Test » est créée). L'animateur peut lancer le dé depuis la télé (bouton « 🎲 Lancer le dé pour… »). Les cases Duel, Vol et Échange sont passées faute d'adversaire.
+
 ## Les cases (32)
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
