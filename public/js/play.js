@@ -124,9 +124,21 @@ function shakeArm(fn) {
   shakeHandler = e => { const a = e.accelerationIncludingGravity; if (!a || fired) return; if (Math.abs(a.x) + Math.abs(a.y) + Math.abs(a.z) > 38) { fired = true; removeEventListener('devicemotion', shakeHandler); fn(); } };
   addEventListener('devicemotion', shakeHandler);
 }
+let rollShown = 0, rollAnimTimer = null;
 function renderRolled() {
   if (shakeHandler) { removeEventListener('devicemotion', shakeHandler); shakeHandler = null; }
   const m = S.move, cell = S.meta.board[m.to], who = team(m.teamId);
+  // Animation : le dé tourne quelques secondes avant d'afficher le résultat
+  const left = (m.at || 0) + S.meta.timers.roll - serverNow();
+  if (rollShown !== m.n && left > 150) {
+    clearInterval(rollAnimTimer);
+    html(`<div class="center"><div id="rollDie" class="spin">${dieHTML(1 + Math.floor(Math.random() * 6)).replace('class="die', 'style="width:170px;height:170px" class="die')}</div>
+      <h1>${isMyTurn() ? 'Ça roule…' : esc(who.name) + ' lance le dé…'}</h1></div>`);
+    rollAnimTimer = setInterval(() => { const d = $('#rollDie'); if (d) d.innerHTML = dieHTML(1 + Math.floor(Math.random() * 6)).replace('class="die', 'style="width:170px;height:170px" class="die'); buzz(15); }, 120);
+    setTimeout(() => { clearInterval(rollAnimTimer); rollShown = m.n; buzz([80, 40, 160]); render(true); }, left);
+    return;
+  }
+  rollShown = m.n;
   const head = `<div class="center">${dieHTML(m.roll).replace('class="die', 'style="width:150px;height:150px" class="die')}
     <h1>${isMyTurn() ? 'Vous faites' : esc(who.name) + ' fait'} ${m.roll}${m.rerolled ? ' (relancé)' : ''}</h1>
     <h2>→ Case ${m.to} · <span class="c-${cell.group}">${esc(cell.label)}</span></h2>`;

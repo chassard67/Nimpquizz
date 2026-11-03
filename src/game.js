@@ -58,12 +58,14 @@ export const JOKERS = {
 export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#00E0C6'];
 
 export const T = {
-  grace: 2500, rolled: 12000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
+  grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
   bac: 75000, review: 120000, famille: 45000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
   media: 45000, mediaAnswer: 15000, reveal: 120000,
   mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000
 };
 
+export const HOP_MS = 450;               // durée d'un saut de pion sur la télé
+export const ROLL_ANIM_MS = 2800;        // durée de l'animation du dé
 export const LADDER = [1, 2, 3, 5, 8];   // gains du Millionnaire
 const LADDER_SAFE = 1;                  // palier assuré : après la 2e question
 const DCC_PTS = { duo: 1, carre: 2, cash: 4 };
@@ -74,7 +76,7 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000 },
+  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hop: HOP_MS, roll: ROLL_ANIM_MS },
   ladder: LADDER, dcc: DCC_PTS,
   cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
@@ -285,7 +287,9 @@ function hostAction(s, msg, ctx, rng) {
   }
   if (a === 'start') {
     if (s.phase !== 'lobby') return 'Déjà commencée.';
-    if (s.teams.length < 2) return 'Il faut au moins 2 équipes.';
+    // Mode test : on peut lancer avec une seule équipe, ou aucune (une équipe test est créée)
+    if (!s.teams.length) { s.teams.push(newTeam(s, 'Équipe Test', COLORS[0])); feed(s, 'info', 'Mode test : une équipe fictive est créée. Lancez le dé depuis la télé.'); }
+    s.test = s.teams.length < 2;
     // ordre de passage au hasard
     for (let i = s.teams.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [s.teams[i], s.teams[j]] = [s.teams[j], s.teams[i]]; }
     s.phase = 'roll'; s.turn = 0; s.round = 1; s.startedAt = ctx.now; s.endAt = ctx.now + s.durationMin * 60000;
@@ -309,6 +313,10 @@ function hostAction(s, msg, ctx, rng) {
     if (!(i >= 0 && i < BOARD.length)) return 'Case inconnue.';
     s.move.to = i; s.move.passed = false;
     return null;
+  }
+  if (a === 'roll') {
+    if (s.phase !== 'roll') return 'Pas le moment de lancer.';
+    doRoll(s, active(s), rng, ctx.now); return null;
   }
   if (a === 'next') {
     if (s.phase === 'reveal') { nextTurn(s, ctx); return null; }
@@ -362,7 +370,7 @@ function hostAction(s, msg, ctx, rng) {
 function doRoll(s, tm, rng, now) {
   const r = 1 + Math.floor(rng() * 6);
   const from = tm.pos;
-  s.move = { teamId: tm.id, from, roll: r, to: (from + r) % BOARD.length, passed: from + r >= BOARD.length, n: ++s.moveSeq, rerolled: !!(s.move && s.move.teamId === tm.id && s.phase === 'rolled') };
+  s.move = { at: now, teamId: tm.id, from, roll: r, to: (from + r) % BOARD.length, passed: from + r >= BOARD.length, n: ++s.moveSeq, rerolled: !!(s.move && s.move.teamId === tm.id && s.phase === 'rolled') };
   s.phase = 'rolled';
   s.deadline = now + T.rolled;
 }
@@ -377,7 +385,9 @@ function applyMove(s, ctx, rng) {
     const p = award(s, tm, 2);
     feed(s, 'points', `${tm.name} fait un tour complet : +${p} pts 🏁`);
   }
-  startCell(s, BOARD[tm.pos], ctx, rng, s.ch ? s.ch.gains : {});
+  const hops = Math.min(12, s.move.roll || 0);
+  const animLeft = Math.max(0, (s.move.at || 0) + ROLL_ANIM_MS - ctx.now);
+  startCell(s, BOARD[tm.pos], { ...ctx, now: ctx.now + animLeft + hops * HOP_MS + 400 }, rng, s.ch ? s.ch.gains : {});
 }
 
 // ─── démarrage d'une case ────────────────────────────────────
@@ -449,6 +459,7 @@ function startCell(s, type, ctx, rng, gains = {}) {
     const go = now + T.grace + T.buzzReady;
     s.ch = { ...base, stage: 'ready', goAt: go, participants: all, taps: {}, deadline: go + T.buzzMax };
   } else if (meta.kind === 'duel' || meta.kind === 'target') {
+    if (!others(s, tm.id).length) { s.ch = base; return toReveal(s, ctx, 'Pas d\'adversaire à cette table (mode test) : on passe. Allez, au suivant.'); }
     s.ch = { ...base, stage: 'pick', target: null, deadline: now + T.grace + T.pick };
   } else if (meta.kind === 'curse') {
     s.ch = base;

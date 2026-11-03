@@ -55,7 +55,7 @@ function onState(first) {
   if (S.phase === 'lobby') return renderLobby();
   if (S.phase === 'end') return renderEnd();
   $('#game').classList.remove('hidden');
-  if (S.move && S.move.n !== lastMoveN) { lastMoveN = S.move.n; if (!first) { rollAnimUntil = Date.now() + 1000; sfx.dice(); } }
+  if (S.move && S.move.n !== lastMoveN) { lastMoveN = S.move.n; if (!first) { rollAnimUntil = Date.now() + S.meta.timers.roll; sfx.dice(); } }
   syncPawns(first);
   renderBoard(); renderSide(); renderHostbar(); renderOverlay(true); syncAudio();
 }
@@ -78,8 +78,8 @@ function renderLobby() {
       ${S.host ? `<button class="x" data-rm="${t.id}" title="Retirer">✕</button>` : ''}</div>`).join('')
     : `<div class="empty">Personne ? Allez, sortez vos téléphones, bande de mollusques.</div>`;
   $('#duration').value = String(S.durationMin);
-  $('#startBtn').disabled = S.teams.length < 2;
-  $('#startBtn').textContent = S.teams.length < 2 ? 'Il faut 2 équipes minimum' : 'Lancer la partie';
+  $('#startBtn').disabled = false;
+  $('#startBtn').textContent = !S.teams.length ? 'Tester le plateau (sans équipe)' : S.teams.length === 1 ? 'Lancer en mode test (1 équipe)' : 'Lancer la partie';
 }
 $('#lobbyTeams').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b && confirm('Retirer cette équipe ?')) host('removeTeam', { teamId: b.dataset.rm }); });
 $('#duration').addEventListener('change', e => host('setDuration', { min: Number(e.target.value) }));
@@ -98,7 +98,7 @@ function buildBoard() {
     const [col, row] = posToGrid(i);
     return `<div class="cell g-${c.group} ${c.type === 'depart' ? 'dep' : ''}" data-i="${i}" style="grid-column:${col};grid-row:${row}">
       <span class="num">${i || ''}</span><span class="lab">${esc(c.label)}</span><div class="pawns"></div></div>`;
-  }).join('') + `<div id="center"></div>`;
+  }).join('') + `<div id="center"></div><div id="flyer" class="hidden"><i></i></div>`;
   boardBuilt = true;
 }
 
@@ -111,24 +111,54 @@ function syncPawns(first) {
     else disp[t.id] = t.pos;
   }
 }
+// Le pion saute de case en case, une fois l'animation du dé terminée
+let flying = null;
+function cellCenter(i) {
+  const c = document.querySelector(`.cell[data-i="${i}"]`);
+  return [c.offsetLeft + c.offsetWidth / 2, c.offsetTop + c.offsetHeight / 2];
+}
 function animatePawn(id, to) {
-  clearInterval(animating);
-  animating = setInterval(() => {
-    disp[id] = (disp[id] + 1) % N(); sfx.tick(); renderPawns();
-    if (disp[id] === to) { clearInterval(animating); animating = null; }
-  }, 260);
+  clearTimeout(animating);
+  const t = team(id), fl = $('#flyer');
+  const place = (i, smooth) => { const [x, y] = cellCenter(i); fl.style.transition = smooth ? `left ${S.meta.timers.hop - 60}ms ease-in-out, top ${S.meta.timers.hop - 60}ms ease-in-out` : 'none'; fl.style.left = x + 'px'; fl.style.top = y + 'px'; };
+  const start = () => {
+    flying = id; renderPawns();
+    fl.querySelector('i').style.background = t.color;
+    place(disp[id], false); fl.classList.remove('hidden');
+    const step = () => {
+      if (disp[id] === to) { fl.classList.add('hidden'); flying = null; animating = null; renderPawns(); renderOverlay(true); return; }
+      const next = (disp[id] + 1) % N();
+      void fl.offsetWidth; place(next, true);
+      const i = fl.querySelector('i'); i.classList.remove('jump'); void i.offsetWidth; i.classList.add('jump');
+      animating = setTimeout(() => { disp[id] = next; sfx.tick(); renderPawns(); step(); }, S.meta.timers.hop);
+    };
+    step();
+  };
+  // on attend la fin de l'animation du dé
+  animating = setTimeout(start, Math.max(0, rollAnimUntil - Date.now()) + 200);
 }
 function renderPawns() {
   document.querySelectorAll('.cell').forEach(c => {
     const i = Number(c.dataset.i);
-    const here = S.teams.filter(t => disp[t.id] === i);
+    const here = S.teams.filter(t => disp[t.id] === i && t.id !== flying);
     c.querySelector('.pawns').innerHTML = here.map(t => `<span class="pawn" style="background:${t.color}" title="${esc(t.name)}"></span>`).join('');
     const act = activeTeam();
     c.classList.toggle('here', !!act && disp[act.id] === i && S.phase === 'roll');
-    c.classList.toggle('dest', S.phase === 'rolled' && S.move && S.move.to === i && Date.now() > rollAnimUntil);
+    c.classList.toggle('dest', !!S.move && S.move.to === i && Date.now() > rollAnimUntil && (S.phase === 'rolled' || !!flying));
   });
 }
 
+// Le dé tourne pendant ROLL_ANIM_MS en changeant de face, puis se pose
+let rollTimer = null;
+function scheduleRollFrame() {
+  if (rollTimer) return;
+  rollTimer = setTimeout(() => {
+    rollTimer = null;
+    if (!S || S.phase === 'lobby' || S.phase === 'end') return;
+    renderBoard();
+    if (Date.now() >= rollAnimUntil) sfx.ding(); else sfx.tick();
+  }, 140);
+}
 function renderBoard() {
   if (!boardBuilt) buildBoard();
   renderPawns();
@@ -145,7 +175,7 @@ function renderBoard() {
       <div class="txt"><span class="what">${esc(team(S.move.teamId).name)} ${rolling ? 'lance…' : `fait <b style="color:var(--yellow)">${S.move.roll}</b>${S.move.rerolled ? ' (relancé !)' : ''}`}</span>
       ${rolling ? '' : `<span class="dest-l">→ Case ${S.move.to} · <span class="c-${cell.group}">${esc(cell.label)}</span></span>`}
       ${!rolling && S.phase === 'rolled' ? `<span class="what">On y va ? (ou joker relance…) <b data-dl="${S.deadline}" class="cd"></b></span>` : ''}</div></div>`;
-    if (rolling) setTimeout(() => { if (S.phase !== 'lobby') { renderBoard(); } }, 1050);
+    if (rolling) scheduleRollFrame();
   } else box = '';
   c.innerHTML = `<div class="logo"><span>Le grand</span><b>N'importe Quiz</b></div>${box}${legend}`;
 }
@@ -184,7 +214,7 @@ $('#scores').addEventListener('click', e => { const b = e.target.closest('[data-
 function renderHostbar() {
   if (!S.host) return;
   const ch = S.ch, b = [];
-  if (S.phase === 'roll') b.push(`<span class="hint">En attente du lancer de dé de ${esc(activeTeam().name)}…</span>`);
+  if (S.phase === 'roll') b.push(`<button class="main" data-h="roll">🎲 Lancer le dé pour ${esc(activeTeam().name)}</button><span class="hint">…ou attendre qu'ils lancent depuis leur téléphone.</span>`);
   if (S.phase === 'rolled') b.push(`<button class="main" data-h="next">Avancer le pion ▶</button>`);
   if (S.phase === 'challenge') {
     if (ch.kind === 'bac' && ch.stage === 'review') b.push(`<button class="main" data-h="bacValidate">Valider les points ✓</button><span class="hint">Cliquez sur un mot pour le valider / refuser.</span>`);

@@ -137,7 +137,7 @@ function playTurn(forceType) {
   check(s.phase === 'rolled', 'phase rolled');
   if (forceType) { s.move.roll = 3; s.move.to = (s.move.from + 3) % G.BOARD.length; s.move.passed = s.move.from + 3 >= G.BOARD.length; }
   if (t.jokers.relance && turns === 2) check(send(pidOf(t.id), { t: 'joker', kind: 'relance' }) === null, 'joker relance');
-  if (turns % 2) send(pidOf(t.id), { t: 'go' }); else wait(13000);
+  if (turns % 2) send(pidOf(t.id), { t: 'go' }); else wait(15000);
   check(s.phase === 'challenge' || s.phase === 'reveal', 'case jouée après le déplacement (' + s.phase + ')');
   playChallenge();
   check(s.phase === 'reveal', 'révélation (' + (s.ch && s.ch.type) + ')');

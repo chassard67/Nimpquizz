@@ -241,3 +241,12 @@ table.bac td.tn { background: transparent; }
 .layers { display: flex; gap: 14px; }
 .layers span { background: var(--panel); color: var(--muted); border-radius: 999px; padding: 10px 18px; font-size: 22px; font-weight: 900; opacity: .4; transition: all .3s; }
 .layers span.on { background: var(--bt); color: var(--bg); opacity: 1; }
+
+/* Pion volant (saut de case en case) */
+#board { position: absolute; }
+#flyer { position: absolute; width: 0; height: 0; z-index: 4; pointer-events: none; }
+#flyer i { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; border: 5px solid var(--bg); box-shadow: 0 6px 0 rgba(0,0,0,.35); display: block; }
+#flyer i.jump { animation: jump .45s ease-out; }
+@keyframes jump { 0% { transform: translateY(0) scale(1); } 45% { transform: translateY(-70px) scale(1.25); } 80% { transform: translateY(0) scale(1.1, .85); } 100% { transform: translateY(0) scale(1); } }
+.turnbox .die.rolling { animation: tumble .5s infinite; }
+@keyframes tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-30px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-20px); } 100% { transform: rotate(360deg) translateY(0); } }

@@ -75,3 +75,6 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 14px; colo
 .dcc { display: flex; flex-direction: column; gap: 12px; }
 .dcc .btn { display: flex; flex-direction: column; gap: 2px; font-family: var(--body); font-weight: 900; font-size: 15px; min-height: 76px; }
 .dcc .btn b { font-family: var(--display); font-weight: 400; font-size: 26px; }
+
+#rollDie.spin { animation: tumble .5s infinite; }
+@keyframes tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-24px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-14px); } 100% { transform: rotate(360deg) translateY(0); } }
