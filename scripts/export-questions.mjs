@@ -51,6 +51,8 @@ h(`Sans réponse possible (${count(C.OPEN)})`); out.push(`_${TYPES.sansreponse.r
 
 h(`Double sens (${count(C.DOUBLESENS)})`); out.push(`_${TYPES.doublesens.rule}_\n`);
 C.DOUBLESENS.forEach((d, i) => out.push(`${i + 1}. Une phrase qui marche à **${d.a}** et à **${d.b}**${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
+h(`Invente (${count(C.INVENTE)})`); out.push(`_${TYPES.invente.rule}_\n`);
+C.INVENTE.forEach((d, i) => out.push(`${i + 1}. Inventez une expression pour dire de ${d.q}${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
 h(`Titre débile (${count(C.TITRES)})`); out.push(`_${TYPES.titredebile.rule}_ Ex. : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes.\n`);
 C.TITRES.forEach((t, i) => out.push(`${i + 1}. ${t}`));
 

@@ -2,13 +2,13 @@
 //  LE GRAND N'IMPORTE QUIZ — moteur de jeu (pur, sans réseau)
 //  L'état est un objet JSON. handle() applique un message, tick() gère les chronos.
 // ─────────────────────────────────────────────────────────────
-import { QCM, NUMBERS, OPEN, BAC, FAMILLE, CURSES, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS, DOUBLESENS, TITRES } from './content.js';
+import { QCM, NUMBERS, OPEN, BAC, FAMILLE, CURSES, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS, DOUBLESENS, TITRES, INVENTE } from './content.js';
 
 // 32 cases : 10 en haut, 6 à droite, 10 en bas, 6 à gauche
 export const BOARD = [
   'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_films', 'plusoumoins', 'millions', 'buzz10', 'pochette',
   'paroles', 'malediction', 'burger', 'mensonge', 'bt_intemporel', 'video',
-  'famille', 'duel', 'affiche', 'bt_series', 'contrario', 'bac', 'envers', 'echange', 'culture', 'unenote',
+  'famille', 'duel', 'affiche', 'bt_series', 'contrario', 'bac', 'envers', 'invente', 'culture', 'unenote',
   'replique', 'sansreponse', 'instruments', 'doublesens', 'noix', 'titredebile'
 ];
 
@@ -27,6 +27,7 @@ export const TYPES = {
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
   plusoumoins:   { label: 'Plus ou moins', group: 'q', kind: 'number', rule: 'Donnez un nombre. L\'équipe la plus proche prend 2 pts, +1 si pile poil.' },
   doublesens:    { label: 'Double sens', group: 'q', kind: 'open', rule: 'Une phrase qui marche dans les deux situations. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts.' },
+  invente:       { label: 'Invente', group: 'q', kind: 'open', rule: 'Inventez une expression imagée. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts.' },
   titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Ajoutez UN mot au titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
   sansreponse:   { label: 'Sans réponse', group: 'q', kind: 'open', rule: 'Pas de bonne réponse : écrivez la plus drôle, puis votez. La plus votée prend 2 pts.' },
   bac:           { label: 'Le Bac', group: 'q', kind: 'bac', rule: 'Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d\'autre ne l\'a.' },
@@ -89,6 +90,7 @@ const POOLS = {
 const OPEN_POOLS = {
   sansreponse: OPEN.map(q => ({ q })),
   doublesens: DOUBLESENS.map(d => ({ q: `Une phrase qui marche aussi bien à ${d.a} qu'à ${d.b}`, sub: d.ex ? `Exemple : ${d.ex}` : '' })),
+  invente: INVENTE.map(d => ({ q: `Inventez une expression pour dire de ${d.q}`, sub: d.ex ? `Exemple : ${d.ex}` : '' })),
   titredebile: TITRES.map(t => ({ q: `« ${t} »`, sub: 'Ajoutez UN seul mot pour le rendre débile. Ex. : Star Wars → Star Wars Zazat' }))
 };
 const CULTURE_ALL = { gen: QCM.culture, ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.q])) };

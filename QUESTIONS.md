@@ -14,7 +14,7 @@
 | 4 | Vol de points | 20 | A contrario |
 | 5 | BT Films | 21 | Le Bac |
 | 6 | Plus ou moins | 22 | À l'envers |
-| 7 | Millionnaire | 23 | Échange de place |
+| 7 | Millionnaire | 23 | Invente |
 | 8 | Buzzer 10 s | 24 | Culture G |
 | 9 | Pochette floutée | 25 | Une seule note |
 | 10 | N'oubliez pas les paroles | 26 | Réplique culte |
@@ -661,6 +661,25 @@ _Une phrase qui marche dans les deux situations. Écrivez, puis votez pour la me
 10. Une phrase qui marche à **un atelier jardinage** et à **un premier rendez-vous Tinder**
 11. Une phrase qui marche à **le contrôle technique** et à **une soirée tupperware coquine**
 12. Une phrase qui marche à **une partie de pétanque** et à **un tournage de film pour adultes**
+
+## Invente (14 questions)
+
+_Inventez une expression imagée. Écrivez, puis votez pour la meilleure des autres équipes : 2 pts._
+
+1. Inventez une expression pour dire de quelqu'un de con _(ex. « Il n'est pas le couteau le plus aiguisé du tiroir. »)_
+2. Inventez une expression pour dire de quelqu'un de radin
+3. Inventez une expression pour dire de quelqu'un de moche
+4. Inventez une expression pour dire de quelqu'un de complètement bourré
+5. Inventez une expression pour dire de quelqu'un de très paresseux
+6. Inventez une expression pour dire de quelqu'un qui parle trop
+7. Inventez une expression pour dire de quelqu'un de très vieux
+8. Inventez une expression pour dire de quelqu'un de nul au lit
+9. Inventez une expression pour dire de quelqu'un qui pue des pieds
+10. Inventez une expression pour dire de quelqu'un qui est toujours en retard
+11. Inventez une expression pour dire de quelqu'un qui drague lourdement
+12. Inventez une expression pour dire de quelqu'un qui ronfle très fort
+13. Inventez une expression pour dire de quelqu'un qui ment comme il respire
+14. Inventez une expression pour dire de quelqu'un qui ne comprend jamais les blagues
 
 ## Titre débile (15 questions)
 

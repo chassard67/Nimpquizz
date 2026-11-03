@@ -508,6 +508,24 @@ export const TITRES = [
   "Harry Potter à l'école des sorciers", "Le Dîner de cons", "Jurassic Park", "Les Visiteurs", "Pirates des Caraïbes"
 ];
 
+// ─── INVENTE : inventez une expression imagée. Chacun écrit, on vote.
+export const INVENTE = [
+  { q: "quelqu'un de con", ex: "« Il n'est pas le couteau le plus aiguisé du tiroir. »" },
+  { q: "quelqu'un de radin" },
+  { q: "quelqu'un de moche" },
+  { q: "quelqu'un de complètement bourré" },
+  { q: "quelqu'un de très paresseux" },
+  { q: "quelqu'un qui parle trop" },
+  { q: "quelqu'un de très vieux" },
+  { q: "quelqu'un de nul au lit" },
+  { q: "quelqu'un qui pue des pieds" },
+  { q: "quelqu'un qui est toujours en retard" },
+  { q: "quelqu'un qui drague lourdement" },
+  { q: "quelqu'un qui ronfle très fort" },
+  { q: "quelqu'un qui ment comme il respire" },
+  { q: "quelqu'un qui ne comprend jamais les blagues" }
+];
+
 // ─── MÉDIAS : à préparer. Les réponses sont déjà là, il ne manque que les fichiers.
 //  Déposez le fichier dans public/media/ et remplacez src: null par le chemin, ex. src: "/media/queen.mp3".
 //  Une entrée sans fichier est ignorée. Si une case n'a aucun fichier, elle donne une question de Culture G.
