@@ -20,6 +20,8 @@ Chaque `git push` sur `main` redéploie automatiquement.
 
 **Commandes animateur** (écran télé) : la barre en bas à droite propose l'action du moment (avancer, révéler, tour suivant, valider le Bac, juger un buzz). `Espace` déclenche l'action principale. Survoler une équipe permet de donner ou retirer 1 point à la main.
 
+**Veille** : les téléphones et la télé restent allumés pendant la partie (Wake Lock, ou petite vidéo muette en boucle sur les vieux navigateurs). Si un bandeau jaune « Touchez l'écran… » apparaît, un toucher suffit. Si un téléphone a quand même été verrouillé, il se reconnecte tout seul en revenant sur la page.
+
 Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte sur la même partie est simple spectatrice.
 
 **Mode test** : on peut lancer la partie avec une seule équipe, ou sans aucune (une « Équipe Test » est créée). L'animateur peut lancer le dé depuis la télé (bouton « 🎲 Lancer le dé pour… »). Pour tester une case précise, choisir **🧪 Aller à la case…** dans la barre animateur, ou cliquer directement sur une case du plateau : le pion y est téléporté et l'épreuve démarre. Les cases Duel, Vol et Échange sont passées faute d'adversaire.

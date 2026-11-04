@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx } from './common.js';
+import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx, keepAwake } from './common.js';
 
 // ── Salle et clé d'animateur ─────────────────────────────────
 const params = new URLSearchParams(location.search);
@@ -87,6 +87,7 @@ $('#duration').addEventListener('change', e => host('setDuration', { min: Number
 $('#startBtn').addEventListener('click', () => { audioUnlock(); sfx.win(); host('start'); });
 $('#fsBtn').addEventListener('click', () => { audioUnlock(); document.documentElement.requestFullscreen?.(); });
 addEventListener('click', audioUnlock, { once: true });
+keepAwake(); // la télé non plus ne doit pas se mettre en veille
 
 // ── PLATEAU ──────────────────────────────────────────────────
 // Plateau 32 cases sur une grille 10 × 8 : haut (0-9), droite (10-15), bas (16-25), gauche (26-31)

@@ -9,21 +9,80 @@ export const serverNow = () => Date.now() + offset;
 
 // Connexion WebSocket avec reconnexion automatique
 export function connect(room, hello, { onState, onError, onStatus }) {
-  let ws, alive = false, retry = 0;
+  let ws, alive = false, retry = 0, lastMsgAt = 0;
   const open = () => {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
     ws = new WebSocket(`${proto}://${location.host}/ws/${room}`);
     ws.onopen = () => { retry = 0; alive = true; onStatus && onStatus(true); ws.send(JSON.stringify({ t: 'hello', ...hello() })); };
     ws.onmessage = e => {
+      lastMsgAt = Date.now();
       const m = JSON.parse(e.data);
       if (m.t === 'state') { offset = m.s.now - Date.now(); onState(m.s); }
       else if (m.t === 'error') onError && onError(m.text);
     };
-    ws.onclose = () => { alive = false; onStatus && onStatus(false); setTimeout(open, Math.min(4000, 400 * ++retry)); };
+    ws.onclose = () => { alive = false; onStatus && onStatus(false); clearTimeout(timer); timer = setTimeout(open, Math.min(4000, 400 * ++retry)); };
   };
+  let timer;
   open();
   setInterval(() => { if (alive) try { ws.send('{"t":"ping"}'); } catch {} }, 25000);
+  // Retour au premier plan / réseau revenu : on reconnecte tout de suite au lieu d'attendre
+  const revive = () => {
+    if (document.visibilityState !== 'visible') return;
+    if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) { clearTimeout(timer); retry = 0; open(); }
+    else if (ws.readyState === WebSocket.OPEN) {
+      // on redemande l'état à jour ; sans réponse sous 3 s, la connexion est « zombie » (après une veille) : on repart à zéro
+      const t0 = Date.now(), dead = ws;
+      try { dead.send(JSON.stringify({ t: 'hello', ...hello() })); } catch {}
+      setTimeout(() => {
+        if (ws !== dead || lastMsgAt >= t0) return;
+        dead.onclose = null; try { dead.close(); } catch {}
+        alive = false; onStatus && onStatus(false); clearTimeout(timer); retry = 0; open();
+      }, 3000);
+    }
+  };
+  document.addEventListener('visibilitychange', revive);
+  addEventListener('online', revive);
+  addEventListener('pageshow', revive);
   return { send: m => { if (alive) ws.send(JSON.stringify(m)); else onError && onError('Connexion perdue, on réessaie…'); } };
+}
+
+// ── Écran toujours allumé (téléphones et télé)
+// 1) API Screen Wake Lock (Chrome/Android, Safari iOS ≥ 16.4), redemandée à chaque retour sur la page
+// 2) sinon, petite vidéo noire muette en boucle (même astuce que NoSleep.js) pour les vieux navigateurs
+// Les navigateurs exigent un geste de l'utilisateur : on s'accroche au premier toucher.
+export function keepAwake({ onChange } = {}) {
+  let lock = null, video = null, on = false;
+  const set = v => { if (v !== on) { on = v; onChange && onChange(on); } };
+  const useVideo = () => {
+    if (!video) {
+      video = document.createElement('video');
+      video.setAttribute('playsinline', ''); video.setAttribute('muted', ''); video.muted = true; video.loop = true;
+      video.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0';
+      for (const [src, type] of [['/vendor/keepawake.webm', 'video/webm'], ['/vendor/keepawake.mp4', 'video/mp4']]) {
+        const s = document.createElement('source'); s.src = src; s.type = type; video.appendChild(s);
+      }
+      document.body.appendChild(video);
+    }
+    video.play().then(() => set(true)).catch(() => set(false));
+  };
+  const request = async () => {
+    if (document.visibilityState !== 'visible') return;
+    if ('wakeLock' in navigator) {
+      if (lock && !lock.released) return set(true);
+      try {
+        lock = await navigator.wakeLock.request('screen');
+        set(true);
+        lock.addEventListener('release', () => { set(false); setTimeout(request, 1000); });
+        return;
+      } catch { /* refusé (économie d'énergie, onglet caché…) : on tente la vidéo */ }
+    }
+    useVideo();
+  };
+  document.addEventListener('visibilitychange', request);
+  addEventListener('pageshow', request);
+  for (const ev of ['click', 'touchend', 'keydown']) addEventListener(ev, request, { passive: true });
+  request();
+  return { get on() { return on; } };
 }
 
 const FACES = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };

@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS } from './common.js';
+import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake } from './common.js';
 
 const params = new URLSearchParams(location.search);
 const room = (params.get('room') || '').toUpperCase();
@@ -21,6 +21,10 @@ const net = connect(room, () => ({ role: 'phone', pid }), {
   onStatus: ok => $('#conn').classList.toggle('hidden', ok)
 });
 const send = m => net.send(m);
+// L'écran du téléphone ne doit jamais se mettre en veille pendant la partie
+const wakeBadge = Object.assign(document.createElement('div'), { id: 'wake', textContent: '😴 Touchez l\'écran pour l\'empêcher de se mettre en veille' });
+document.body.appendChild(wakeBadge);
+keepAwake({ onChange: on => wakeBadge.classList.toggle('hidden', on) });
 const buzz = p => { try { navigator.vibrate && navigator.vibrate(p); } catch {} };
 const team = id => S.teams.find(t => t.id === id);
 const me = () => S.me ? team(S.me.teamId) : null;
