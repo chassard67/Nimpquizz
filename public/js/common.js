@@ -6,9 +6,11 @@ export const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random(
 // Horloge serveur (pour les chronos)
 let offset = 0;
 export const serverNow = () => Date.now() + offset;
+// Heure du jeu : figée pendant une pause (les chronos et les indices ne défilent plus)
+export const gameNow = S => (S && S.paused ? S.paused.at : Date.now() + offset);
 
 // Connexion WebSocket avec reconnexion automatique
-export function connect(room, hello, { onState, onError, onStatus }) {
+export function connect(room, hello, { onState, onError, onStatus, onDenied }) {
   let ws, alive = false, retry = 0, lastMsgAt = 0;
   const open = () => {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
@@ -19,6 +21,7 @@ export function connect(room, hello, { onState, onError, onStatus }) {
       const m = JSON.parse(e.data);
       if (m.t === 'state') { offset = m.s.now - Date.now(); onState(m.s); }
       else if (m.t === 'error') onError && onError(m.text);
+      else if (m.t === 'denied') onDenied && onDenied(m.text);
     };
     ws.onclose = () => { alive = false; onStatus && onStatus(false); clearTimeout(timer); timer = setTimeout(open, Math.min(4000, 400 * ++retry)); };
   };
@@ -43,7 +46,10 @@ export function connect(room, hello, { onState, onError, onStatus }) {
   document.addEventListener('visibilitychange', revive);
   addEventListener('online', revive);
   addEventListener('pageshow', revive);
-  return { send: m => { if (alive) ws.send(JSON.stringify(m)); else onError && onError('Connexion perdue, on réessaie…'); } };
+  return {
+    send: m => { if (alive) ws.send(JSON.stringify(m)); else onError && onError('Connexion perdue, on réessaie…'); },
+    hello: () => { if (alive) ws.send(JSON.stringify({ t: 'hello', ...hello() })); }
+  };
 }
 
 // ── Écran toujours allumé (téléphones et télé)

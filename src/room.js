@@ -35,6 +35,26 @@ export class GameRoom extends DurableObject {
     if (msg.t === 'hello') {
       const pid = String(msg.pid || '').slice(0, 40);
       let att;
+      if (msg.role === 'gm') {
+        // Maître du jeu : code secret (variable GM_PIN dans Cloudflare, 1234 par défaut)
+        const prev = ws.deserializeAttachment() || {};
+        if (prev.lockUntil && now < prev.lockUntil) {
+          ws.send(JSON.stringify({ t: 'denied', text: `Trop d'essais. Réessayez dans ${Math.ceil((prev.lockUntil - now) / 1000)} s.` }));
+          return;
+        }
+        const pin = String((this.env && this.env.GM_PIN) || '1234');
+        if (String(msg.pin || '') !== pin) {
+          const fails = (prev.fails || 0) + 1;
+          ws.serializeAttachment({ role: 'anon', fails, lockUntil: fails >= 5 ? now + 60000 : 0 });
+          ws.send(JSON.stringify({ t: 'denied', text: fails >= 5 ? 'Trop d\'essais. Bloqué 1 minute.' : 'Code incorrect.' }));
+          return;
+        }
+        att = { role: 'gm', host: true, gm: true };
+        ws.serializeAttachment(att);
+        this.sendState(ws, att);
+        this.broadcast(); // la télé sait qu'un maître du jeu est là
+        return;
+      }
       if (msg.role === 'tv') {
         if (!this.s.hostKey && msg.hostKey) { this.s.hostKey = String(msg.hostKey).slice(0, 64); await this.save(); }
         att = { role: 'tv', host: !!msg.hostKey && msg.hostKey === this.s.hostKey };
@@ -47,7 +67,7 @@ export class GameRoom extends DurableObject {
     }
 
     const att = ws.deserializeAttachment() || {};
-    const err = G.handle(this.s, msg, { now, pid: att.pid, host: !!att.host, rng: Math.random });
+    const err = G.handle(this.s, msg, { now, pid: att.pid, host: !!att.host, gm: !!att.gm, rng: Math.random });
     if (err) { ws.send(JSON.stringify({ t: 'error', text: err })); }
     else {
       await this.save();
@@ -61,7 +81,11 @@ export class GameRoom extends DurableObject {
     else await this.schedule();
   }
 
-  async webSocketClose(ws, code) { try { ws.close(code, 'bye'); } catch {} }
+  async webSocketClose(ws, code) {
+    const att = ws.deserializeAttachment() || {};
+    try { ws.close(code, 'bye'); } catch {}
+    if (att.role === 'gm' && this.s) this.broadcast();
+  }
   async webSocketError() {}
 
   async save() {
@@ -75,15 +99,22 @@ export class GameRoom extends DurableObject {
     else await this.ctx.storage.deleteAlarm();
   }
 
-  sendState(ws, att) {
-    try { ws.send(JSON.stringify({ t: 'state', s: G.view(this.s, att) })); } catch {}
+  gmCount() {
+    let n = 0;
+    for (const w of this.ctx.getWebSockets()) { if (w.readyState !== 1) continue; const a = w.deserializeAttachment() || {}; if (a.role === 'gm') n++; }
+    return n;
+  }
+
+  sendState(ws, att, gmOnline = this.gmCount()) {
+    try { ws.send(JSON.stringify({ t: 'state', s: G.view(this.s, att, { gmOnline }) })); } catch {}
   }
 
   broadcast() {
+    const gmOnline = this.gmCount();
     for (const ws of this.ctx.getWebSockets()) {
       const att = ws.deserializeAttachment() || {};
-      if (att.role === 'anon') continue;
-      this.sendState(ws, att);
+      if (att.role === 'anon' || !att.role) continue;
+      this.sendState(ws, att, gmOnline);
     }
   }
 }

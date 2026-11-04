@@ -26,6 +26,23 @@ Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte su
 
 **Mode test** : on peut lancer la partie avec une seule équipe, ou sans aucune (une « Équipe Test » est créée). L'animateur peut lancer le dé depuis la télé (bouton « 🎲 Lancer le dé pour… »). Pour tester une case précise, choisir **🧪 Aller à la case…** dans la barre animateur, ou cliquer directement sur une case du plateau : le pion y est téléporté et l'épreuve démarre. Les cases Duel, Vol et Échange sont passées faute d'adversaire.
 
+## Maître du jeu (sur votre téléphone)
+
+L'ordi reste branché à la télé (plateau, son, vidéos) ; le maître du jeu pilote tout depuis son téléphone.
+
+1. Sur le téléphone : ouvrir `/gm` (lien « 🎩 Maître du jeu » en bas de l'accueil, l'adresse exacte est aussi affichée sur la télé dans la salle d'attente).
+2. Saisir le code de la partie (4 lettres) et le **code secret** (`1234` par défaut). 5 erreurs = 1 minute de blocage.
+3. Tant qu'un maître du jeu est connecté, la barre de commandes disparaît de la télé (les joueurs ne voient rien) ; « 🎩 MJ » s'affiche à côté de l'horloge.
+
+**Changer le code secret** (conseillé, le dépôt est public) : Cloudflare → Workers & Pages → `nimpquizz` → Settings → Variables and Secrets → ajouter un **Secret** `GM_PIN` avec votre code. Il est conservé aux déploiements suivants.
+
+Ce que voit et peut faire le maître du jeu :
+
+- **En cours** : la **réponse attendue** (bonne réponse, bonus, toutes les questions d'un Burger Quiz / Millionnaire, sondage complet de la Famille en or, lettre du Bac…), la réponse de chaque équipe en direct, et les actions du moment : lancer le dé à la place d'une équipe ou **choisir sa valeur**, relancer le dé, corriger la case d'arrivée, envoyer sur n'importe quelle case, donner la main à une autre équipe, valider ✓ / ✓ + bonus / ✗ un buzz, **annuler un buzz**, **relancer l'extrait** (ou reflouter la pochette), choisir la cible / le menu / « je continue » à la place d'une équipe, corriger le Bac, accepter ou refuser un cash, **effacer la réponse** d'une équipe (elle peut répondre à nouveau), **écarter ou réintégrer** une équipe de l'épreuve, +15 s / +30 s, révéler maintenant, passer, **rejouer l'épreuve** (même question, réponses et points remis à zéro) ou **autre question** sur la même case, ±1 pt après la révélation.
+- **Équipes** : score (±1 ou valeur exacte), position du pion (sans déclencher la case), tours à passer (bloquer / débloquer), jokers (rendre / retirer), effets (×2, bouclier, ÷2), malédictions, renommer, joueurs (changer d'équipe, retirer).
+- **Partie** : ⏸ **pause** (chronos arrêtés, son coupé, téléphones bloqués), ±15 min de jeu, fin de partie, journal.
+- **Historique** : chaque étape (lancer, épreuve, révélation) et chaque correction crée un point de retour. **↩️ Annuler la dernière étape** ou **Revenir ici** remet scores, pions, dé et épreuve comme ils étaient (25 derniers points gardés).
+
 ## Les cases (32)
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
@@ -59,7 +76,7 @@ Tant qu'une case n'a aucun fichier, elle donne une question de Culture G « de c
 ```bash
 npm install
 npm run dev        # http://localhost:8787
-npm test           # simulation du moteur (toutes les cases, jokers, fin de partie)
+npm test           # simulation du moteur (toutes les cases, jokers, fin de partie) + actions du maître du jeu
 npm run sim        # partie complète à 3 équipes contre le serveur local (wrangler dev doit tourner)
 npm run questions  # régénère QUESTIONS.md depuis src/content.js
 ```
@@ -71,3 +88,4 @@ Structure :
 - `src/index.js`: Worker : création de partie, WebSocket, lien court du QR code
 - `public/tv.html`, `public/js/tv.js`: écran télé
 - `public/play.html`, `public/js/play.js`: manette téléphone
+- `public/gm.html`, `public/js/gm.js`: téléphone du maître du jeu

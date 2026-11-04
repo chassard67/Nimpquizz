@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake } from './common.js';
+import { $, esc, uid, connect, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake } from './common.js';
 
 const params = new URLSearchParams(location.search);
 const room = (params.get('room') || '').toUpperCase();
@@ -21,6 +21,9 @@ const net = connect(room, () => ({ role: 'phone', pid }), {
   onStatus: ok => $('#conn').classList.toggle('hidden', ok)
 });
 const send = m => net.send(m);
+// Bandeau de pause (décidée par le maître du jeu)
+const pauseBanner = Object.assign(document.createElement('div'), { id: 'pauseBanner', className: 'hidden', textContent: '⏸ PAUSE — on attend le maître du jeu' });
+document.body.appendChild(pauseBanner);
 // L'écran du téléphone ne doit jamais se mettre en veille pendant la partie
 const wakeBadge = Object.assign(document.createElement('div'), { id: 'wake', textContent: '😴 Touchez l\'écran pour l\'empêcher de se mettre en veille' });
 document.body.appendChild(wakeBadge);
@@ -32,6 +35,7 @@ const dot = c => `<span class="dot" style="background:${c}"></span>`;
 const isMyTurn = () => me() && S.teams[S.turn] && S.teams[S.turn].id === me().id;
 
 function onState(first) {
+  pauseBanner.classList.toggle('hidden', !S.paused);
   const t = me();
   // toasts : vannes reçues, jokers et malédictions
   if (first) lastFeed = S.feed.length ? S.feed[S.feed.length - 1].id : 0;
@@ -66,7 +70,7 @@ function keyOf() {
   const k = [S.phase, t ? t.id : '-', S.turn, S.move && S.move.n, S.move && S.move.roll];
   if (!t) k.push(JSON.stringify(S.teams.map(x => [x.id, x.name, S.players[x.id]])));
   if (ch) k.push(ch.type, ch.stage, ch.cell, ch.target, ch.buzzer, (ch.excluded || []).length, ch.answers && t && ch.answers[t.id] ? 'A' : '', ch.votes && t && ch.votes[t.id] ? 'V' : '',
-    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', serverNow() >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && serverNow() >= ch.goAt ? 'G' : '');
+    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', gameNow(S) >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && gameNow(S) >= ch.goAt ? 'G' : '');
   if (S.phase === 'end') k.push(JSON.stringify(S.ranking));
   return k.join('|');
 }
@@ -133,7 +137,7 @@ function renderRolled() {
   if (shakeHandler) { removeEventListener('devicemotion', shakeHandler); shakeHandler = null; }
   const m = S.move, cell = S.meta.board[m.to], who = team(m.teamId);
   // Animation : le dé tourne quelques secondes avant d'afficher le résultat
-  const left = (m.at || 0) + S.meta.timers.roll - serverNow();
+  const left = (m.at || 0) + S.meta.timers.roll - gameNow(S);
   if (rollShown !== m.n && left > 150) {
     clearInterval(rollAnimTimer);
     html(`<div class="center"><div id="rollDie" class="spin">${dieHTML(1 + Math.floor(Math.random() * 6)).replace('class="die', 'style="width:170px;height:170px" class="die')}</div>
@@ -159,7 +163,7 @@ function renderRolled() {
 function renderChallenge() {
   const ch = S.ch, t = me();
   const timer = `<span class="cd" data-dl="${ch.deadline}"></span>`;
-  if (serverNow() < (ch.startsAt || 0) && ch.kind !== 'buzz10') return html(`<div class="center"><div class="big">👀</div><h1>Regardez la télé !</h1><h2>${esc(ch.fallback ? 'Question de consolation' : ch.label)}</h2></div>`);
+  if (gameNow(S) < (ch.startsAt || 0) && ch.kind !== 'buzz10') return html(`<div class="center"><div class="big">👀</div><h1>Regardez la télé !</h1><h2>${esc(ch.fallback ? 'Question de consolation' : ch.label)}</h2></div>`);
   const answered = ch.answers && ch.answers[t.id] !== undefined;
   const wait = (txt, emoji = '⏳') => html(`<div class="center"><div class="big">${emoji}</div><h1>${txt}</h1><p class="msg">${timer}</p></div>`);
   const participant = !ch.participants || ch.participants.includes(t.id);
@@ -222,7 +226,7 @@ function renderChallenge() {
   }
   if (ch.kind === 'affiche') {
     if (answered) return wait('Réponse envoyée ! On verse les points à la fin.', '🎬');
-    const k = Math.min(4, 1 + Math.floor(Math.max(0, serverNow() - ch.startsAt) / S.meta.timers.clue));
+    const k = Math.min(4, 1 + Math.floor(Math.max(0, gameNow(S) - ch.startsAt) / S.meta.timers.clue));
     return qcmUI({ head: `<h2 id="affpts">Répondez vite : ${5 - k} pts maintenant</h2>` });
   }
   if (ch.kind === 'qcm' || (ch.kind === 'duel' && ch.stage === 'q')) {
@@ -264,7 +268,7 @@ function renderChallenge() {
   }
   if (ch.kind === 'buzz10') {
     if (ch.taps[t.id] !== undefined) return wait(ch.taps[t.id] === -1 ? 'FAUX DÉPART. Bravo les champions.' : 'Enregistré ! Verdict sur la télé.', ch.taps[t.id] === -1 ? '🤦' : '⏱️');
-    const go = serverNow() >= ch.goAt;
+    const go = gameNow(S) >= ch.goAt;
     return html(`<div class="center"><h1>${go ? 'GO ! Appuyez à 10 secondes pile' : 'Attendez le GO…'}</h1>
       <button class="buzzer ${go ? 'go' : ''}" id="bz">${go ? 'STOP' : '…'}</button><p class="msg">${go ? 'Comptez dans votre tête 🤫' : 'Buzzer avant le GO = éliminé'}</p></div>`,
       () => $('#bz').onclick = () => { buzz(80); send({ t: 'buzz' }); });
@@ -366,7 +370,7 @@ function renderSheet() {
 // ── Chronos, auto-envoi, changements d'écran liés au temps ───
 setInterval(() => {
   if (!S) return;
-  const now = serverNow();
+  const now = gameNow(S);
   document.querySelectorAll('[data-dl]').forEach(el => { const s = fmtSec(Number(el.dataset.dl) - now); el.textContent = `⏱ ${s} s`; });
   if (keyOf() !== screenKey) render();
   const ap = document.getElementById('affpts');

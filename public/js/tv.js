@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, serverNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx, keepAwake } from './common.js';
+import { $, esc, uid, connect, serverNow, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx, keepAwake } from './common.js';
 
 // ── Salle et clé d'animateur ─────────────────────────────────
 const params = new URLSearchParams(location.search);
@@ -41,6 +41,9 @@ const activeTeam = () => S.teams[S.turn];
 // ── Réception d'un nouvel état ───────────────────────────────
 function onState(first) {
   document.body.classList.toggle('host', S.host);
+  // un maître du jeu au téléphone : la barre de commandes télé se fait discrète
+  document.body.classList.toggle('gmon', S.gmOnline > 0);
+  $('#pauseTv').classList.toggle('hidden', !S.paused);
   $('#notHost').classList.toggle('hidden', S.host);
   // fil d'actu → toasts
   if (first) lastFeed = S.feed.length ? S.feed[S.feed.length - 1].id : 0;
@@ -71,6 +74,7 @@ function renderLobby() {
     $('#qr').innerHTML = qr.createSvgTag({ cellSize: 8, margin: 1, scalable: true });
     $('#joinUrl').textContent = url.replace(/^https?:\/\//, '');
     $('#roomCode').textContent = room;
+    $('#gmUrl').textContent = `${location.host}/gm?room=${room}`;
     qrDone = true;
   }
   $('#lobbyTeams').innerHTML = S.teams.length ? S.teams.map(t => `
@@ -273,7 +277,7 @@ const statusList = (ids, isDone, title = 'Sur les téléphones') => `<div class=
 function renderOverlay(stateChanged) {
   const ov = $('#overlay');
   const ch = S.ch;
-  const show = ch && (S.phase === 'challenge' || S.phase === 'reveal') && ch.kind && (lastOverlayKey !== '' || serverNow() >= (ch.startsAt || 0) - 300) && !animating;
+  const show = ch && (S.phase === 'challenge' || S.phase === 'reveal') && ch.kind && (lastOverlayKey !== '' || gameNow(S) >= (ch.startsAt || 0) - 300) && !animating;
   if (!show) { ov.classList.add('hidden'); lastOverlayKey = ''; return; }
   const key = JSON.stringify([S.phase, ch.type, ch.stage, ch.cell, S.move && S.move.n, ch.i, ch.level, ch.buzzer, (ch.excluded || []).length, JSON.stringify(ch.ok || null)]);
   if (!stateChanged && key === lastOverlayKey) return;
@@ -374,7 +378,7 @@ const RENDER = {
   },
   buzz10(ch, rev) {
     if (!rev) {
-      const now = serverNow();
+      const now = gameNow(S);
       const before = now < ch.goAt;
       return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center" id="b10">
         <div class="huge" data-go="${ch.goAt}">${before ? fmtSec(ch.goAt - now) : 'GO !'}</div>
@@ -501,8 +505,8 @@ function syncLayers(ch) {
     if (ch) for (const src of ch.item.layers) { const a = new Audio(new URL(src, location.href).href); a.preload = 'auto'; a.volume = 0; layerAudio.push(a); }
   }
   if (!ch) return;
-  const playing = (S.phase === 'challenge' && ch.stage === 'play' && serverNow() >= ch.startsAt) || S.phase === 'reveal';
-  const n = S.phase === 'reveal' ? layerAudio.length : Math.min(layerAudio.length, 1 + Math.floor((serverNow() - ch.startsAt) / S.meta.timers.layer));
+  const playing = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
+  const n = S.phase === 'reveal' ? layerAudio.length : Math.min(layerAudio.length, 1 + Math.floor((gameNow(S) - ch.startsAt) / S.meta.timers.layer));
   layerAudio.forEach((a, i) => {
     a.volume = i < n ? 1 : 0;
     if (playing && a.paused) { a.currentTime = layerAudio[0].currentTime || 0; a.play().catch(() => {}); }
@@ -513,7 +517,7 @@ function syncLayers(ch) {
 let vidHandled = '';
 function syncVideo(ch) {
   const v = $('#vid'); if (!v || !ch || !ch.item) return;
-  const tag = ch.cell + S.phase + (v.dataset.resume || '');
+  const tag = ch.cell + S.phase + (v.dataset.resume || '') + '|' + (ch.replay || 0);
   if (vidHandled === tag) return;
   vidHandled = tag;
   const start = ch.item.start || 0, stop = ch.item.stop;
@@ -522,14 +526,32 @@ function syncVideo(ch) {
   v.ontimeupdate = () => { if (stop != null && v.currentTime >= stop) { v.pause(); v.ontimeupdate = null; if (S.host) host('mediaDone'); } };
   v.onended = () => { if (S.host) host('mediaDone'); };
 }
+let lastReplayKey = '';
 function syncAudio() {
   const ch = S.ch;
+  // pause du maître du jeu : tout se tait
+  const vid = $('#vid');
+  if (S.paused) {
+    if (!audio.paused) audio.pause();
+    layerAudio.forEach(a => a.pause());
+    if (vid && !vid.paused) { vid.pause(); vid.dataset.gmPaused = '1'; }
+    return;
+  }
+  if (vid && vid.dataset.gmPaused) { delete vid.dataset.gmPaused; vid.play().catch(() => {}); }
+  // « relancer l'extrait » demandé par le maître du jeu
+  const rk = ch ? `${ch.cell}|${S.move && S.move.n}|${ch.replay || 0}` : '';
+  if (ch && ch.replay && rk !== lastReplayKey && lastReplayKey !== '') {
+    try { audio.currentTime = (ch.item && ch.item.start) || 0; } catch {}
+    layerAudio.forEach(a => { try { a.currentTime = 0; } catch {} });
+    vidHandled = '';
+  }
+  lastReplayKey = rk;
   syncLayers(ch && ch.kind === 'media' && ch.media === 'layers' && ch.item && ch.item.layers ? ch : null);
   if (ch && ch.type === 'video') syncVideo(ch);
   if (!ch || ch.kind !== 'media' || ch.media !== 'audio' || !ch.item || !ch.item.src) { if (!audio.paused) audio.pause(); return; }
   const src = new URL(ch.item.src, location.href).href;
   if (audio.src !== src) { audio.src = src; audio.currentTime = ch.item.start || 0; }
-  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && serverNow() >= ch.startsAt) || S.phase === 'reveal';
+  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
   if (ch.stage === 'answer' && S.phase === 'challenge' && !audio.paused) { audio.pause(); sfx.buzz(); }
   if (shouldPlay && audio.paused) audio.play().catch(() => {});
 }
@@ -549,7 +571,7 @@ function renderEnd() {
 
 // ── Chronos (rafraîchis 5 fois par seconde) ──────────────────
 function tickTimers() {
-  const now = serverNow();
+  const now = gameNow(S);
   document.querySelectorAll('[data-ring]').forEach(el => {
     const dl = Number(el.dataset.ring), total = Number(el.dataset.total) || 30000;
     const rem = Math.max(0, dl - now);
@@ -581,7 +603,7 @@ function tickTimers() {
   if (S && S.startedAt && S.phase !== 'end' && S.phase !== 'lobby') {
     const el = Math.floor((now - S.startedAt) / 60000), tot = S.durationMin;
     const f = m => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`;
-    $('#clock').textContent = `${f(el)} / ${f(tot)}${now > S.endAt ? ' · dernier tour !' : ''} · manche ${S.round}`;
+    $('#clock').textContent = `${f(el)} / ${f(tot)}${now > S.endAt ? ' · dernier tour !' : ''} · manche ${S.round}${S.gmOnline > 0 ? ' · 🎩 MJ' : ''}`;
   }
 }
 setInterval(() => { if (!S || S.phase === 'lobby' || S.phase === 'end') return; renderOverlay(false); syncAudio(); tickTimers(); }, 200);

@@ -253,3 +253,12 @@ table.bac td.tn { background: transparent; }
 @keyframes jump { 0% { transform: translateY(0) scale(1); } 45% { transform: translateY(-70px) scale(1.25); } 80% { transform: translateY(0) scale(1.1, .85); } 100% { transform: translateY(0) scale(1); } }
 .turnbox .die.rolling { animation: tumble .5s infinite; }
 @keyframes tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-30px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-20px); } 100% { transform: rotate(360deg) translateY(0); } }
+
+/* Maître du jeu au téléphone */
+body.gmon #hostbar { display: none; }
+.gm-hint { font-size: 20px; margin: 8px 0 0; }
+.gm-hint b { color: var(--ink); }
+#pauseTv { position: absolute; inset: 0; z-index: 40; background: rgba(22, 11, 46, .82); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+#pauseTv b { font-family: var(--display); font-weight: 400; font-size: 200px; color: var(--yellow); line-height: 1; animation: pulse 1.6s infinite; }
+#pauseTv span { font-size: 40px; color: var(--muted); }
+#gmBadge { position: absolute; right: 24px; bottom: 16px; z-index: 30; font-size: 18px; color: var(--muted); background: var(--panel); padding: 8px 14px; border-radius: 999px; }

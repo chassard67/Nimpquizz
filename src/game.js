@@ -206,8 +206,21 @@ function newTeam(s, name, color) {
 }
 
 // ─── point d'entrée des messages ─────────────────────────────
-// ctx = { now, rng, pid, host }  → retourne un message d'erreur ou null
+// ctx = { now, rng, pid, host, gm }  → retourne un message d'erreur ou null
+// Chaque étape importante (et chaque correction du maître du jeu) est mémorisée pour pouvoir revenir en arrière.
 export function handle(s, msg, ctx) {
+  const a = msg && msg.t === 'host' ? msg.action : null;
+  if (s.phase === 'lobby' || NO_HIST.has(a)) return handleInner(s, msg, ctx);
+  const before = snap(s), k0 = stageKey(s), label0 = describe(s);
+  const err = handleInner(s, msg, ctx);
+  if (err || s.phase === 'lobby') return err;
+  const edit = a && EDIT_LABEL[a];
+  if (edit) pushHist(s, 'Avant : ' + edit(msg, s), before, ctx.now);
+  else if (stageKey(s) !== k0) pushHist(s, label0, before, ctx.now);
+  return err;
+}
+
+function handleInner(s, msg, ctx) {
   s._now = ctx.now;
   const rng = ctx.rng || Math.random;
   const me = ctx.pid ? s.players[ctx.pid] : null;
@@ -216,7 +229,7 @@ export function handle(s, msg, ctx) {
 
   // ── animateur (écran TV)
   if (t === 'host') {
-    if (!ctx.host) return "Seul l'écran principal peut faire ça.";
+    if (!ctx.host) return "Seul l'écran principal ou le maître du jeu peut faire ça.";
     return hostAction(s, msg, ctx, rng);
   }
 
@@ -243,6 +256,7 @@ export function handle(s, msg, ctx) {
   if (t === 'leaveTeam') { delete s.players[ctx.pid]; return null; }
 
   if (!myTeam) return 'Rejoignez d\'abord une équipe.';
+  if (s.paused && t !== 'taunt') return '⏸ Pause ! On attend le maître du jeu.';
 
   if (t === 'taunt') {
     const last = s.lastTaunt[ctx.pid] || 0;
@@ -304,8 +318,11 @@ function hostAction(s, msg, ctx, rng) {
   }
   if (a === 'adjust') {
     const tm = team(s, msg.teamId); if (!tm) return 'Équipe inconnue.';
-    const d = Math.trunc(Number(msg.delta) || 0);
-    tm.score = Math.max(0, tm.score + d);
+    const before = tm.score;
+    tm.score = Math.max(0, tm.score + Math.trunc(Number(msg.delta) || 0));
+    const d = tm.score - before;
+    if (!d) return null;
+    if (s.ch && s.ch.gains && (s.phase === 'challenge' || s.phase === 'reveal')) s.ch.gains[tm.id] = (s.ch.gains[tm.id] || 0) + d;
     feed(s, 'points', `L'animateur ${d > 0 ? 'offre' : 'retire'} ${Math.abs(d)} pt${Math.abs(d) > 1 ? 's' : ''} ${d > 0 ? 'à' : 'aux'} ${tm.name}. ${d > 0 ? 'Corruption ?' : 'Sanction divine.'}`);
     return null;
   }
@@ -321,7 +338,7 @@ function hostAction(s, msg, ctx, rng) {
   }
   // Mode test : l'animateur envoie le pion directement sur n'importe quelle case
   if (a === 'goto') {
-    if (!s.test) return 'Réservé au mode test.';
+    if (!s.test && !ctx.gm) return 'Réservé au mode test ou au maître du jeu.';
     const i = Number(msg.cell);
     if (!Number.isInteger(i) || i < 0 || i >= BOARD.length) return 'Case inconnue.';
     const tm = active(s);
@@ -333,8 +350,12 @@ function hostAction(s, msg, ctx, rng) {
   }
   if (a === 'roll') {
     if (s.phase !== 'roll') return 'Pas le moment de lancer.';
-    doRoll(s, active(s), rng, ctx.now); return null;
+    doRoll(s, active(s), rng, ctx.now);
+    if (msg.value) setRollValue(s, msg.value);
+    return null;
   }
+  const gmErr = gmAction(s, a, msg, ctx, rng);
+  if (gmErr !== undefined) return gmErr;
   if (a === 'next') {
     if (s.phase === 'reveal') { nextTurn(s, ctx); return null; }
     if (s.phase === 'rolled') { applyMove(s, ctx, rng); return null; }
@@ -383,6 +404,312 @@ function hostAction(s, msg, ctx, rng) {
   return 'Action inconnue.';
 }
 
+// ─── maître du jeu : historique, pause, corrections ──────────
+const HIST_MAX = 25;
+// Actions qui gèrent elles-mêmes l'historique (ou n'ont pas à y figurer)
+const NO_HIST = new Set(['undo', 'restoreTo', 'restart', 'newQuestion', 'pause', 'resume', 'replay', 'addTime', 'addGameTime', 'renameTeam', 'movePlayer', 'kick', 'setDuration']);
+const tn = (s, id) => (team(s, id) || {}).name || '?';
+// Corrections qui méritent un point de retour, avec leur libellé
+const EDIT_LABEL = {
+  adjust: (m, s) => `${tn(s, m.teamId)} ${Number(m.delta) > 0 ? '+' : ''}${Math.trunc(Number(m.delta) || 0)} pt`,
+  setScore: (m, s) => `score de ${tn(s, m.teamId)} → ${m.value}`,
+  setSkip: (m, s) => Number(m.n) ? `${tn(s, m.teamId)} bloquée ${m.n} tour(s)` : `${tn(s, m.teamId)} débloquée`,
+  setJoker: (m, s) => `joker ${JOKERS[m.kind] ? JOKERS[m.kind].label : m.kind} de ${tn(s, m.teamId)} ${m.on ? 'rendu' : 'retiré'}`,
+  setArmed: (m, s) => `${tn(s, m.teamId)} : ${ARMED[m.key] || m.key} ${m.on ? 'activé' : 'désactivé'}`,
+  clearCurses: (m, s) => `malédictions de ${tn(s, m.teamId)} levées`,
+  setPos: (m, s) => `${tn(s, m.teamId)} déplacée case ${m.cell}`,
+  setTurn: (m, s) => `la main passe à ${tn(s, m.teamId)}`,
+  judge: m => (m.ok ? 'réponse validée' : 'réponse refusée'),
+  bacToggle: (m, s) => `mot du Bac de ${tn(s, m.teamId)} corrigé`,
+  cashToggle: (m, s) => `réponse cash de ${tn(s, m.teamId)} corrigée`,
+  clearAnswer: (m, s) => `réponse de ${tn(s, m.teamId)} effacée`,
+  blockTeam: (m, s) => `${tn(s, m.teamId)} ${m.on ? 'écartée' : 'réintégrée'} de l'épreuve`,
+  unbuzz: () => 'buzz annulé',
+  setRoll: m => `dé forcé à ${m.value}`,
+  reroll: () => 'dé relancé',
+  forceCell: m => `case d'arrivée forcée (${m.cell})`,
+  goto: m => `envoi direct sur la case ${m.cell}`,
+  pick: (m, s) => `cible choisie : ${tn(s, m.teamId)}`,
+  theme: () => 'thème choisi par le maître du jeu',
+  decide: m => (m.go ? 'on continue (Millionnaire)' : 'on s\'arrête (Millionnaire)')
+};
+const ARMED = { double: 'Points ×2', shield: 'Bouclier', halve: 'Points ÷2 (malédiction)' };
+const STAGE_LBL = { mode: 'choix duo/carré/cash', q: 'question', pick: 'choix de la cible', theme: 'choix du thème', video: 'vidéo', write: 'écriture', vote: 'vote', review: 'correction', play: 'écoute', answer: 'réponse au buzz', ready: 'prêts', running: 'compte', decide: 'on continue ?' };
+
+// État sans l'historique ni le fil d'actu (ce qu'on restaure)
+function snap(s) {
+  const { hist, chSnap, feed, lastTaunt, _now, ...rest } = s;
+  return JSON.stringify(rest);
+}
+function stageKey(s) {
+  const ch = s.ch;
+  return [s.phase, s.turn, s.move && s.move.n, ch && ch.cell, ch && ch.stage, ch && ch.i, ch && ch.level].join('|');
+}
+function describe(s) {
+  const tm = active(s), n = tm ? tm.name : '?';
+  const ch = s.ch;
+  if (s.phase === 'roll') return `Tour de ${n} : avant le lancer de dé`;
+  if (s.phase === 'rolled' && s.move) return `${n} a fait ${s.move.roll} → case ${s.move.to} (${TYPES[BOARD[s.move.to]].label})`;
+  if (s.phase === 'challenge' && ch) return `${ch.label} (case ${ch.cell}) en cours${STAGE_LBL[ch.stage] ? ' · ' + STAGE_LBL[ch.stage] : ''}${ch.i ? ' · question ' + (ch.i + 1) : ''}`;
+  if (s.phase === 'reveal' && ch) return `Résultat : ${ch.label || 'épreuve'} (case ${ch.cell ?? '?'})`;
+  return s.phase;
+}
+function pushHist(s, label, data, at) {
+  s.hist = s.hist || [];
+  s.histSeq = (s.histSeq || 0) + 1;
+  s.hist.push({ id: s.histSeq, label, at, data });
+  if (s.hist.length > HIST_MAX) s.hist.splice(0, s.hist.length - HIST_MAX);
+}
+// Décale toutes les dates (en ms depuis 1970) d'un objet : sert à la pause et aux retours en arrière
+function shiftTimes(o, d) {
+  if (!o || typeof o !== 'object' || !d) return;
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'number' && v > 1e12) o[k] = v + d;
+    else if (v && typeof v === 'object') shiftTimes(v, d);
+  }
+}
+// Remet le jeu dans un état mémorisé, comme si on y était à l'instant
+function restore(s, data, at, now) {
+  const old = s;
+  const keep = { feed: old.feed, seq: old.seq, players: old.players, lastTaunt: old.lastTaunt, hist: old.hist, histSeq: old.histSeq, chSnap: old.chSnap, hostKey: old.hostKey };
+  const extraTeams = old.teams;
+  const st = JSON.parse(data);
+  for (const k of Object.keys(s)) delete s[k];
+  Object.assign(s, st, keep);
+  // une équipe créée après le point de retour est conservée
+  for (const t of extraTeams) if (!s.teams.some(x => x.id === t.id)) s.teams.push({ ...t, pos: t.pos });
+  // les noms et couleurs actuels sont gardés (un renommage n'est pas une étape de jeu)
+  for (const t of s.teams) { const cur = extraTeams.find(x => x.id === t.id); if (cur) { t.name = cur.name; t.color = cur.color; } }
+  s.paused = null;
+  const d = now - at;
+  shiftTimes(s.ch, d); shiftTimes(s.move, d);
+  if (s.deadline) s.deadline += d;
+}
+function setRollValue(s, value) {
+  const r = Math.max(1, Math.min(6, Math.trunc(Number(value)) || 1));
+  const m = s.move;
+  m.roll = r; m.to = (m.from + r) % BOARD.length; m.passed = m.from + r >= BOARD.length;
+}
+function videoDur(item) { return item && item.stop != null ? Math.max(3000, (item.stop - (item.start || 0)) * 1000 + 1500) : T.video; }
+
+// Actions du maître du jeu. Retourne undefined si l'action n'est pas d'ici.
+function gmAction(s, a, msg, ctx, rng) {
+  const now = ctx.now, ch = s.ch;
+  const tm = msg.teamId ? team(s, msg.teamId) : null;
+  const needTeam = () => tm ? null : 'Équipe inconnue.';
+  switch (a) {
+    case 'pause':
+      if (s.paused) return 'Déjà en pause.';
+      s.paused = { at: now }; feed(s, 'info', '⏸ Pause ! Personne ne bouge.');
+      return null;
+    case 'resume': {
+      if (!s.paused) return 'Le jeu n\'est pas en pause.';
+      const d = now - s.paused.at;
+      s.paused = null;
+      shiftTimes(s.ch, d); shiftTimes(s.move, d);
+      if (s.deadline) s.deadline += d;
+      if (s.endAt) s.endAt += d;
+      feed(s, 'info', '▶️ On reprend !');
+      return null;
+    }
+    case 'undo': case 'restoreTo': {
+      const h = s.hist || [];
+      const idx = a === 'undo' ? h.length - 1 : h.findIndex(x => x.id === Number(msg.id));
+      if (idx < 0) return 'Rien à annuler.';
+      const e = h[idx];
+      restore(s, e.data, e.at, now);
+      s.hist = h.slice(0, idx);
+      feed(s, 'info', `↩️ Retour en arrière : ${e.label.replace(/^Avant : /, 'avant « ') + (e.label.startsWith('Avant : ') ? ' »' : '')}`);
+      return null;
+    }
+    case 'restart': case 'newQuestion': {
+      const cs = s.chSnap;
+      if (!cs || !ch || !s.move || cs.n !== s.move.n) return 'Pas d\'épreuve à relancer.';
+      pushHist(s, describe(s), snap(s), now);
+      const used = s.used;
+      restore(s, cs.data, cs.at, now);
+      if (a === 'newQuestion') {
+        s.used = used;
+        s.ch = null;
+        startCell(s, BOARD[active(s).pos], { ...ctx, now }, rng, {});
+        s.chSnap = { at: now, n: s.move.n, data: snap(s) };
+        feed(s, 'info', '🔀 Le maître du jeu change de question.');
+      } else {
+        // on repart avec le délai d'affichage normal
+        if (s.ch && s.ch.startsAt) { const d = now + T.grace - s.ch.startsAt; shiftTimes(s.ch, d); if (s.deadline) s.deadline += d; }
+        feed(s, 'info', '🔄 L\'épreuve recommence à zéro.');
+      }
+      return null;
+    }
+    case 'setScore': {
+      if (needTeam()) return needTeam();
+      const v = Math.max(0, Math.trunc(Number(msg.value)) || 0), d = v - tm.score;
+      tm.score = v;
+      if (d && s.ch && s.ch.gains && (s.phase === 'challenge' || s.phase === 'reveal')) s.ch.gains[tm.id] = (s.ch.gains[tm.id] || 0) + d;
+      feed(s, 'points', `Le maître du jeu fixe le score de ${tm.name} à ${v}.`);
+      return null;
+    }
+    case 'setSkip':
+      if (needTeam()) return needTeam();
+      tm.skip = Math.max(0, Math.min(5, Math.trunc(Number(msg.n)) || 0));
+      feed(s, 'info', tm.skip ? `⛔ ${tm.name} passera ${tm.skip > 1 ? 'ses ' + tm.skip + ' prochains tours' : 'son prochain tour'}.` : `✅ ${tm.name} est débloquée.`);
+      return null;
+    case 'setJoker':
+      if (needTeam()) return needTeam();
+      if (!JOKERS[msg.kind]) return 'Joker inconnu.';
+      tm.jokers[msg.kind] = msg.on ? 1 : 0;
+      return null;
+    case 'setArmed':
+      if (needTeam()) return needTeam();
+      if (!ARMED[msg.key]) return 'Effet inconnu.';
+      tm.armed[msg.key] = !!msg.on;
+      return null;
+    case 'clearCurses':
+      if (needTeam()) return needTeam();
+      tm.curses = []; tm.armed.halve = false;
+      return null;
+    case 'setPos': {
+      if (needTeam()) return needTeam();
+      const c = Number(msg.cell);
+      if (!Number.isInteger(c) || c < 0 || c >= BOARD.length) return 'Case inconnue.';
+      tm.pos = c;
+      return null;
+    }
+    case 'setTurn': {
+      if (needTeam()) return needTeam();
+      s.turn = s.teams.indexOf(tm);
+      s.ch = null; s.move = null; s.chSnap = null; s.phase = 'roll'; s.deadline = null;
+      feed(s, 'info', `Le maître du jeu donne la main à ${tm.name} 🎲`);
+      return null;
+    }
+    case 'setRoll':
+      if (s.phase !== 'rolled') return 'Seulement juste après un lancer.';
+      setRollValue(s, msg.value);
+      return null;
+    case 'reroll': {
+      if (s.phase !== 'rolled') return 'Seulement juste après un lancer.';
+      const old = s.move.roll;
+      doRoll(s, team(s, s.move.teamId), rng, now);
+      feed(s, 'info', `🎲 Le maître du jeu relance le dé : ${old} → ${s.move.roll}`);
+      return null;
+    }
+    case 'renameTeam': {
+      if (needTeam()) return needTeam();
+      const name = clampText(msg.name, 28);
+      if (!name) return 'Nom vide.';
+      if (s.teams.some(x => x !== tm && norm(x.name) === norm(name))) return 'Ce nom est déjà pris.';
+      tm.name = name;
+      return null;
+    }
+    case 'movePlayer': {
+      const p = s.players[msg.pid];
+      if (!p) return 'Joueur inconnu.';
+      if (needTeam()) return needTeam();
+      p.teamId = tm.id;
+      return null;
+    }
+    case 'kick':
+      if (!s.players[msg.pid]) return 'Joueur inconnu.';
+      delete s.players[msg.pid];
+      return null;
+    case 'addGameTime': {
+      const m = Math.max(-120, Math.min(120, Math.trunc(Number(msg.min)) || 0));
+      s.durationMin = Math.max(5, s.durationMin + m);
+      if (s.startedAt) s.endAt = s.startedAt + s.durationMin * 60000;
+      return null;
+    }
+  }
+  // ── pendant une épreuve
+  if (a === 'addTime') {
+    const add = Math.max(-120, Math.min(300, Math.trunc(Number(msg.sec)) || 15)) * 1000;
+    if (!s.deadline) return 'Pas de chrono en cours.';
+    if (s.phase === 'challenge' && ch && ch.kind === 'buzz10') return 'Pas de rallonge sur le Buzzer 10 s.';
+    s.deadline = Math.max(now + 3000, s.deadline + add);
+    if (ch && ch.deadline) ch.deadline = s.deadline;
+    return null;
+  }
+  if (a === 'replay') {
+    if (!ch || (!ch.item && ch.kind !== 'media')) return 'Pas d\'extrait à relancer.';
+    ch.replay = (ch.replay || 0) + 1;
+    if (s.phase === 'challenge' && ch.stage === 'play') {
+      ch.startsAt = now + 300;
+      ch.deadline = Math.max(ch.deadline, now + (ch.media === 'layers' ? Math.max(T.media, ch.item.layers.length * T.layer + 15000) : T.media));
+      s.deadline = ch.deadline;
+    } else if (s.phase === 'challenge' && ch.stage === 'video') {
+      ch.startsAt = now + 300;
+      ch.deadline = now + 300 + videoDur(ch.item); s.deadline = ch.deadline;
+    }
+    return null;
+  }
+  if (s.phase !== 'challenge' || !ch) return undefined;
+  if (a === 'unbuzz') {
+    if (ch.kind !== 'media' || ch.stage !== 'answer') return 'Personne n\'a buzzé.';
+    feed(s, 'info', `Buzz de ${tn(s, ch.buzzer)} annulé, on reprend !`);
+    ch.buzzer = null; ch.stage = 'play';
+    ch.deadline = now + (ch.remaining || 15000); s.deadline = ch.deadline;
+    return null;
+  }
+  if (a === 'pick') {
+    if (ch.stage !== 'pick') return 'Pas de cible à choisir.';
+    if (!tm || tm.id === ch.teamId) return 'Cible invalide.';
+    doPick(s, tm, ctx, rng); return null;
+  }
+  if (a === 'theme') {
+    if (ch.kind !== 'series' || ch.stage !== 'theme') return 'Pas de thème à choisir.';
+    const th = ch.themes[Number(msg.i)]; if (!th) return 'Thème inconnu.';
+    doTheme(s, th, ctx, rng); return null;
+  }
+  if (a === 'decide') {
+    if (ch.kind !== 'millions' || ch.stage !== 'decide') return 'Pas de décision à prendre.';
+    return millionsDecide(s, team(s, ch.teamId), !!msg.go, ctx);
+  }
+  if (a === 'clearAnswer') {
+    if (needTeam()) return needTeam();
+    const id = tm.id;
+    let done = false;
+    if (ch.answers && ch.answers[id] !== undefined && !(ch.kind === 'bac' && ch.stage === 'review')) { delete ch.answers[id]; done = true; }
+    if (ch.kind === 'dcc' && ch.stage === 'mode' && ch.modes[id]) { delete ch.modes[id]; done = true; }
+    if (ch.kind === 'open' && ch.stage === 'vote') {
+      if (ch.votes[id]) { delete ch.votes[id]; done = true; }
+      for (const [voter, target] of Object.entries(ch.votes)) if (target === id && !ch.answers[id]) delete ch.votes[voter];
+    }
+    if (ch.taps && ch.taps[id] !== undefined) { delete ch.taps[id]; done = true; }
+    if (ch.fifty && ch.fifty[id]) delete ch.fifty[id];
+    return done ? null : 'Cette équipe n\'a rien à effacer.';
+  }
+  if (a === 'blockTeam') {
+    if (needTeam()) return needTeam();
+    const id = tm.id;
+    ch.blocked = ch.blocked || [];
+    if (msg.on) {
+      if (ch.blocked.includes(id)) return null;
+      ch.blocked.push(id);
+      if (ch.kind === 'media') {
+        if (!ch.excluded.includes(id)) ch.excluded.push(id);
+        if (ch.stage === 'answer' && ch.buzzer === id) { ch.buzzer = null; ch.stage = 'play'; ch.deadline = now + (ch.remaining || 15000); s.deadline = ch.deadline; }
+        if (s.teams.every(x => ch.excluded.includes(x.id))) resolve(s, ctx, rng);
+      } else if (ch.participants) {
+        ch.participants = ch.participants.filter(x => x !== id);
+        if (ch.answers) delete ch.answers[id];
+        if (ch.taps) delete ch.taps[id];
+        if (ch.participants.length && ch.stage !== 'review' && (ch.kind === 'buzz10' ? ch.participants.every(x => ch.taps[x] !== undefined) : ch.answers && ch.participants.every(x => ch.answers[x] !== undefined))) {
+          if (ch.kind === 'buzz10') resolve(s, ctx, rng); else closeAnswers(s, ctx, rng);
+        }
+      } else return 'Impossible d\'écarter une équipe de cette épreuve.';
+      feed(s, 'info', `🚫 ${tm.name} est écartée de l'épreuve.`);
+      return null;
+    }
+    if (!ch.blocked.includes(id)) return null;
+    ch.blocked = ch.blocked.filter(x => x !== id);
+    if (ch.kind === 'media') ch.excluded = ch.excluded.filter(x => x !== id);
+    else if (ch.participants && !ch.participants.includes(id)) ch.participants.push(id);
+    feed(s, 'info', `✅ ${tm.name} peut de nouveau jouer.`);
+    return null;
+  }
+  return undefined;
+}
+
 // ─── dé et déplacement ───────────────────────────────────────
 function doRoll(s, tm, rng, now) {
   const r = 1 + Math.floor(rng() * 6);
@@ -405,6 +732,7 @@ function applyMove(s, ctx, rng) {
   const hops = Math.min(12, s.move.roll || 0);
   const animLeft = Math.max(0, (s.move.at || 0) + ROLL_ANIM_MS - ctx.now);
   startCell(s, BOARD[tm.pos], { ...ctx, now: ctx.now + animLeft + hops * HOP_MS + 400 }, rng, s.ch ? s.ch.gains : {});
+  s.chSnap = { at: ctx.now, n: s.move.n, data: snap(s) };
 }
 
 // ─── démarrage d'une case ────────────────────────────────────
@@ -949,7 +1277,7 @@ function toReveal(s, ctx, summary) {
 function nextTurn(s, ctx) {
   const cur = active(s);
   cur.curses = cur.curses.map(c => ({ ...c, left: c.left - 1 })).filter(c => c.left > 0);
-  s.ch = null; s.move = null; s.deadline = null;
+  s.ch = null; s.move = null; s.deadline = null; s.chSnap = null;
   const n = s.teams.length;
   for (let guard = 0; guard < n * 3; guard++) {
     s.turn = (s.turn + 1) % n;
@@ -997,11 +1325,20 @@ function timeout(s, ctx, rng) {
 }
 
 export function nextDeadline(s) {
+  if (s.paused) return null;
   if (s.phase === 'challenge' && s.ch && s.ch.kind === 'buzz10' && s.ch.stage === 'ready') return s.ch.goAt;
   return s.deadline;
 }
 
 export function tick(s, now, rng = Math.random) {
+  const d0 = nextDeadline(s);
+  if (!d0 || now < d0) return false;
+  const before = snap(s), k0 = stageKey(s), label0 = describe(s);
+  const changed = tickInner(s, now, rng);
+  if (changed && stageKey(s) !== k0 && s.phase !== 'lobby') pushHist(s, label0, before, now);
+  return changed;
+}
+function tickInner(s, now, rng) {
   s._now = now;
   const ctx = { now };
   let changed = false;
@@ -1016,15 +1353,25 @@ export function tick(s, now, rng = Math.random) {
 }
 
 // ─── vue envoyée aux écrans (on cache les réponses avant la révélation) ───
-export function view(s, viewer = {}) {
-  const v = JSON.parse(JSON.stringify(s));
+export function view(s, viewer = {}, extra = {}) {
+  const { hist, chSnap, ...rest } = s;
+  const v = JSON.parse(JSON.stringify(rest));
   delete v.hostKey; delete v.lastTaunt; delete v.used; delete v._now;
+  const gm = viewer.role === 'gm';
+  v.gm = gm;
+  v.gmOnline = extra.gmOnline || 0;
+  if (gm) {
+    // le maître du jeu voit tout : réponses attendues, réponses des équipes, historique, joueurs
+    v.hist = (hist || []).map(h => ({ id: h.id, label: h.label, at: h.at })).reverse();
+    v.canRestart = !!(chSnap && s.ch && s.move && chSnap.n === s.move.n);
+    v.roster = Object.entries(s.players).map(([pid, p]) => ({ pid, name: p.name, teamId: p.teamId }));
+  }
   const me = viewer.pid ? s.players[viewer.pid] : null;
   v.me = me ? { pid: viewer.pid, teamId: me.teamId, name: me.name } : null;
   v.host = !!viewer.host;
   v.players = Object.values(s.players).reduce((acc, p) => { acc[p.teamId] = (acc[p.teamId] || 0) + 1; return acc; }, {});
   const ch = v.ch;
-  if (ch && s.phase === 'challenge') {
+  if (ch && s.phase === 'challenge' && !gm) {
     if (ch.q) { delete ch.q.a; delete ch.q.f; delete ch.q.k; delete ch.q.n; if (ch.q.r) ch.q.r = ch.q.r.map(() => null); }
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;

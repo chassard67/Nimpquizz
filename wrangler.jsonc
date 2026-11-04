@@ -8,5 +8,7 @@
     "bindings": [{ "name": "ROOMS", "class_name": "GameRoom" }]
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["GameRoom"] }],
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // garde les variables saisies dans le tableau de bord Cloudflare (ex. GM_PIN) à chaque déploiement
+  "keep_vars": true
 }

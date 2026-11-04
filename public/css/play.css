@@ -82,3 +82,4 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 14px; colo
 /* Bandeau si l'écran risque de se mettre en veille */
 #wake { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 50; background: #FFD23F; color: #111; font-weight: 800; font-size: 14px; padding: 10px 14px; border-radius: 12px; box-shadow: 0 4px 0 rgba(0,0,0,.3); width: max-content; max-width: calc(100vw - 24px); text-align: center; }
 #wake.hidden { display: none; }
+#pauseBanner { position: fixed; left: 0; right: 0; top: 0; z-index: 55; background: var(--yellow); color: var(--bg); text-align: center; font-family: var(--display); font-size: 18px; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; }
