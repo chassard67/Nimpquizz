@@ -20,8 +20,9 @@ function client(name, hello) {
     if (m.t === 'state') {
       c.s = m.s; c.states++; c.offset = m.s.now - Date.now();
       const ch = m.s.ch;
-      if (m.s.phase === 'challenge' && ch && ch.q && (ch.q.a !== undefined || ch.q.f !== undefined)) leaks.push(`${name} voit la réponse (${ch.type})`);
+      if (name !== 'MJ' && m.s.phase === 'challenge' && ch && ch.q && (ch.q.a !== undefined || ch.q.f !== undefined)) leaks.push(`${name} voit la réponse (${ch.type})`);
       if (m.s.phase === 'challenge' && ch && ch.answers && m.s.me) for (const [id, a] of Object.entries(ch.answers)) if (id !== m.s.me.teamId && !a.hidden && !(ch.kind === 'open' && ch.stage === 'vote') && !(ch.kind === 'bac' && ch.stage === 'review')) leaks.push(`${name} voit la réponse d'une autre équipe (${ch.type})`);
+      if (m.s.bmc || (ch && ch.kind === 'bmc' && (ch.picks || ch.players))) leaks.push(`${name} voit les mains des autres (Blanc Manger Coco)`);
       for (const f of m.s.feed) if (f.k === 'taunt' && !c.done.has('t' + f.id)) { c.done.add('t' + f.id); if (m.s.me && f.to === m.s.me.teamId) taunted.push(`${name} a reçu « ${f.text} »`); }
     }
     if (m.t === 'error') { c.errors.push(m.text); errors.push(`${name}: ${m.text}`); }
@@ -54,6 +55,14 @@ tv.send({ t: 'host', action: 'setDuration', min: 45 });
 tv.send({ t: 'host', action: 'start' });
 await sleep(500);
 console.log('Équipes :', tv.s.teams.map(t => t.name).join(' / '), '— phase', tv.s.phase);
+
+// maître du jeu (code secret par défaut) : il envoie le pion sur les nouvelles cases pour être sûr de les voir passer
+const gmc = client('MJ', { role: 'gm', pin: process.env.GM_PIN || '1234' });
+await gmc.ready; await sleep(300);
+gmc.send({ t: 'host', action: 'setNsfw', on: true });
+await sleep(200);
+const forced = { 1: 'bmc', 3: 'titredebile', 5: 'culture' };
+const forcedDone = new Set();
 
 const pickOther = (s, myId) => { const o = s.teams.filter(t => t.id !== myId); return o[Math.floor(Math.random() * o.length)].id; };
 const once = (c, key, fn) => { if (!c.done.has(key)) { c.done.add(key); fn(); } };
@@ -90,10 +99,10 @@ function bot(c) {
   if (ch.kind === 'millions' && ch.teamId === my && ch.stage === 'decide') once(c, 'd' + k + ch.level, () => c.send({ t: 'decide', go: Math.random() < .6 }));
   if (ch.kind === 'affiche' && !answered) once(c, 'a' + k, () => setTimeout(() => c.send({ t: 'answer', value: Math.floor(Math.random() * 4) }), Math.random() * 9000));
   if (ch.kind === 'number' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: String(Math.floor(Math.random() * 2000)) }));
-  if (ch.kind === 'open' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: `${c.name} propose : une saucisse en tutu` }));
+  if (ch.kind === 'open' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.q.words ? { pos: Math.floor(Math.random() * (ch.q.words.length + 1)), word: 'Saucisse' } : `${c.name} propose : une saucisse en tutu` }));
   if (ch.kind === 'open' && ch.stage === 'vote' && !ch.votes[my]) once(c, 'v' + k, () => { const o = Object.keys(ch.answers).filter(id => id !== my); if (o.length) c.send({ t: 'vote', teamId: o[0] }); });
   if (ch.kind === 'bac' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.cats.map((_, i) => i % 2 ? ch.letter + 'ouette' : '') }));
-  if (ch.kind === 'famille' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ['téléphone', 'les pieds', 'putain'] }));
+  if (ch.kind === 'bmc' && ch.stage === 'write' && ch.inGame && !ch.mine && s.bmcHand) once(c, 'bmc' + k, () => setTimeout(() => c.send({ t: 'bmc', cards: s.bmcHand.slice(0, ch.black.n).map(x => x.i) }), 300 + Math.random() * 1500));
   if (ch.kind === 'buzz10' && ch.taps[my] === undefined && now >= ch.goAt) once(c, 'b' + k, () => setTimeout(() => c.send({ t: 'buzz' }), 9000 + Math.random() * 2000));
   if ((ch.kind === 'duel' || ch.kind === 'target') && ch.stage === 'pick' && ch.teamId === my) once(c, 'p' + k, () => c.send({ t: 'pick', teamId: pickOther(s, my) }));
   if (ch.kind === 'media' && ch.stage === 'play') once(c, 'bz' + k, () => c.send({ t: 'buzz' }));
@@ -107,6 +116,7 @@ function animateur() {
   }
   if (s.phase === 'challenge' && s.ch.kind === 'bac' && s.ch.stage === 'review') once(tv, 'bv' + key, () => { tv.send({ t: 'host', action: 'bacToggle', teamId: s.teams[0].id, i: 1 }); setTimeout(() => tv.send({ t: 'host', action: 'bacValidate' }), 300); });
   if (s.phase === 'challenge' && s.ch.kind === 'media' && s.ch.stage === 'answer') once(tv, 'j' + key, () => tv.send({ t: 'host', action: 'judge', ok: true }));
+  if (s.phase === 'challenge' && s.ch.kind === 'bmc' && s.ch.stage === 'judge') once(tv, 'bmc' + key, () => { if (s.ch.entries.some(e => e.teamId || e.name)) leaks.push('cartes du Blanc Manger Coco pas anonymes'); setTimeout(() => tv.send({ t: 'host', action: 'bmcPick', i: 0 }), 500); });
 }
 
 // ── forçage de quelques cases pour être sûr de tout voir passer : on ne triche pas sur le serveur,
@@ -117,6 +127,10 @@ while (turnsPlayed < TURNS && Date.now() - t0 < 6 * 60 * 1000) {
   phones.forEach(bot); animateur();
   const s = tv.s;
   if (s.phase === 'roll' && s.move === null && lastN !== s.round + '-' + s.turn) { lastN = s.round + '-' + s.turn; turnsPlayed++; }
+  if (s.phase === 'roll' && forced[turnsPlayed] && !forcedDone.has(turnsPlayed)) {
+    forcedDone.add(turnsPlayed);
+    gmc.send({ t: 'host', action: 'goto', cell: s.meta.board.findIndex(c => c.type === forced[turnsPlayed]) });
+  }
   if (!extraDone && turnsPlayed === 4) {
     extraDone = true;
     const [a, b, c] = phones;
@@ -148,5 +162,6 @@ console.log('Fuites de réponses :', leaks.length ? [...new Set(leaks)].join(' |
 console.log('Erreurs inattendues :', unexpected.length ? unexpected.join(' | ') : 'aucune ✅');
 const ok = s.phase === 'end' && spyRefused && !leaks.length && !unexpected.length && turnsPlayed >= TURNS && taunted.length >= 2;
 console.log(ok ? '\n✅ Partie de bout en bout OK' : '\n❌ Problème détecté');
-for (const c of [tv, spy, ...phones]) c.ws.close();
+console.log('Mode NSFW vu par le MJ :', gmc.s && gmc.s.nsfw ? 'oui' : 'non');
+for (const c of [tv, spy, gmc, ...phones]) c.ws.close();
 process.exit(ok ? 0 : 1);

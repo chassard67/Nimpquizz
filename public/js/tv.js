@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, serverNow, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx, keepAwake } from './common.js';
+import { $, esc, uid, connect, serverNow, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, audioUnlock, sfx, keepAwake, countdown, bmcSentence } from './common.js';
 
 // ── Salle et clé d'animateur ─────────────────────────────────
 const params = new URLSearchParams(location.search);
@@ -113,7 +113,8 @@ function syncPawns(first) {
     if (disp[t.id] === undefined || first) { disp[t.id] = t.pos; continue; }
     if (disp[t.id] === t.pos) continue;
     const fwd = (t.pos - disp[t.id] + N()) % N();
-    if (S.move && S.move.done && S.move.teamId === t.id && fwd > 0 && fwd <= 12) animatePawn(t.id, t.pos);
+    // pas de sauts pour un pion téléporté (mode test / maître du jeu) : l'épreuve et son décompte démarrent tout de suite
+    if (S.move && S.move.done && !S.move.test && S.move.teamId === t.id && fwd > 0 && fwd <= 12) animatePawn(t.id, t.pos);
     else disp[t.id] = t.pos;
   }
 }
@@ -170,7 +171,7 @@ function renderBoard() {
   renderPawns();
   const t = activeTeam();
   const c = $('#center');
-  const legend = `<div class="legend">${[['q', 'Questions'], ['bt', 'Blind tests'], ['v', 'Visuel'], ['bz', 'Buzzers'], ['s', 'Pièges']].map(([g, l]) => `<span><i class="g-${g}"></i>${l}</span>`).join('')}</div>`;
+  const legend = `<div class="legend">${[['q', 'Questions'], ['cm', 'Cartes'], ['bt', 'Blind tests'], ['v', 'Visuel'], ['bz', 'Buzzer'], ['s', 'Pièges']].map(([g, l]) => `<span><i class="g-${g}"></i>${l}</span>`).join('')}</div>`;
   let box;
   if (S.phase === 'roll') {
     box = `<div class="turnbox">${dieHTML(0)}<div class="txt"><span class="what">Au tour de</span><span class="who" style="color:${t.color}">${esc(t.name)}</span><span class="what">Lancez le dé sur votre téléphone 📱</span></div></div>`;
@@ -203,6 +204,7 @@ function renderSide() {
     let status = '';
     if (ch && ch.answers && ch.participants && ch.participants.includes(t.id)) status = ch.answers[t.id] ? '<span class="status" style="color:var(--ok)">✓ répondu</span>' : '<span class="status muted">réfléchit…</span>';
     if (ch && ch.kind === 'open' && ch.stage === 'vote') status = ch.votes[t.id] ? '<span class="status" style="color:var(--ok)">✓ voté</span>' : '<span class="status muted">vote…</span>';
+    if (ch && ch.kind === 'bmc' && ch.stage === 'write' && ch.teamDone && ch.teamDone[t.id]) { const [d, n] = ch.teamDone[t.id]; status = `<span class="status" style="color:${d === n ? 'var(--ok)' : 'var(--muted)'}">🃏 ${d}/${n}</span>`; }
     if (ch && ch.taps) status = ch.taps[t.id] === -1 ? '<span class="status" style="color:var(--ko)">faux départ</span>' : ch.taps[t.id] !== undefined ? '<span class="status" style="color:var(--ok)">✓ buzzé</span>' : '';
     const bump = prevScores[t.id] !== undefined && prevScores[t.id] !== t.score;
     return `<div class="score ${S.teams[S.turn] && S.teams[S.turn].id === t.id && S.phase !== 'end' ? 'active' : ''}">
@@ -227,6 +229,8 @@ function renderHostbar() {
     if (ch.kind === 'bac' && ch.stage === 'review') b.push(`<button class="main" data-h="bacValidate">Valider les points ✓</button><span class="hint">Cliquez sur un mot pour le valider / refuser.</span>`);
     else if (ch.kind === 'media' && ch.stage === 'answer') b.push(`<button class="ok" data-h="judge" data-ok="1">✓ Bonne réponse</button><button class="ok" data-h="judge" data-ok="1" data-bonus="1">✓ + bonus</button><button class="ko" data-h="judge" data-ok="0">✗ Raté</button><span class="hint">Bonus +1 : l'année ou le réalisateur en plus.</span>`);
     else if (ch.stage === 'video') b.push(`<button class="main" data-h="mediaDone">Questions ! ▶</button>`);
+    else if (ch.kind === 'bmc' && ch.stage === 'judge') b.push(`<span class="hint">🃏 Cliquez sur la carte la plus drôle.</span><button data-h="next">Personne ne gagne ⏭</button>`);
+    else if (ch.kind === 'bmc') b.push(`<button class="main" data-h="next">Stop, on passe au choix ▶</button>`);
     else b.push(`<button class="main" data-h="next">Stop, on révèle ⏱</button>`);
     b.push(`<button data-h="skip">Passer l'épreuve ⏭</button>`);
   }
@@ -338,16 +342,22 @@ const RENDER = {
       ${q.f ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(q.f)}</div>` : ''}${revFooter(ch)}`, ''];
   },
   open(ch, rev) {
-    const q = `<div class="question" style="font-size:${ch.type === 'titredebile' ? 64 : 42}px">${esc(ch.q.q)}</div>${ch.q.sub && !rev ? `<div class="rule" style="font-size:26px">${esc(ch.q.sub)}</div>` : ''}`;
-    if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div>${q}<div class="big-center"><div class="mid">✍️ Écrivez votre meilleure connerie sur les téléphones</div></div>`, answeredSide(ch).join('')];
+    const words = ch.q.words;
+    // Titre débile : le titre mot par mot, avec un trou entre chaque mot
+    const titleHTML = words ? `<div class="title-slots">${words.map(w => `<i></i><span>${esc(w)}</span>`).join('')}<i></i></div>` : '';
+    const q = words && !rev && ch.stage === 'write' ? titleHTML : `<div class="question" style="font-size:${words ? 64 : 42}px">${esc(ch.q.q)}</div>`;
+    const sub = ch.q.sub && !rev ? `<div class="rule" style="font-size:26px">${esc(ch.q.sub)}</div>` : '';
+    if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div>${q}${sub}<div class="big-center"><div class="mid">✍️ ${words ? 'Glissez votre mot dans un des trous, sur les téléphones' : 'Écrivez votre meilleure connerie sur les téléphones'}</div></div>`, answeredSide(ch).join('')];
     const ids = Object.keys(ch.answers);
     const order = [...ids].sort((a, b) => (ch.answers[a].v || '').length - (ch.answers[b].v || '').length);
     const cards = order.map((id, i) => {
       const t = team(id), votes = rev && ch.tally ? ch.tally[id] || 0 : null;
-      return `<div class="card ${rev && (ch.winners || []).includes(id) ? 'win' : ''}" style="--r:${(i % 2 ? 1 : -1) * (1 + i % 3)}deg">${esc(ch.answers[id].v)}
+      const a = ch.answers[id];
+      const txt = words && a.w !== undefined ? [...words.slice(0, a.ins).map(esc), `<mark>${esc(a.w)}</mark>`, ...words.slice(a.ins).map(esc)].join(' ') : esc(a.v);
+      return `<div class="card ${rev && (ch.winners || []).includes(id) ? 'win' : ''}" style="--r:${(i % 2 ? 1 : -1) * (1 + i % 3)}deg">${txt}
         ${rev ? `<div class="by">${dot(t.color)}${esc(t.name)}</div>` : ''}${votes !== null ? `<span class="votes">${votes} vote${votes > 1 ? 's' : ''}</span>` : ''}</div>`;
     }).join('');
-    if (!rev) return [`${q}<div class="rule">Votez pour la meilleure sur votre téléphone. Pas pour vous-mêmes, tricheurs.</div><div class="cards">${cards}</div>`,
+    if (!rev) return [`${q}${sub}<div class="rule">Votez pour la meilleure sur votre téléphone. Pas pour vous-mêmes, tricheurs.</div><div class="cards">${cards}</div>`,
       [ring(ch.deadline, 30000), statusList(S.teams.map(t => t.id), id => !!ch.votes[id], 'Votes')].join('')];
     return [`${q}<div class="cards">${cards}</div>${revFooter(ch)}`, ''];
   },
@@ -364,17 +374,6 @@ const RENDER = {
     }).join('');
     return [`<div style="display:flex;align-items:center;gap:30px"><span class="bac-letter" style="font-size:120px">${esc(ch.letter)}</span><span class="rule">${rev ? 'Vert = validé · ★ = mot unique (2 pts)' : "L'animateur corrige. Contestations acceptées, mais ignorées."}</span></div>
       <table class="bac">${head}${rows}</table>${rev ? revFooter(ch) : ''}`, ''];
-  },
-  famille(ch, rev) {
-    const slots = ch.q.r.map((r, i) => {
-      if (!rev || !r) return `<div class="slot"><span class="i">${i + 1}</span></div>`;
-      const who = (ch.found[i] || []).map(id => dot(team(id).color)).join('');
-      return `<div class="slot open" style="animation-delay:${i * .25}s"><span class="i">${i + 1}</span>${esc(r.l)}<span class="who">${who}</span><span class="pc">${r.p}</span></div>`;
-    }).join('');
-    const answers = rev ? `<div class="famans">${Object.entries(ch.matches || {}).map(([id, ms]) => `<div class="r">${dot(team(id).color)}<b>${esc(team(id).name)} :</b> ${ms.map(m => m.idx >= 0 ? `<span style="color:var(--bz)">${esc(m.text)}</span>` : `<s>${esc(m.text)}</s>`).join(' · ')}</div>`).join('')}</div>` : '';
-    return [`${rev ? '' : `<div class="rule">${esc(ch.rule)}</div>`}<div class="rule" style="font-size:26px">Nous avons demandé à 100 personnes (bourrées)…</div>
-      <div class="question" style="font-size:44px">${esc(ch.q.q)}</div><div class="fam">${slots}</div>${answers}${rev ? revFooter(ch) : ''}`,
-      rev ? '' : answeredSide(ch).join('')];
   },
   buzz10(ch, rev) {
     if (!rev) {
@@ -395,9 +394,6 @@ const RENDER = {
     if (!rev) return [`<div class="big-center"><div class="mid">${dot(a.color, 50)} ${esc(a.name)}</div><div class="huge">${ch.type === 'vol' ? '🦹' : '🔄'}</div><div class="mid">choisit sa victime…</div><div class="rule">${esc(ch.rule)}</div></div>`, ring(ch.deadline, ch.deadline - ch.startsAt)];
     return [`<div class="big-center"><div class="huge">${ch.type === 'vol' ? '🦹' : '🔄'}</div><div class="mid" style="max-width:1100px">${esc(ch.summary)}</div>${gainsHTML(ch)}</div>`, ''];
   },
-  curse(ch) {
-    return [`<div class="big-center"><div class="huge">💀</div><div class="curse">${esc(ch.summary)}</div>${gainsHTML(ch)}</div>`, ''];
-  },
   info(ch) {
     return [`<div class="big-center"><div class="huge">🚽</div><div class="mid" style="max-width:1100px">${esc(ch.summary || ch.text || '')}</div>${gainsHTML(ch)}</div>`, ''];
   },
@@ -415,6 +411,28 @@ const RENDER = {
       ${buzzer ? `<div class="buzzed"><div class="b" style="background:${buzzer.color}"><div class="x">BUZZ !</div><div class="n">${esc(buzzer.name)}</div><div class="s">On vous écoute… 15 secondes</div></div></div>` : ''}`,
       ring(ch.deadline, ch.stage === 'answer' ? 15000 : Math.max(S.meta.timers.media, ch.deadline - ch.startsAt))];
   }
+};
+
+// ── Blanc Manger Coco
+RENDER.bmc = (ch, rev) => {
+  const black = ch.black ? ch.black.t : '';
+  if (!rev && ch.stage === 'write') {
+    const teams = Object.keys(ch.teamDone || {}).map(id => { const t = team(id), [d, n] = ch.teamDone[id]; return t ? `<div class="r">${dot(t.color)}<span>${esc(t.name)}</span><span class="s ${d === n ? 'ok' : 'muted'}">${d}/${n}</span></div>` : ''; }).join('');
+    return [`<div class="rule">${esc(ch.rule)}</div><div class="bmc-black bmc-big">${bmcSentence(black, [])}</div>
+      <div class="big-center"><div class="mid">🃏 Choisissez ${ch.black && ch.black.n > 1 ? `${ch.black.n} cartes (dans l'ordre)` : 'votre carte'} sur votre téléphone</div><div class="rule">${ch.done} / ${ch.total} joueur${ch.total > 1 ? 's ont' : ' a'} joué</div></div>`,
+      [ring(ch.deadline, ch.deadline - ch.startsAt), `<div class="status-list"><span class="h">Cartes jouées</span>${teams}</div>`].join('')];
+  }
+  const entries = ch.entries || [];
+  const cards = entries.map((e, i) => {
+    const t = rev && e.teamId ? team(e.teamId) : null;
+    const win = rev && ch.winner === i;
+    return `<div class="bmc-black bmc-entry ${win ? 'win' : ''} ${!rev && S.host ? 'toggle' : ''}" data-bmc="${i}" style="--r:${(i % 2 ? 1 : -1) * (0.5 + i % 3 * .6)}deg">
+      ${rev ? '' : `<span class="no">${i + 1}</span>`}${bmcSentence(black, e.parts)}
+      ${t ? `<div class="by">${dot(t.color)}${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${win ? ' 🏆' : ''}</div>` : ''}</div>`;
+  }).join('');
+  const grid = `<div class="bmc-grid ${entries.length > 6 ? 'many' : ''}">${cards}</div>`;
+  if (!rev) return [`<div class="rule">Le maître du jeu choisit la plus drôle… (c'est anonyme, pas de favoritisme. En théorie.)</div>${grid}`, ring(ch.deadline, ch.deadline - ch.startsAt)];
+  return [`${grid}${revFooter(ch)}`, ''];
 };
 
 // ── Duo, carré ou cash
@@ -488,6 +506,8 @@ RENDER.affiche = (ch, rev) => {
 
 // clic animateur sur une case du Bac
 $('#overlay').addEventListener('click', e => {
+  const bm = e.target.closest('[data-bmc]');
+  if (bm && S.host && S.phase === 'challenge' && S.ch && S.ch.stage === 'judge') return host('bmcPick', { i: Number(bm.dataset.bmc) });
   const c = e.target.closest('[data-cash]');
   if (c && c.dataset.cash && S.host) return host('cashToggle', { teamId: c.dataset.cash });
   const td = e.target.closest('td.toggle'); if (!td || !S.host) return;
@@ -607,3 +627,7 @@ function tickTimers() {
   }
 }
 setInterval(() => { if (!S || S.phase === 'lobby' || S.phase === 'end') return; renderOverlay(false); syncAudio(); tickTimers(); }, 200);
+
+// ── Décompte « bip bip bip » avant chaque question ou épreuve
+const cdUpdate = countdown({ parent: stage, onTick: n => (n ? sfx.bip : sfx.bipGo)() });
+setInterval(() => { if (S) cdUpdate(S); }, 50);

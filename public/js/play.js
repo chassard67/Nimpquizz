@@ -1,4 +1,4 @@
-import { $, esc, uid, connect, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake } from './common.js';
+import { $, esc, uid, connect, gameNow, dieHTML, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake, countdown, bmcSentence } from './common.js';
 
 const params = new URLSearchParams(location.search);
 const room = (params.get('room') || '').toUpperCase();
@@ -13,7 +13,7 @@ if (!/^[A-Z]{4}$/.test(room)) {
 }
 
 const pid = localStorage.getItem('nq_pid') || (() => { const k = uid(); localStorage.setItem('nq_pid', k); return k; })();
-let S = null, lastFeed = -1, screenKey = '', sheet = null, chosenColor = null, selOpt = null, tauntTo = 'all', tauntTab = 'mean', autoSent = '';
+let S = null, lastFeed = -1, screenKey = '', sheet = null, chosenColor = null, selOpt = null, tauntTo = 'all', tauntTab = 'mean', autoSent = '', bmcSel = [];
 
 const net = connect(room, () => ({ role: 'phone', pid }), {
   onState: st => { const first = !S; S = st; onState(first); },
@@ -70,7 +70,7 @@ function keyOf() {
   const k = [S.phase, t ? t.id : '-', S.turn, S.move && S.move.n, S.move && S.move.roll];
   if (!t) k.push(JSON.stringify(S.teams.map(x => [x.id, x.name, S.players[x.id]])));
   if (ch) k.push(ch.type, ch.stage, ch.cell, ch.target, ch.buzzer, (ch.excluded || []).length, ch.answers && t && ch.answers[t.id] ? 'A' : '', ch.votes && t && ch.votes[t.id] ? 'V' : '',
-    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', gameNow(S) >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && gameNow(S) >= ch.goAt ? 'G' : '');
+    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', gameNow(S) >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && gameNow(S) >= ch.goAt ? 'G' : '', ch.mine ? 'M' : '', ch.inGame ? 'I' : '');
   if (S.phase === 'end') k.push(JSON.stringify(S.ranking));
   return k.join('|');
 }
@@ -78,7 +78,7 @@ function keyOf() {
 function render(force) {
   const k = keyOf();
   if (!force && k === screenKey) return;
-  screenKey = k; selOpt = null;
+  screenKey = k; selOpt = null; bmcSel = [];
   const t = me();
   if (!t) return renderJoin();
   if (S.phase === 'lobby') return html(`<div class="center"><div class="big">🍻</div><h1>Vous êtes dans<br>${esc(t.name)}</h1>
@@ -243,6 +243,25 @@ function renderChallenge() {
   if (ch.kind === 'open') {
     if (ch.stage === 'write') {
       if (answered) return wait('Proposition envoyée. On espère que c\'est drôle.', '✍️');
+      if (ch.q.words) {
+        // Titre débile : un trou entre chaque mot, on écrit son mot dans UN seul trou
+        const w = ch.q.words;
+        return html(`<h2>Titre débile</h2><p class="msg">Glissez UN mot où vous voulez dans le titre.</p>
+          <div class="tslots">${w.map((x, i) => `<input class="slot" data-pos="${i}" maxlength="30" autocomplete="off" autocapitalize="sentences" aria-label="Mot avant « ${esc(x)} »" data-auto="titre"><span>${esc(x)}</span>`).join('')}<input class="slot" data-pos="${w.length}" maxlength="30" autocomplete="off" autocapitalize="sentences" aria-label="Mot à la fin" data-auto="titre"></div>
+          <div class="tpreview" id="tprev"></div>
+          <button class="btn" id="val" disabled>Envoyer ${timer}</button>`, () => {
+          const slots = [...main.querySelectorAll('.slot')];
+          const sync = () => {
+            const filled = slots.filter(x => x.value.trim());
+            slots.forEach(x => { x.disabled = filled.length > 0 && !filled.includes(x); x.size = Math.max(2, x.value.length + 1); });
+            const f = filled[0];
+            $('#tprev').innerHTML = f ? [...w.slice(0, Number(f.dataset.pos)).map(esc), `<mark>${esc(f.value.trim())}</mark>`, ...w.slice(Number(f.dataset.pos)).map(esc)].join(' ') : '<span class="muted">Touchez un trou pour écrire votre mot</span>';
+            $('#val').disabled = !f;
+          };
+          slots.forEach(x => x.oninput = sync); sync();
+          $('#val').onclick = () => submitAuto();
+        });
+      }
       return html(`<div class="qtext" style="color:var(--ink);font-size:20px">${esc(ch.q.q)}</div>${ch.q.sub ? `<p class="msg">${esc(ch.q.sub)}</p>` : ''}<label class="f">${ch.type === 'titredebile' ? 'Votre titre débile' : ch.type === 'expression' ? 'Votre expression' : 'Votre réponse la plus drôle'}
         <textarea id="txt" rows="4" maxlength="140" placeholder="Lâchez-vous…" data-auto="open"></textarea></label>
         <button class="btn" id="val">Envoyer ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
@@ -250,7 +269,8 @@ function renderChallenge() {
     if (ch.votes[t.id]) return wait('Vote enregistré. Vous avez du goût. Ou pas.', '🗳️');
     const others = Object.keys(ch.answers).filter(id => id !== t.id);
     if (!others.length) return wait('Personne d\'autre n\'a répondu, pas de vote pour vous.', '🤷');
-    return html(`<h1>Votez pour la meilleure</h1><p class="msg">${timer}</p><div class="opts">${others.map(id => `<button class="card" data-v="${id}">${esc(ch.answers[id].v)}</button>`).join('')}</div>`,
+    const txt = a => ch.q.words && a.w !== undefined ? [...ch.q.words.slice(0, a.ins).map(esc), `<mark>${esc(a.w)}</mark>`, ...ch.q.words.slice(a.ins).map(esc)].join(' ') : esc(a.v);
+    return html(`<h1>Votez pour la meilleure</h1><p class="msg">${timer}</p><div class="opts">${others.map(id => `<button class="card" data-v="${id}">${txt(ch.answers[id])}</button>`).join('')}</div>`,
       () => main.querySelectorAll('[data-v]').forEach(b => b.onclick = () => send({ t: 'vote', teamId: b.dataset.v })));
   }
   if (ch.kind === 'bac') {
@@ -260,11 +280,31 @@ function renderChallenge() {
       ${ch.cats.map((c, i) => `<label class="f">${esc(c)}<input data-bac="${i}" autocomplete="off" autocapitalize="words" data-auto="bac"></label>`).join('')}
       <button class="btn" id="val">Rendre la copie</button>`, () => { $('#val').onclick = () => submitAuto(); });
   }
-  if (ch.kind === 'famille') {
-    if (answered) return wait('Réponses envoyées. Le sondage va parler.', '📊');
-    return html(`<h2>Nous avons demandé à 100 personnes…</h2><div class="qtext" style="font-size:22px;color:var(--ink)">${esc(ch.q.q)}</div>
-      ${[0, 1, 2].map(i => `<input data-fam="${i}" autocomplete="off" placeholder="Réponse ${i + 1}" data-auto="famille">`).join('')}
-      <button class="btn" id="val">Envoyer ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
+  if (ch.kind === 'bmc') {
+    const black = ch.black.t, n = ch.black.n;
+    if (ch.stage === 'judge') {
+      return html(`<h1>Le maître du jeu choisit… 🃏</h1><p class="msg">${timer}</p><div class="opts">${(ch.entries || []).map(e => `<div class="bmc-black bmc-sm ${e.me ? 'mine' : ''}">${bmcSentence(black, e.parts)}${e.me ? '<small>← la vôtre</small>' : ''}</div>`).join('')}</div>`);
+    }
+    if (!ch.inGame) return wait('Arrivé en cours de route : pas de cartes pour celle-là. Profitez du spectacle 🍿', '🃏');
+    if (ch.mine) return html(`<div class="center"><div class="big">🃏</div><h1>Carte jouée !</h1><div class="bmc-black bmc-sm">${bmcSentence(black, ch.mine)}</div><p class="msg">On attend les autres… ${timer}</p></div>`);
+    const hand = S.bmcHand || [];
+    return html(`<div class="bmc-black bmc-sm" id="bmcPrev">${bmcSentence(black, [])}</div>
+      <p class="msg">${n > 1 ? `Touchez ${n} cartes, dans l'ordre des trous` : 'Touchez la carte qui complète le mieux'} · ${timer}</p>
+      <div class="hand">${hand.map(c => `<button class="bmc-white hc" data-c="${c.i}"><span class="ord"></span>${esc(c.t)}</button>`).join('')}</div>
+      <button class="btn" id="val" disabled>Jouer ${n > 1 ? 'ces cartes' : 'cette carte'}</button>`, () => {
+      const upd = () => {
+        main.querySelectorAll('.hc').forEach(b => { const k = bmcSel.indexOf(Number(b.dataset.c)); b.classList.toggle('sel', k >= 0); b.querySelector('.ord').textContent = n > 1 && k >= 0 ? k + 1 : ''; });
+        $('#bmcPrev').innerHTML = bmcSentence(black, bmcSel.map(i => (hand.find(c => c.i === i) || {}).t));
+        $('#val').disabled = bmcSel.length !== n;
+      };
+      main.querySelectorAll('.hc').forEach(b => b.onclick = () => {
+        const i = Number(b.dataset.c), k = bmcSel.indexOf(i);
+        if (k >= 0) bmcSel.splice(k, 1); else if (bmcSel.length < n) bmcSel.push(i); else bmcSel[n - 1] = i;
+        buzz(20); upd();
+      });
+      $('#val').onclick = () => submitAuto();
+      upd();
+    });
   }
   if (ch.kind === 'buzz10') {
     if (ch.taps[t.id] !== undefined) return wait(ch.taps[t.id] === -1 ? 'FAUX DÉPART. Bravo les champions.' : 'Enregistré ! Verdict sur la télé.', ch.taps[t.id] === -1 ? '🤦' : '⏱️');
@@ -293,9 +333,13 @@ function submitAuto() {
   const ch = S.ch; if (!ch) return;
   if (ch.kind === 'number' || (ch.q && ch.q.isNumber)) { const v = $('#num')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
   if (ch.kind === 'dcc') { const v = $('#cash')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
-  if (ch.kind === 'open') { const v = $('#txt')?.value.trim(); if (v) send({ t: 'answer', value: v }); }
+  if (ch.kind === 'open') {
+    const slot = [...main.querySelectorAll('.slot')].find(x => x.value.trim());
+    if (slot) return send({ t: 'answer', value: { pos: Number(slot.dataset.pos), word: slot.value.trim() } });
+    const v = $('#txt')?.value.trim(); if (v) send({ t: 'answer', value: v });
+  }
+  if (ch.kind === 'bmc' && ch.stage === 'write' && ch.black && bmcSel.length === ch.black.n) send({ t: 'bmc', cards: bmcSel });
   if (ch.kind === 'bac') send({ t: 'answer', value: [...main.querySelectorAll('[data-bac]')].map(i => i.value) });
-  if (ch.kind === 'famille') { const v = [...main.querySelectorAll('[data-fam]')].map(i => i.value).filter(Boolean); if (v.length) send({ t: 'answer', value: v }); }
 }
 
 // ── Révélation ───────────────────────────────────────────────
@@ -304,11 +348,12 @@ const QUIPS_ZERO = ['Zéro. Pointé. 🥚', 'Vos parents auraient honte.', 'Au m
 function renderReveal() {
   const t = me(), ch = S.ch;
   const g = (ch && ch.gains && ch.gains[t.id]) || 0;
-  const involved = ch && (ch.teamId === t.id || ch.target === t.id || (ch.participants || []).includes(t.id));
+  const involved = ch && (ch.teamId === t.id || ch.target === t.id || (ch.participants || []).includes(t.id) || (ch.kind === 'bmc' && (ch.entries || []).some(e => e.teamId === t.id)));
   if (g > 0) buzz([60, 40, 60, 40, 200]);
   const quip = g > 0 ? QUIPS_WIN[S.round % QUIPS_WIN.length] : g < 0 ? 'Aïe. Ça pique.' : involved ? QUIPS_ZERO[S.round % QUIPS_ZERO.length] : 'Pas concernés cette fois. Profitez du spectacle 🍿';
   html(`<div class="center"><div class="gain ${g > 0 ? 'pos' : g < 0 ? 'neg' : 'zero'}">${g > 0 ? '+' : involved ? '' : '·'}${involved || g ? g : ''}</div>
     <h1>${quip}</h1>
+    ${ch && ch.kind === 'bmc' && ch.entries && ch.entries[ch.winner] ? `<div class="bmc-black bmc-sm">${bmcSentence(ch.black.t, ch.entries[ch.winner].parts)}</div>` : ''}
     <p class="msg">${esc(ch && ch.summary || '')}</p><p class="msg">Suite sur la télé quand l'animateur aura fini de rire.</p></div>`);
 }
 
@@ -367,6 +412,10 @@ function renderSheet() {
   }
 }
 
+// ── Décompte avant chaque épreuve (visuel + vibration, le son vient de la télé)
+const cdUpdate = countdown({ onTick: n => buzz(n ? 40 : 160) });
+setInterval(() => { if (S) cdUpdate(S); }, 50);
+
 // ── Chronos, auto-envoi, changements d'écran liés au temps ───
 setInterval(() => {
   if (!S) return;
@@ -377,7 +426,8 @@ setInterval(() => {
   if (ap && S.ch && S.ch.kind === 'affiche') { const k = Math.min(4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue)); ap.textContent = `Répondez vite : ${5 - k} pt${k < 4 ? 's' : ''} maintenant`; }
   // envoi automatique de ce qui est tapé juste avant la fin du chrono
   const ch = S.ch, t = me();
-  if (S.phase === 'challenge' && ch && t && ch.deadline - now < 1500 && ch.answers && ch.answers[t.id] === undefined && main.querySelector('[data-auto]')) {
+  const pending = ch && t && ((ch.answers && ch.answers[t.id] === undefined && main.querySelector('[data-auto]')) || (ch.kind === 'bmc' && ch.stage === 'write' && !ch.mine && bmcSel.length));
+  if (S.phase === 'challenge' && pending && ch.deadline - now < 1500) {
     const tag = ch.type + ch.cell + (S.move && S.move.n);
     if (autoSent !== tag) { autoSent = tag; submitAuto(); }
   }

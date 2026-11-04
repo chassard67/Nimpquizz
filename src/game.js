@@ -2,14 +2,14 @@
 //  LE GRAND N'IMPORTE QUIZ — moteur de jeu (pur, sans réseau)
 //  L'état est un objet JSON. handle() applique un message, tick() gère les chronos.
 // ─────────────────────────────────────────────────────────────
-import { QCM, NUMBERS, OPEN, BAC, FAMILLE, CURSES, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS, DOUBLESENS, TITRES, INVENTE } from './content.js';
+import { QCM, NUMBERS, BAC, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS, DOUBLESENS, TITRES, INVENTE, BMC } from './content.js';
 
 // 32 cases : 10 en haut, 6 à droite, 10 en bas, 6 à gauche
 export const BOARD = [
-  'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_films', 'plusoumoins', 'millions', 'buzz10', 'pochette',
-  'paroles', 'malediction', 'burger', 'mensonge', 'bt_intemporel', 'video',
-  'famille', 'duel', 'affiche', 'bt_series', 'contrario', 'bac', 'envers', 'expression', 'culture', 'unenote',
-  'replique', 'sansreponse', 'instruments', 'expression', 'noix', 'titredebile'
+  'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_ecrans', 'plusoumoins', 'millions', 'buzz10', 'pochette',
+  'bmc', 'echange', 'burger', 'mensonge', 'bt_intemporel', 'video',
+  'culture', 'duel', 'affiche', 'bt_ecrans', 'contrario', 'bac', 'emojis', 'expression', 'culture', 'unenote',
+  'replique', 'bmc', 'instruments', 'expression', 'noix', 'titredebile'
 ];
 
 export const TYPES = {
@@ -27,23 +27,18 @@ export const TYPES = {
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
   plusoumoins:   { label: 'Plus ou moins', group: 'q', kind: 'number', rule: 'Donnez un nombre. L\'équipe la plus proche prend 2 pts, +1 si pile poil.' },
   expression:    { label: 'Donne-moi l\'expression', group: 'q', kind: 'open', rule: 'Chaque équipe propose son expression, puis vote pour la meilleure des autres équipes : 2 pts.' },
-  titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Ajoutez UN mot au titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
-  sansreponse:   { label: 'Sans réponse', group: 'q', kind: 'open', rule: 'Pas de bonne réponse : écrivez la plus drôle, puis votez. La plus votée prend 2 pts.' },
+  titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Glissez UN mot n\'importe où dans le titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
   bac:           { label: 'Le Bac', group: 'q', kind: 'bac', rule: 'Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d\'autre ne l\'a.' },
+  bmc:           { label: 'Blanc Manger Coco', group: 'cm', kind: 'bmc', rule: 'Complétez la carte noire avec une de vos cartes blanches. Le maître du jeu choisit la plus drôle : 2 pts pour l\'équipe du joueur.' },
   bt_actuel:     { label: 'BT Actuel', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts.' },
   bt_intemporel: { label: 'BT Intemporel', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts.' },
-  bt_series:     { label: 'BT Séries', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez le générique. 2 pts.' },
-  bt_films:      { label: 'BT Films', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez le film. 2 pts.' },
-  paroles:       { label: "N'oubliez pas les paroles", group: 'bt', kind: 'media', media: 'audio', rule: 'La musique coupe : chantez la suite. 2 pts.' },
-  envers:        { label: "À l'envers", group: 'bt', kind: 'media', media: 'audio', rule: 'Le morceau passe à l\'envers. Buzzez ! 2 pts.' },
+  bt_ecrans:     { label: 'BT Séries & films', group: 'bt', kind: 'media', media: 'audio', rule: 'Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts.' },
   replique:      { label: 'Réplique culte', group: 'bt', kind: 'media', media: 'audio', rule: 'Une réplique, trouvez le film. 2 pts.' },
   pochette:      { label: 'Pochette floutée', group: 'v', kind: 'media', media: 'image', rule: 'L\'image se défloute. Buzzez dès que vous savez. 2 pts.' },
   buzz10:        { label: 'Buzzer 10 s', group: 'bz', kind: 'buzz10', rule: 'Au GO, comptez 10 secondes dans votre tête et appuyez. Le plus proche prend 2 pts.' },
-  famille:       { label: 'Famille en or', group: 'bz', kind: 'famille', rule: 'Trouvez les réponses du sondage. 3 pts pour la 1re, 2 pour les 2e et 3e, 1 pour les autres.' },
   duel:          { label: 'Duel', group: 's', kind: 'duel', rule: 'Choisissez un adversaire. Le premier qui trouve gagne 3 pts.' },
   vol:           { label: 'Vol de points', group: 's', kind: 'target', rule: 'Choisissez une victime : vous lui volez 3 pts.' },
-  echange:       { label: 'Échange de place', group: 's', kind: 'target', rule: 'Choisissez une équipe : vous échangez vos places sur le plateau.' },
-  malediction:   { label: 'Malédiction', group: 's', kind: 'curse', rule: 'Le sort s\'abat sur vous.' }
+  echange:       { label: 'Échange de place', group: 's', kind: 'target', rule: 'Choisissez une équipe : vous échangez vos places sur le plateau.' }
 };
 
 export const JOKERS = {
@@ -59,10 +54,15 @@ export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#
 
 export const T = {
   grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
-  bac: 75000, review: 120000, famille: 45000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
+  bac: 75000, review: 120000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
   media: 45000, mediaAnswer: 15000, reveal: 120000,
-  mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000
+  mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
+  cd: 2200,                  // décompte « bip bip bip » (2 s) avant une question qui s'enchaîne
+  bmcWrite: 60000, bmcJudge: 120000
 };
+export const CD_MS = 2000;   // durée du décompte affiché avant chaque question ou épreuve
+export const BMC_HAND = 5;   // cartes blanches en main par joueur
+const BMC_PTS = 2;
 
 export const HOP_MS = 450;               // durée d'un saut de pion sur la télé
 export const ROLL_ANIM_MS = 2800;        // durée de l'animation du dé
@@ -76,8 +76,8 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hop: HOP_MS, roll: ROLL_ANIM_MS },
-  ladder: LADDER, dcc: DCC_PTS,
+  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
+  ladder: LADDER, dcc: DCC_PTS, bmcPts: BMC_PTS,
   cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
 
@@ -87,15 +87,45 @@ const POOLS = {
 };
 // Épreuves où l'on écrit puis l'on vote
 const OPEN_POOLS = {
-  sansreponse: OPEN.map(q => ({ q })),
   // les deux sortes de sujets en alternance
   expression: (() => {
     const a = DOUBLESENS.map(d => ({ q: `Donne-moi une phrase qui marche aussi bien à ${d.a} qu'à ${d.b}`, sub: d.ex ? `Exemple : ${d.ex}` : '' }));
     const b = INVENTE.map(d => ({ q: `Donne-moi une expression pour définir ${d.q}`, sub: d.ex ? `Exemple : ${d.ex}` : '' }));
     const out = []; for (let i = 0; i < Math.max(a.length, b.length); i++) { if (b[i]) out.push(b[i]); if (a[i]) out.push(a[i]); } return out;
   })(),
-  titredebile: TITRES.map(t => ({ q: `« ${t} »`, sub: 'Ajoutez UN seul mot pour le rendre débile. Ex. : Star Wars → Star Wars Zazat' }))
+  // le titre est découpé en mots : le joueur glisse son mot entre deux mots, au début ou à la fin
+  titredebile: TITRES.map(t => ({ q: `« ${t} »`, words: t.split(/\s+/).filter(Boolean), sub: 'Glissez UN seul mot où vous voulez. Ex. : Star Wars → Star Wars Zazat · Le Parrain → Le Parrain Charcutier' }))
 };
+
+// ─── Blanc Manger Coco ───────────────────────────────────────
+// Les mains (cartes blanches) sont gardées par joueur pour toute la partie : s.bmc.hands[pid] = [index de carte]
+const BLANK = /-{3,}/;
+const bmcBlanks = t => Math.max(1, String(t).split(BLANK).length - 1);
+const bmcOk = (s, card) => !card.nsfw || !!s.nsfw;
+function bmcState(s) { return (s.bmc = s.bmc || { hands: {}, played: [] }); }
+// Tire une carte blanche : d'abord une jamais jouée et dans aucune main, puis on remélange la défausse
+function bmcDraw(s, rng, mine = []) {
+  const st = bmcState(s);
+  const all = BMC.blanches.map((c, i) => i).filter(i => bmcOk(s, BMC.blanches[i]));
+  if (!all.length) return -1;
+  const inHands = new Set(Object.values(st.hands).flat());
+  let free = all.filter(i => !inHands.has(i) && !st.played.includes(i));
+  if (!free.length) { st.played = []; free = all.filter(i => !inHands.has(i)); }
+  if (!free.length) free = all.filter(i => !mine.includes(i)); // plus de joueurs que de cartes : on accepte les doublons
+  if (!free.length) free = all;
+  return free[Math.floor(rng() * free.length)];
+}
+// Complète la main d'un joueur à 5 cartes (et retire les cartes NSFW si le mode n'est plus actif)
+function bmcFill(s, pid, rng) {
+  const st = bmcState(s);
+  const hand = (st.hands[pid] || []).filter(i => BMC.blanches[i] && bmcOk(s, BMC.blanches[i]));
+  st.hands[pid] = hand;
+  for (let guard = 0; hand.length < BMC_HAND && guard < 20; guard++) {
+    const i = bmcDraw(s, rng, hand);
+    if (i < 0) break;
+    hand.push(i);
+  }
+}
 const CULTURE_ALL = { gen: QCM.culture, ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.q])) };
 
 // ─── utilitaires ─────────────────────────────────────────────
@@ -193,7 +223,8 @@ export function createGame(code, now) {
   return {
     v: 1, code, createdAt: now, hostKey: null, phase: 'lobby', durationMin: 120,
     teams: [], players: {}, turn: 0, round: 1, move: null, moveSeq: 0, ch: null,
-    used: {}, feed: [], seq: 0, startedAt: null, endAt: null, deadline: null, lastTaunt: {}
+    used: {}, feed: [], seq: 0, startedAt: null, endAt: null, deadline: null, lastTaunt: {},
+    nsfw: false, bmc: { hands: {}, played: [] }
   };
 }
 
@@ -292,12 +323,27 @@ function handleInner(s, msg, ctx) {
   if (t === 'mode') return chooseMode(s, myTeam, msg.mode, ctx, rng);
   if (t === 'theme') return chooseTheme(s, myTeam, Number(msg.i), ctx, rng);
   if (t === 'decide') return millionsDecide(s, myTeam, !!msg.go, ctx, rng);
+  if (t === 'bmc') return bmcPlay(s, ctx.pid, msg.cards, ctx, rng);
   return 'Message inconnu.';
 }
 
 function hostAction(s, msg, ctx, rng) {
   const a = msg.action;
   if (a === 'setDuration') { s.durationMin = Math.max(15, Math.min(300, Number(msg.min) || 120)); return null; }
+  // Option NSFW (téléphone du maître du jeu) : ajoute les cartes de cul, de religion et l'humour limite
+  if (a === 'setNsfw') {
+    const on = !!msg.on;
+    if (on === !!s.nsfw) return null;
+    s.nsfw = on;
+    const st = bmcState(s);
+    for (const pid of Object.keys(st.hands)) {
+      // en cours de partie, on remplace 2 cartes de chaque main pour que le changement se sente tout de suite
+      if (on) for (let k = 0; k < 2 && st.hands[pid].length; k++) st.played.push(...st.hands[pid].splice(Math.floor(rng() * st.hands[pid].length), 1));
+      bmcFill(s, pid, rng);
+    }
+    feed(s, 'info', s.nsfw ? '🔞 Mode NSFW activé : on ne répond plus de rien.' : '😇 Mode NSFW désactivé : retour aux cartes gentilles.');
+    return null;
+  }
   if (a === 'removeTeam') {
     if (s.phase !== 'lobby') return 'Impossible en cours de partie.';
     s.teams = s.teams.filter(x => x.id !== msg.teamId);
@@ -385,6 +431,14 @@ function hostAction(s, msg, ctx, rng) {
     ch.bonus = !!msg.bonus;
     judgeMedia(s, !!msg.ok, ctx, rng); return null;
   }
+  if (a === 'bmcPick') {
+    const ch = s.ch;
+    if (s.phase !== 'challenge' || !ch || ch.kind !== 'bmc' || ch.stage !== 'judge') return 'Pas de carte à choisir.';
+    const i = Number(msg.i);
+    if (!Number.isInteger(i) || !ch.entries[i]) return 'Carte inconnue.';
+    ch.winner = i;
+    resolve(s, ctx, rng); return null;
+  }
   if (a === 'mediaDone') {
     const ch = s.ch;
     if (s.phase !== 'challenge' || !ch || ch.stage !== 'video') return null;
@@ -431,10 +485,12 @@ const EDIT_LABEL = {
   goto: m => `envoi direct sur la case ${m.cell}`,
   pick: (m, s) => `cible choisie : ${tn(s, m.teamId)}`,
   theme: () => 'thème choisi par le maître du jeu',
-  decide: m => (m.go ? 'on continue (Millionnaire)' : 'on s\'arrête (Millionnaire)')
+  decide: m => (m.go ? 'on continue (Millionnaire)' : 'on s\'arrête (Millionnaire)'),
+  bmcPick: () => 'carte la plus drôle choisie',
+  setNsfw: m => `mode NSFW ${m.on ? 'activé' : 'désactivé'}`
 };
 const ARMED = { double: 'Points ×2', shield: 'Bouclier', halve: 'Points ÷2 (malédiction)' };
-const STAGE_LBL = { mode: 'choix duo/carré/cash', q: 'question', pick: 'choix de la cible', theme: 'choix du thème', video: 'vidéo', write: 'écriture', vote: 'vote', review: 'correction', play: 'écoute', answer: 'réponse au buzz', ready: 'prêts', running: 'compte', decide: 'on continue ?' };
+const STAGE_LBL = { mode: 'choix duo/carré/cash', q: 'question', pick: 'choix de la cible', theme: 'choix du thème', video: 'vidéo', write: 'écriture', vote: 'vote', review: 'correction', play: 'écoute', answer: 'réponse au buzz', ready: 'prêts', running: 'compte', decide: 'on continue ?', judge: 'choix de la plus drôle' };
 
 // État sans l'historique ni le fil d'actu (ce qu'on restaure)
 function snap(s) {
@@ -796,19 +852,22 @@ function startCell(s, type, ctx, rng, gains = {}) {
     const letter = BAC.letters[Math.floor(rng() * BAC.letters.length)];
     const cats = [...BAC.cats].sort(() => rng() - 0.5).slice(0, 5);
     s.ch = { ...base, letter, cats, stage: 'write', participants: all, answers: {}, valid: {}, deadline: now + T.grace + T.bac };
-  } else if (meta.kind === 'famille') {
-    const i = pickIndex(s, type, FAMILLE.length, rng);
-    const f = FAMILLE[i];
-    s.ch = { ...base, q: { q: f.q, r: f.r.map(x => ({ ...x })) }, participants: all, answers: {}, deadline: now + T.grace + T.famille };
+  } else if (meta.kind === 'bmc') {
+    // carte noire tirée parmi celles autorisées (gentilles, ou toutes en mode NSFW)
+    const pool = BMC.noires.filter(c => bmcOk(s, c));
+    const black = pool[pickIndex(s, 'bmc' + (s.nsfw ? 'X' : 'N'), pool.length, rng)];
+    // joueurs : ceux qui sont connectés (ou tous les inscrits si on ne sait pas)
+    const online = Array.isArray(ctx.online) ? ctx.online : null;
+    const pids = Object.keys(s.players).filter(p => !online || online.includes(p));
+    for (const p of pids) bmcFill(s, p, rng);
+    s.ch = { ...base, black: { t: black.t, n: bmcBlanks(black.t) }, stage: 'write', players: pids, picks: {}, deadline: now + T.grace + T.bmcWrite };
+    if (!pids.length) { s.ch.entries = []; return toReveal(s, ctx, 'Personne n\'a de cartes en main (aucun joueur connecté). On passe.'); }
   } else if (meta.kind === 'buzz10') {
     const go = now + T.grace + T.buzzReady;
     s.ch = { ...base, stage: 'ready', goAt: go, participants: all, taps: {}, deadline: go + T.buzzMax };
   } else if (meta.kind === 'duel' || meta.kind === 'target') {
     if (!others(s, tm.id).length) { s.ch = base; return toReveal(s, ctx, 'Pas d\'adversaire à cette table (mode test) : on passe. Allez, au suivant.'); }
     s.ch = { ...base, stage: 'pick', target: null, deadline: now + T.grace + T.pick };
-  } else if (meta.kind === 'curse') {
-    s.ch = base;
-    return applyCurse(s, tm, ctx, rng);
   }
   s.phase = 'challenge';
   s.deadline = s.ch.deadline;
@@ -855,17 +914,22 @@ function answer(s, tm, value, ctx, rng) {
     ch.answers[tm.id] = { v };
   } else if (ch.kind === 'open') {
     if (ch.stage !== 'write') return 'Trop tard pour écrire, place au vote.';
-    const v = clampText(value, 140);
-    if (!v) return 'Écrivez quelque chose, même une bêtise.';
-    ch.answers[tm.id] = { v };
+    if (ch.q.words && value && typeof value === 'object') {
+      // Titre débile : { pos, word } = le mot glissé à la position pos (0 = avant le premier mot)
+      const words = ch.q.words, pos = Number(value.pos);
+      const w = clampText(value.word, 30);
+      if (!w) return 'Écrivez votre mot dans un des trous.';
+      if (!Number.isInteger(pos) || pos < 0 || pos > words.length) return 'Position invalide.';
+      ch.answers[tm.id] = { v: [...words.slice(0, pos), w, ...words.slice(pos)].join(' '), ins: pos, w };
+    } else {
+      const v = clampText(value, 140);
+      if (!v) return 'Écrivez quelque chose, même une bêtise.';
+      ch.answers[tm.id] = { v };
+    }
   } else if (ch.kind === 'bac') {
     if (ch.stage !== 'write') return 'Trop tard, stylos posés !';
     const arr = Array.isArray(value) ? value : [];
     ch.answers[tm.id] = { v: ch.cats.map((_, i) => clampText(arr[i], 40)) };
-  } else if (ch.kind === 'famille') {
-    const arr = (Array.isArray(value) ? value : [value]).map(x => clampText(x, 40)).filter(Boolean).slice(0, 3);
-    if (!arr.length) return 'Donnez au moins une réponse.';
-    ch.answers[tm.id] = { v: arr };
   } else {
     return 'On ne répond pas comme ça à cette épreuve.';
   }
@@ -907,6 +971,38 @@ function vote(s, tm, target, ctx, rng) {
   return null;
 }
 
+// ─── Blanc Manger Coco : chacun joue ses cartes, puis le maître du jeu choisit ───
+function bmcPlay(s, pid, cards, ctx, rng) {
+  const ch = s.ch;
+  if (s.phase !== 'challenge' || !ch || ch.kind !== 'bmc') return 'Pas de Blanc Manger Coco en cours.';
+  if (ch.stage !== 'write') return 'Trop tard, le maître du jeu est déjà en train de choisir.';
+  if (ctx.now < ch.startsAt) return 'Attendez que la carte noire s\'affiche !';
+  if (!ch.players.includes(pid)) return 'Vous n\'avez pas de cartes pour celle-là (arrivé en cours de route ?).';
+  if (ch.picks[pid]) return 'Vous avez déjà joué.';
+  const hand = bmcState(s).hands[pid] || [];
+  const arr = (Array.isArray(cards) ? cards : [cards]).map(Number);
+  if (arr.length !== ch.black.n) return ch.black.n > 1 ? `Il faut ${ch.black.n} cartes, dans l'ordre.` : 'Choisissez une carte.';
+  if (new Set(arr).size !== arr.length || !arr.every(i => hand.includes(i))) return 'Ces cartes ne sont pas dans votre main.';
+  ch.picks[pid] = arr;
+  // les cartes jouées partent à la défausse, la main est complétée à 5
+  const st = bmcState(s);
+  st.hands[pid] = hand.filter(i => !arr.includes(i));
+  st.played.push(...arr);
+  bmcFill(s, pid, rng);
+  if (ch.players.every(p => ch.picks[p] || !s.players[p])) bmcToJudge(s, ctx, rng);
+  return null;
+}
+function bmcToJudge(s, ctx, rng = Math.random) {
+  const ch = s.ch;
+  const entries = Object.entries(ch.picks).filter(([pid]) => s.players[pid]).map(([pid, arr]) => ({
+    pid, teamId: s.players[pid].teamId, name: s.players[pid].name || '', parts: arr.map(i => BMC.blanches[i].t)
+  }));
+  for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [entries[i], entries[j]] = [entries[j], entries[i]]; }
+  ch.entries = entries;
+  if (!entries.length) return toReveal(s, ctx, 'Personne n\'a joué de carte. Un grand moment de solitude.');
+  ch.stage = 'judge'; ch.deadline = ctx.now + T.bmcJudge; s.deadline = ch.deadline;
+}
+
 // ─── Duo, carré ou cash ──────────────────────────────────────
 function chooseMode(s, tm, mode, ctx, rng) {
   const ch = s.ch;
@@ -927,7 +1023,7 @@ function dccToQuestion(s, ctx, rng) {
       ch.duo[id] = rng() < 0.5 ? pair : pair.reverse();
     }
   }
-  ch.stage = 'q'; ch.startsAt = ctx.now; ch.deadline = ctx.now + T.qcm; s.deadline = ch.deadline;
+  ch.stage = 'q'; ch.startsAt = ctx.now + T.cd; ch.deadline = ch.startsAt + T.qcm; s.deadline = ch.deadline;
 }
 
 // ─── Burger Quiz et vidéo culte : plusieurs questions à la suite ───
@@ -951,7 +1047,7 @@ function startSeriesQ(s, i, ctx) {
   if (!ch.qs || i >= ch.qs.length) return toRevealSeries(s, ctx);
   ch.i = i; ch.q = ch.qs[i]; ch.stage = 'q';
   ch.participants = s.teams.map(x => x.id); ch.answers = {}; ch.fifty = {};
-  ch.startsAt = ctx.now + (i ? 1200 : T.grace);
+  ch.startsAt = ctx.now + (i ? T.cd : T.grace);
   ch.deadline = ch.startsAt + (ch.q.n !== undefined ? T.number : T.series); s.deadline = ch.deadline;
 }
 function closeSeriesQ(s, ctx) {
@@ -1000,7 +1096,7 @@ function millionsDecide(s, tm, go, ctx) {
   if (ch.teamId !== tm.id) return 'Ce n\'est pas votre partie.';
   if (!go) return millionsEnd(s, ctx, 'stop'), null;
   ch.q = ch.ladder[ch.level]; ch.answers = {}; ch.fifty = {}; ch.stage = 'q';
-  ch.startsAt = ctx.now + 1000; ch.deadline = ch.startsAt + T.millions; s.deadline = ch.deadline;
+  ch.startsAt = ctx.now + T.cd; ch.deadline = ch.startsAt + T.millions; s.deadline = ch.deadline;
   return null;
 }
 function millionsEnd(s, ctx, why) {
@@ -1080,33 +1176,6 @@ function doPick(s, target, ctx, rng) {
     const a = tm.pos; tm.pos = target.pos; target.pos = a;
     return toReveal(s, ctx, `${tm.name} et ${target.name} échangent leurs places. Chacun chez l'autre !`);
   }
-}
-
-// ─── malédictions ────────────────────────────────────────────
-function applyCurse(s, tm, ctx, rng) {
-  const total = CURSES.reduce((a, c) => a + (c.w || 1), 0);
-  let r = rng() * total, c = CURSES[0];
-  for (const x of CURSES) { r -= (x.w || 1); if (r < 0) { c = x; break; } }
-  const fx = c.fx || {};
-  const notes = [];
-  if (fx.move) { tm.pos = Math.max(0, tm.pos + fx.move); notes.push(`Retour case ${tm.pos}.`); }
-  if (fx.home) tm.pos = 0;
-  if (fx.points) { const b = tm.score; tm.score = Math.max(0, tm.score + fx.points); s.ch.gains[tm.id] = (s.ch.gains[tm.id] || 0) + tm.score - b; }
-  if (fx.skip) tm.skip += fx.skip;
-  if (fx.halve) tm.armed.halve = true;
-  if (fx.robin) {
-    const poor = others(s, tm.id).sort((a, b) => a.score - b.score)[0];
-    if (poor) { const k = transfer(s, tm, poor, fx.robin); notes.push(`${poor.name} récupère ${k} pt${k > 1 ? 's' : ''}.`); }
-  }
-  if (fx.loseJoker) {
-    const avail = Object.keys(tm.jokers).filter(k => tm.jokers[k]);
-    if (avail.length) { const k = avail[Math.floor(rng() * avail.length)]; tm.jokers[k] = 0; notes.push(`Joker perdu : ${JOKERS[k].label}.`); }
-    else notes.push('Ah, vous n\'aviez plus de joker. Bien joué, en fait.');
-  }
-  if (c.turns) tm.curses.push({ t: c.t, left: c.turns + 1 });
-  s.ch.curse = c.t;
-  feed(s, 'curse', `💀 ${tm.name} : ${c.t}`);
-  toReveal(s, ctx, [c.t, ...notes].join(' '));
 }
 
 // ─── jokers ──────────────────────────────────────────────────
@@ -1227,22 +1296,13 @@ function resolve(s, ctx, rng) {
       if (pts) award(s, team(s, id), pts);
     }
     summary = 'Les copies sont corrigées. Certaines sont gênantes.';
-  } else if (ch.kind === 'famille') {
-    const RANK = [3, 2, 2, 1, 1, 1];
-    ch.matches = {};
-    ch.found = ch.q.r.map(() => []);
-    for (const [id, a] of Object.entries(ch.answers)) {
-      ch.matches[id] = [];
-      let pts = 0;
-      for (const txt of a.v) {
-        const n = ' ' + norm(txt) + ' ';
-        const idx = ch.q.r.findIndex((r, i) => !ch.found[i].includes(id) && r.k.some(k => n.includes(k.length <= 3 ? ' ' + k + ' ' : k)));
-        ch.matches[id].push({ text: txt, idx });
-        if (idx >= 0) { ch.found[idx].push(id); pts += RANK[idx] || 1; }
-      }
-      if (pts) award(s, team(s, id), pts);
-    }
-    summary = 'Révélation du sondage (100 % scientifique, 0 % vérifié).';
+  } else if (ch.kind === 'bmc') {
+    const w = ch.entries && ch.entries[ch.winner];
+    const wt = w && team(s, w.teamId);
+    if (wt) {
+      award(s, wt, BMC_PTS);
+      summary = `La plus drôle : ${w.name ? w.name + ' (' + wt.name + ')' : wt.name}. Le jury a parlé, et le jury a mauvais goût. 🃏`;
+    } else summary = 'Le maître du jeu n\'a pas su choisir. Personne ne marque, tout le monde est vexé.';
   } else if (ch.kind === 'buzz10') {
     const valid = Object.entries(ch.taps).filter(([, ms]) => ms >= 0).map(([id, ms]) => [id, Math.abs(ms - 10000)]);
     if (valid.length) {
@@ -1321,6 +1381,7 @@ function timeout(s, ctx, rng) {
   if (ch.kind === 'media' && ch.stage === 'answer') return judgeMedia(s, false, ctx, rng);
   if (ch.kind === 'open' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
   if (ch.kind === 'bac' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
+  if (ch.kind === 'bmc' && ch.stage === 'write') return bmcToJudge(s, ctx, rng);
   return resolve(s, ctx, rng);
 }
 
@@ -1330,17 +1391,18 @@ export function nextDeadline(s) {
   return s.deadline;
 }
 
-export function tick(s, now, rng = Math.random) {
+// online = joueurs connectés (facultatif, sert à savoir qui reçoit des cartes au Blanc Manger Coco)
+export function tick(s, now, rng = Math.random, online) {
   const d0 = nextDeadline(s);
   if (!d0 || now < d0) return false;
   const before = snap(s), k0 = stageKey(s), label0 = describe(s);
-  const changed = tickInner(s, now, rng);
+  const changed = tickInner(s, now, rng, online);
   if (changed && stageKey(s) !== k0 && s.phase !== 'lobby') pushHist(s, label0, before, now);
   return changed;
 }
-function tickInner(s, now, rng) {
+function tickInner(s, now, rng, online) {
   s._now = now;
-  const ctx = { now };
+  const ctx = { now, online };
   let changed = false;
   for (let i = 0; i < 6; i++) {
     const d = nextDeadline(s);
@@ -1384,6 +1446,26 @@ export function view(s, viewer = {}, extra = {}) {
     }
     if (ch.taps) for (const id of Object.keys(ch.taps)) if (!me || me.teamId !== id) ch.taps[id] = ch.taps[id] === -1 ? -1 : 0;
     if (ch.fifty && me) ch.fifty = { [me.teamId]: ch.fifty[me.teamId] }; else if (ch.fifty) ch.fifty = {};
+  }
+  // Blanc Manger Coco : chacun ne voit que sa main ; les identifiants des joueurs ne sortent jamais ;
+  // les cartes jouées restent anonymes jusqu'à la révélation (même pour le maître du jeu, c'est plus juste)
+  delete v.bmc;
+  const hand = viewer.pid && s.bmc && s.bmc.hands[viewer.pid];
+  if (me && hand) v.bmcHand = hand.map(i => ({ i, t: BMC.blanches[i].t, nsfw: !!BMC.blanches[i].nsfw }));
+  if (ch && ch.kind === 'bmc') {
+    const sc = s.ch;
+    ch.total = (sc.players || []).length;
+    ch.done = (sc.players || []).filter(p => sc.picks[p]).length;
+    ch.teamDone = {};
+    for (const p of sc.players || []) {
+      const tid = s.players[p] && s.players[p].teamId; if (!tid) continue;
+      const r = ch.teamDone[tid] = ch.teamDone[tid] || [0, 0];
+      r[1]++; if (sc.picks[p]) r[0]++;
+    }
+    ch.inGame = !!(viewer.pid && (sc.players || []).includes(viewer.pid));
+    ch.mine = viewer.pid && sc.picks[viewer.pid] ? sc.picks[viewer.pid].map(i => BMC.blanches[i].t) : null;
+    delete ch.players; delete ch.picks;
+    if (ch.entries) ch.entries = ch.entries.map(e => s.phase === 'reveal' ? { teamId: e.teamId, name: e.name, parts: e.parts, me: e.pid === viewer.pid } : { parts: e.parts, me: e.pid === viewer.pid });
   }
   v.now = s._now || Date.now();
   v.meta = META;

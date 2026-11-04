@@ -262,3 +262,25 @@ body.gmon #hostbar { display: none; }
 #pauseTv b { font-family: var(--display); font-weight: 400; font-size: 200px; color: var(--yellow); line-height: 1; animation: pulse 1.6s infinite; }
 #pauseTv span { font-size: 40px; color: var(--muted); }
 #gmBadge { position: absolute; right: 24px; bottom: 16px; z-index: 30; font-size: 18px; color: var(--muted); background: var(--panel); padding: 8px 14px; border-radius: 999px; }
+
+/* ── Décompte (télé) */
+#countdown .cd-box span { font-size: 56px; }
+#countdown .cd-box b { font-size: 380px; text-shadow: 16px 16px 0 var(--bt); }
+#countdown .cd-box.go b { text-shadow: 16px 16px 0 var(--q); }
+
+/* ── Titre débile : le titre avec un trou entre chaque mot */
+.title-slots { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; font-family: var(--display); font-size: 64px; line-height: 1.1; }
+.title-slots i { width: 54px; height: 64px; border: 5px dashed var(--yellow); border-radius: 12px; display: inline-block; }
+.card mark { background: var(--yellow); color: var(--bg); border-radius: 8px; padding: 0 .2em; }
+
+/* ── Blanc Manger Coco */
+.bmc-big { font-size: 58px; padding: 44px 50px; transform: rotate(-1deg); max-width: 1180px; }
+.bmc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.bmc-grid.many { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.bmc-entry { position: relative; font-size: 30px; padding: 24px 26px; transform: rotate(var(--r, 0deg)); }
+.bmc-grid.many .bmc-entry { font-size: 22px; padding: 18px 20px; }
+.bmc-entry .no { position: absolute; top: -16px; left: -12px; background: var(--yellow); color: var(--bg); font-family: var(--display); font-size: 24px; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.bmc-entry .by { display: flex; align-items: center; gap: 8px; font-size: 20px; margin-top: 12px; color: var(--muted); }
+.bmc-entry.win { outline: 6px solid var(--yellow); box-shadow: 10px 10px 0 var(--yellow); }
+.bmc-entry.toggle { cursor: pointer; }
+body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow); }

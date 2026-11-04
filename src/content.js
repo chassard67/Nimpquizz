@@ -119,28 +119,6 @@ export const NUMBERS = [
   { q: "Combien de cases sur un échiquier ?", a: 64, u: "cases", f: "64. Si vous vous êtes trompés, retournez aux petits chevaux." }
 ];
 
-// ─── QUESTIONS SANS RÉPONSE : les équipes inventent, puis votent pour la meilleure
-export const OPEN = [
-  "Que dit un poisson rouge quand il fait le tour de son bocal pour la 3 000e fois ?",
-  "Si les chats avaient un compte en banque, ils dépenseraient tout dans quoi ?",
-  "Quel est le pire nom possible pour un chirurgien esthétique ?",
-  "Qu'est-ce que Dieu a dit en voyant l'ornithorynque pour la première fois ?",
-  "Quel serait le slogan publicitaire de la gastro ?",
-  "Où partent vraiment les chaussettes qui disparaissent dans la machine à laver ?",
-  "Quel est le dernier message que ton frigo enverrait avant de mourir ?",
-  "Quelle est la pire phrase à dire juste après « Oui, je le veux » ?",
-  "Que se passe-t-il vraiment dans un bureau de poste entre 12 h et 14 h ?",
-  "Quel est le titre du prochain film X inspiré d'un Disney ?",
-  "Si ton slip pouvait parler, il dirait quoi de toi ?",
-  "Quel est le pire métier pour quelqu'un qui pète tout le temps ?",
-  "Comment s'appelait le 8e nain, celui que Disney a viré ?",
-  "Que faisaient vraiment les dinosaures le samedi soir ?",
-  "Quelle est la vraie raison pour laquelle le Titanic a coulé ?",
-  "Quel est le mot de passe Wi-Fi de Dieu ?",
-  "Qu'est-ce qu'on trouve dans l'historique de navigation du Père Noël ?",
-  "Quelle serait la pire application de rencontre possible ?"
-];
-
 // ─── LE BAC : une lettre + 5 catégories tirées au sort
 export const BAC = {
   letters: "ABCDFGLMNPRST",
@@ -152,113 +130,6 @@ export const BAC = {
     "Un plat qui fait péter", "Un truc qu'on trouve sous un lit", "Une raison de divorcer"
   ]
 };
-
-// ─── UNE FAMILLE EN OR : sondage 100 % bidon. k = mots-clés reconnus (sans accents, minuscules)
-export const FAMILLE = [
-  { q: "Une excuse pour ne pas aller à une soirée", r: [
-    { l: "Je suis malade", k: ["malade", "fievre", "creve", "grippe", "covid", "gastro", "rhume"], p: 32 },
-    { l: "Je suis fatigué", k: ["fatigue", "epuise", "dormir", "sommeil"], p: 24 },
-    { l: "Les enfants", k: ["enfant", "gosse", "babysit", "nounou", "gamin", "mome"], p: 18 },
-    { l: "Le boulot", k: ["boulot", "taf", "travail", "bosse", "travaille"], p: 14 },
-    { l: "Panne de voiture", k: ["panne", "voiture", "bagnole", "train", "greve"], p: 8 } ] },
-  { q: "Un truc qu'on fait en cachette aux toilettes", r: [
-    { l: "Le téléphone", k: ["tel", "portable", "scroll", "insta", "tiktok", "telephone", "reseaux"], p: 38 },
-    { l: "Lire", k: ["lire", "lecture", "journal", "magazine", "bouquin", "livre"], p: 20 },
-    { l: "Fumer", k: ["fumer", "cigarette", "clope", "joint"], p: 15 },
-    { l: "Pleurer", k: ["pleur"], p: 12 },
-    { l: "Manger", k: ["manger", "chips", "chocolat", "bouffer", "grignot"], p: 9 },
-    { l: "Dormir", k: ["dormir", "sieste", "dort"], p: 6 } ] },
-  { q: "Un truc dans le sac à main d'une mamie", r: [
-    { l: "Mouchoirs", k: ["mouchoir", "kleenex"], p: 30 },
-    { l: "Bonbons", k: ["bonbon", "werther", "pastille", "caramel", "reglisse"], p: 25 },
-    { l: "Porte-monnaie", k: ["monnaie", "argent", "piece", "portefeuille", "sous"], p: 18 },
-    { l: "Lunettes", k: ["lunette"], p: 12 },
-    { l: "Photos des petits-enfants", k: ["photo", "petit"], p: 8 },
-    { l: "Parapluie", k: ["parapluie", "pluie"], p: 7 } ] },
-  { q: "Une raison de se faire larguer", r: [
-    { l: "Tromper", k: ["tromp", "infidel", "cocu", "amant", "maitresse"], p: 35 },
-    { l: "Ronfler", k: ["ronfl"], p: 18 },
-    { l: "Être jaloux", k: ["jalou"], p: 15 },
-    { l: "Être radin", k: ["radin", "pingre", "avare"], p: 12 },
-    { l: "La belle-mère", k: ["belle mere", "bellemere", "maman", "mere"], p: 10 },
-    { l: "Les chaussettes qui traînent", k: ["chaussette", "linge", "bordel", "menage", "sale"], p: 10 } ] },
-  { q: "Un truc qui pue", r: [
-    { l: "Les pieds", k: ["pied", "chaussette", "basket"], p: 34 },
-    { l: "La poubelle", k: ["poubelle", "ordure", "dechet"], p: 22 },
-    { l: "Un pet", k: ["pet", "prout", "flatulence", "gaz", "caca"], p: 18 },
-    { l: "Le fromage", k: ["fromage", "maroilles", "munster", "camembert"], p: 14 },
-    { l: "Un œuf pourri", k: ["oeuf", "pourri"], p: 7 },
-    { l: "Ton ex", k: ["ex"], p: 5 } ] },
-  { q: "Un truc qu'on fait en se levant le matin", r: [
-    { l: "Aller aux toilettes", k: ["pipi", "wc", "toilette", "caca"], p: 30 },
-    { l: "Boire un café", k: ["cafe", "the", "petit dej", "dejeuner"], p: 25 },
-    { l: "Prendre une douche", k: ["douche", "laver"], p: 18 },
-    { l: "Regarder son téléphone", k: ["tel", "portable", "insta", "telephone", "mail"], p: 15 },
-    { l: "Se brosser les dents", k: ["dent", "brosse"], p: 7 },
-    { l: "Râler", k: ["raler", "ronchon", "grogn", "rale"], p: 5 } ] },
-  { q: "Un mot qu'on crie quand on se cogne le petit orteil", r: [
-    { l: "Putain", k: ["putain", "ptain", "pute"], p: 40 },
-    { l: "Merde", k: ["merde", "mrd"], p: 25 },
-    { l: "Aïe / Ouille", k: ["aie", "ouille", "ouch", "ouai"], p: 15 },
-    { l: "Bordel", k: ["bordel"], p: 10 },
-    { l: "Ta mère", k: ["ta mere"], p: 6 },
-    { l: "Nom de Dieu", k: ["dieu"], p: 4 } ] },
-  { q: "Une raison de ne pas aller au sport", r: [
-    { l: "La fatigue", k: ["fatigue", "creve", "epuise"], p: 33 },
-    { l: "La flemme", k: ["flemme", "paresse", "envie", "motivation"], p: 28 },
-    { l: "La météo", k: ["pluie", "froid", "temps", "meteo", "chaud", "neige"], p: 15 },
-    { l: "Les courbatures", k: ["courbature", "mal", "douleur", "blessure", "blesse"], p: 12 },
-    { l: "L'apéro", k: ["apero", "biere", "boire", "vin", "alcool"], p: 7 },
-    { l: "Netflix", k: ["netflix", "serie", "film", "tele"], p: 5 } ] },
-  { q: "Un truc qu'on dit à un repas de famille et qu'on regrette", r: [
-    { l: "La politique", k: ["politique", "vote", "election", "macron", "gauche", "droite"], p: 30 },
-    { l: "L'héritage", k: ["heritage", "testament", "notaire"], p: 20 },
-    { l: "« T'as grossi »", k: ["gross", "poids", "gros", "kilo"], p: 18 },
-    { l: "« C'est pour quand le bébé ? »", k: ["bebe", "enfant", "mariage", "marier", "gosse"], p: 15 },
-    { l: "Parler de son ex", k: ["ex"], p: 10 },
-    { l: "La religion", k: ["religion", "dieu", "eglise"], p: 7 } ] },
-  { q: "Un animal qu'on ne veut pas trouver dans son lit", r: [
-    { l: "Une araignée", k: ["araignee", "araigne", "mygale"], p: 35 },
-    { l: "Un serpent", k: ["serpent", "vipere", "couleuvre"], p: 25 },
-    { l: "Un rat", k: ["rat", "souris", "rongeur"], p: 18 },
-    { l: "Un cafard", k: ["cafard", "blatte", "cancrelat"], p: 12 },
-    { l: "Une punaise de lit", k: ["punaise"], p: 6 },
-    { l: "Sa belle-mère", k: ["belle mere", "bellemere"], p: 4 } ] },
-  { q: "Un truc qui dure moins longtemps que prévu", r: [
-    { l: "Les vacances", k: ["vacance", "conge", "weekend", "week end"], p: 30 },
-    { l: "Le couple", k: ["couple", "amour", "relation", "mariage"], p: 22 },
-    { l: "Le salaire", k: ["salaire", "paye", "paie", "argent", "fric", "thune"], p: 20 },
-    { l: "La batterie du téléphone", k: ["batterie", "tel", "portable", "pile"], p: 12 },
-    { l: "Le régime", k: ["regime", "diete"], p: 10 },
-    { l: "Monsieur au lit", k: ["lit", "sexe", "performance", "calin", "rapport", "orgasme"], p: 6 } ] },
-  { q: "Un truc qu'on achète en soldes et qu'on ne porte jamais", r: [
-    { l: "Des chaussures", k: ["chaussure", "talon", "basket", "botte", "escarpin"], p: 30 },
-    { l: "Une robe", k: ["robe"], p: 22 },
-    { l: "Un jean", k: ["jean", "pantalon"], p: 15 },
-    { l: "Un pull", k: ["pull", "gilet"], p: 13 },
-    { l: "Un maillot de bain", k: ["maillot"], p: 10 },
-    { l: "Un manteau", k: ["manteau", "veste", "blouson"], p: 10 } ] }
-];
-
-// ─── MALÉDICTIONS : fx = effet automatique, turns = durée de l'effet texte, w = poids du tirage
-export const CURSES = [
-  { t: "Reculez de 3 cases. Le karma, ça pique.", fx: { move: -3 }, w: 3 },
-  { t: "Perdez 2 points. Cadeau de la maison.", fx: { points: -2 }, w: 3 },
-  { t: "Vous passez votre prochain tour. Allez réfléchir à vos actes.", fx: { skip: 1 }, w: 2 },
-  { t: "Vos prochains points gagnés sont divisés par deux. Comme votre QI.", fx: { halve: true }, w: 2 },
-  { t: "Donnez 2 points à l'équipe dernière au classement. Robin des Bois, version nulle.", fx: { robin: 2 }, w: 2 },
-  { t: "Vous perdez un joker au hasard. Fallait l'utiliser, radins.", fx: { loseJoker: true }, w: 2 },
-  { t: "Retour à la case Départ. Oui, c'est violent. Non, on ne s'excuse pas.", fx: { home: true }, w: 1 },
-  { t: "Pendant 2 tours, toutes vos réponses à voix haute se font en chantant.", fx: {}, turns: 2, w: 2 },
-  { t: "Pendant 2 tours, interdiction de dire « oui » et « non ». Chaque faute = un gage choisi par les autres.", fx: {}, turns: 2, w: 2 },
-  { t: "Jusqu'à votre prochain tour, toute l'équipe parle avec l'accent marseillais. Peuchère.", fx: {}, turns: 1, w: 2 },
-  { t: "Jusqu'à la fin de la partie, vous appelez l'animateur « Votre Majesté ».", fx: {}, turns: 99, w: 1 },
-  { t: "Votre capitaine fait 10 squats. Maintenant. Tout le monde regarde.", fx: {}, turns: 0, w: 2 },
-  { t: "Pendant 2 tours, toute l'équipe parle d'elle-même à la troisième personne.", fx: {}, turns: 2, w: 2 },
-  { t: "Racontez votre pire honte, sinon −3 points. L'assemblée juge.", fx: {}, turns: 0, w: 2 },
-  { t: "Un joueur de votre équipe imite un animal choisi par les autres pendant 30 secondes.", fx: {}, turns: 0, w: 2 },
-  { t: "Vous devez complimenter sincèrement l'équipe en tête. Ça fait mal, hein ?", fx: {}, turns: 0, w: 2 }
-];
 
 // ─── VANNES À ENVOYER D'UN TÉLÉPHONE À L'AUTRE
 export const TAUNTS = {
@@ -561,13 +432,12 @@ export const MEDIA = {
     { src: null, answer: "Africa — Toto", bonus: "1982" },
     { src: null, answer: "Sweet Dreams — Eurythmics", bonus: "1983" }
   ],
-  bt_series: [
+  // Blind test séries & films : génériques de séries et musiques de films mélangés
+  bt_ecrans: [
     { src: "/media/friends.mp3", answer: "Friends" }, { src: null, answer: "Game of Thrones" }, { src: null, answer: "Les Simpson" },
     { src: null, answer: "Stranger Things" }, { src: null, answer: "Dallas" }, { src: null, answer: "X-Files" },
     { src: null, answer: "Kaamelott" }, { src: null, answer: "Plus belle la vie" }, { src: null, answer: "Mission impossible (la série)" },
-    { src: null, answer: "Les Mystères de l'Ouest" }
-  ],
-  bt_films: [
+    { src: null, answer: "Les Mystères de l'Ouest" },
     { src: null, answer: "Star Wars", bonus: "1977 · George Lucas" },
     { src: null, answer: "Les Dents de la mer", bonus: "1975 · Steven Spielberg" },
     { src: null, answer: "Titanic", bonus: "1997 · James Cameron" },
@@ -579,25 +449,6 @@ export const MEDIA = {
     { src: null, answer: "Le Fabuleux Destin d'Amélie Poulain", bonus: "2001 · Jean-Pierre Jeunet" },
     { src: null, answer: "SOS Fantômes", bonus: "1984 · Ivan Reitman" },
     { src: "/media/jurassic-park.mp3", answer: "Jurassic Park", bonus: "1993 · Steven Spielberg" }
-  ],
-  paroles: [
-    { src: null, answer: "Les Lacs du Connemara — Michel Sardou" },
-    { src: null, answer: "Alexandrie Alexandra — Claude François" },
-    { src: null, answer: "Femme Like U — K-Maro" },
-    { src: null, answer: "L'Aventurier — Indochine" },
-    { src: null, answer: "Les Démons de minuit — Images" },
-    { src: null, answer: "Je l'aime à mourir — Francis Cabrel" },
-    { src: null, answer: "Foule sentimentale — Alain Souchon" },
-    { src: null, answer: "Tous les mêmes — Stromae" },
-    { src: null, answer: "Ça plane pour moi — Plastic Bertrand" },
-    { src: null, answer: "Les Sardines — Patrick Sébastien" }
-  ],
-  envers: [
-    { src: null, answer: "Gangnam Style — PSY" }, { src: null, answer: "Macarena — Los del Río" },
-    { src: null, answer: "YMCA — Village People" }, { src: null, answer: "La Danse des canards — J.J. Lionel" },
-    { src: null, answer: "Billie Jean — Michael Jackson" }, { src: null, answer: "Despacito — Luis Fonsi" },
-    { src: null, answer: "Wannabe — Spice Girls" }, { src: null, answer: "Happy — Pharrell Williams" },
-    { src: null, answer: "Asereje (The Ketchup Song) — Las Ketchup" }, { src: null, answer: "Mambo No. 5 — Lou Bega" }
   ],
   replique: [
     { src: null, answer: "Les Visiteurs", bonus: "1993 · Jean-Marie Poiré" },
@@ -661,5 +512,126 @@ export const MEDIA = {
       { q: "BONUS : en quelle année ?", o: ["2016", "2017", "2014", "2019"], a: 0 } ] },
     { src: null, start: 0, stop: null, label: "Jean-Claude Van Damme est « aware »", qs: [
       { q: "Quel mot anglais JCVD utilise-t-il pour dire qu'il est conscient ?", o: ["Aware", "Ready", "Awake", "Alive"], a: 0 } ] }
+  ]
+};
+
+// ─── BLANC MANGER COCO : on tire une carte noire, chacun complète les « ---- » avec une de ses cartes blanches,
+//  le maître du jeu choisit la plus drôle. nsfw: true = carte réservée au mode NSFW (coché sur le téléphone du MJ).
+//  Une carte noire peut avoir deux « ---- » : on joue alors deux cartes blanches, dans l'ordre.
+export const BMC = {
+  noires: [
+    { t: "----, quand je te vois faire, je me dis que c'est tout un art !" },
+    { t: "Bon, ----, on l'a tous fait un jour ou l'autre." },
+    { t: "---- c'est comme tout, il y a la théorie et la pratique." },
+    { t: "----, c'est bien. ----, c'est mieux." },
+    { t: "---- a marqué à coup sûr le premier jour du reste de ma vie !" },
+    { t: "----, mes beaux-parents dominent allègrement le classement, et de loin !" },
+    { t: "---- et ---- : ou comment allier l'utile à l'agréable !" },
+    { t: "Oui mon enfant, Dieu pardonne tout, même ----.", nsfw: true },
+    { t: "Au fond, ce qui manquait le plus à Auschwitz, c'était ----.", nsfw: true },
+    { t: "Entre ---- et une vie de famille, il faut choisir !" },
+    { t: "Papa, c'est quoi ---- ?" },
+    { t: "Homme, 45 ans, célibataire, bonne situation, cherche ----." },
+    { t: "---- c'est un détail à l'échelle de l'humanité.", nsfw: true },
+    { t: "---- c'est un concept… On pourrait essayer !" },
+    { t: "Le seul truc qui m'embête vraiment avec la mondialisation, c'est ----." },
+    { t: "Petit SMS pour vous souhaiter beaucoup de bonheur et ---- pour cette nouvelle année !" },
+    { t: "Sans ----, la fête est moins folle !" },
+    { t: "C'est quoi déjà ton truc qui marche bien contre les maux de gorge ? ----" },
+    { t: "Le meilleur moyen pour lutter contre la surnatalité en Afrique, c'est ----.", nsfw: true },
+    { t: "Les plus belles histoires commencent toujours par ----." },
+    { t: "Le truc le plus romantique à la Saint-Valentin, c'est ----." },
+    { t: "J'ai une technique simple pour réveiller en douceur un nourrisson : ----." },
+    { t: "---- : l'essayer, c'est l'adopter !" }
+  ],
+  blanches: [
+    { t: "Le cannabis thérapeutique" },
+    { t: "Un petit désaccord sur la notion de consentement", nsfw: true },
+    { t: "Les punks à chien" },
+    { t: "La sodomie pour les nuls", nsfw: true },
+    { t: "Marc Dutroux", nsfw: true },
+    { t: "Xavier Dupont de Ligonnès", nsfw: true },
+    { t: "Le petit Grégory", nsfw: true },
+    { t: "Se taper la nounou", nsfw: true },
+    { t: "La ceinture de chasteté", nsfw: true },
+    { t: "Saga Africa, ambiance de la brousse" },
+    { t: "Enfiler sa burka", nsfw: true },
+    { t: "Mettre bébé dans la cave", nsfw: true },
+    { t: "Les boulettes de viande Ikea" },
+    { t: "Traiter les femmes avec respect" },
+    { t: "Commencer avec le doigt, finir avec le bras", nsfw: true },
+    { t: "La France" },
+    { t: "Marion Maréchal-Le Pen" },
+    { t: "Se faire choper en matant un porno", nsfw: true },
+    { t: "Une faciale", nsfw: true },
+    { t: "Une tournante", nsfw: true },
+    { t: "Le concours national du lancer de nain", nsfw: true },
+    { t: "Ta maman" },
+    { t: "La première bière du vendredi soir" },
+    { t: "Ta sœur, qui est aussi ta mère", nsfw: true },
+    { t: "Le point G", nsfw: true },
+    { t: "Égorger le mouton dans la baignoire", nsfw: true },
+    { t: "Un sextoy pour chien", nsfw: true },
+    { t: "Un plan cul fiable", nsfw: true },
+    { t: "Un plan cul pas fiable", nsfw: true },
+    { t: "Les rudiments de l'hygiène corporelle" },
+    { t: "100 balles et un Mars" },
+    { t: "Éjaculer après 14 secondes", nsfw: true },
+    { t: "Relire Mein Kampf", nsfw: true },
+    { t: "Les femmes qui font le poirier après l'amour", nsfw: true },
+    { t: "Être en galère de PQ" },
+    { t: "Le plus-que-parfait du subjonctif" },
+    { t: "La mentalité parisienne" },
+    { t: "L'acharnement thérapeutique" },
+    { t: "L'archevêque de Paris", nsfw: true },
+    { t: "Le passage du salaire brut au net" },
+    { t: "Le bilan" },
+    { t: "Vladimir Poutine" },
+    { t: "Les filles de joie", nsfw: true },
+    { t: "Le cassoulet William Saurin" },
+    { t: "La roulette russe", nsfw: true },
+    { t: "Un 18 trous" },
+    { t: "Un test de grossesse" },
+    { t: "Une poire de lavement" },
+    { t: "Perdre 1,2 kg quand on pèse 123 kg" },
+    { t: "Le string qui dépasse" },
+    { t: "Les francs-maçons" },
+    { t: "Une thèse sur les modèles prédictifs de la susceptibilité des cellules souches pluripotentes" },
+    { t: "Le connard qui ne récure jamais les toilettes" },
+    { t: "La cuite du siècle" },
+    { t: "La droite décomplexée" },
+    { t: "Les bienfaits de la colonisation", nsfw: true },
+    { t: "Une histoire d'amour avec un curé de 62 ans", nsfw: true },
+    { t: "La beauf attitude" },
+    { t: "Un couscous aux lardons", nsfw: true },
+    { t: "Vivelle Dop Fixation Béton" },
+    { t: "Tenir la chandelle" },
+    { t: "Les activités extraconjugales" },
+    { t: "La France d'en bas" },
+    { t: "Les sans-dents" },
+    { t: "L'amant de ma femme" },
+    { t: "Céline Dion" },
+    { t: "Le plombier polonais" },
+    { t: "Être VIP au Macumba" },
+    { t: "Aménager un espace pour les roux" },
+    { t: "L'égalité homme-femme" },
+    { t: "La légitime défense" },
+    { t: "2 heures sous la douche" },
+    // cartes gentilles ajoutées
+    { t: "Tonton qui raconte sa blague pour la 40e fois" },
+    { t: "Une chaussette orpheline" },
+    { t: "Le Tupperware jamais rendu" },
+    { t: "Les chaussettes dans les sandales" },
+    { t: "Une raclette en plein mois d'août" },
+    { t: "Réussir son créneau du premier coup" },
+    { t: "La sieste de 14 h" },
+    { t: "Le dessert de belle-maman" },
+    { t: "Le voisin qui tond la pelouse le dimanche à 8 h" },
+    { t: "La Macarena au mariage du cousin" },
+    { t: "Le dernier carré de chocolat" },
+    { t: "Rater la dernière marche de l'escalier" },
+    { t: "Le mot de passe « 123456 »" },
+    { t: "Marcher dans une flaque en chaussettes" },
+    { t: "Mettre son pull à l'envers toute la journée" }
   ]
 };

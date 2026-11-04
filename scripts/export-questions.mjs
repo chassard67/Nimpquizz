@@ -47,29 +47,30 @@ C.BURGER.forEach(b => { out.push(`\n### ${b.taré ? '🤪 ' : ''}${b.name}`); b.
 h(`Qui veut gagner des millions (${C.MILLIONS.reduce((a, l) => a + l.length, 0)} questions sur 5 niveaux)`); out.push(`_${TYPES.millions.rule}_`);
 C.MILLIONS.forEach((lvl, k) => { out.push(`\n### Niveau ${k + 1} — ${LADDER[k]} pt${LADDER[k] > 1 ? 's' : ''}`); lvl.forEach((q, i) => qcm(q, i + 1)); });
 
-h(`Sans réponse possible (${count(C.OPEN)})`); out.push(`_${TYPES.sansreponse.rule}_\n`); C.OPEN.forEach((q, i) => out.push(`${i + 1}. ${q}`));
-
 h(`Donne-moi l'expression (${C.DOUBLESENS.length + C.INVENTE.length} sujets, 2 cases)`); out.push(`_${TYPES.expression.rule}_ Les deux sortes de sujets tombent en alternance.\n`);
 out.push('### Une phrase qui marche dans les deux situations');
 C.DOUBLESENS.forEach((d, i) => out.push(`${i + 1}. À **${d.a}** et à **${d.b}**${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
 out.push('\n### Une expression pour définir…');
 C.INVENTE.forEach((d, i) => out.push(`${i + 1}. ${d.q}${d.ex ? ` _(ex. ${d.ex})_` : ''}`));
-h(`Titre débile (${count(C.TITRES)})`); out.push(`_${TYPES.titredebile.rule}_ Ex. : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes.\n`);
+h(`Titre débile (${count(C.TITRES)})`); out.push(`_${TYPES.titredebile.rule}_ Le téléphone affiche le titre avec un trou entre chaque mot (et au début, et à la fin) : on écrit son mot dans un seul trou. Ex. : Star Wars → Star Wars Zazat · Le Parrain → Le Parrain Charcutier.\n`);
 C.TITRES.forEach((t, i) => out.push(`${i + 1}. ${t}`));
 
-h(`Une famille en or (${count(C.FAMILLE)})`); out.push(`_${TYPES.famille.rule}_\n`);
-C.FAMILLE.forEach((f, i) => out.push(`${i + 1}. **${f.q}** : ${f.r.map((r, k) => `${k + 1}. ${r.l} (${r.p})`).join(' · ')}`));
+const nsfw = arr => arr.filter(c => c.nsfw).length;
+h(`Blanc Manger Coco (${C.BMC.noires.length} cartes noires, ${C.BMC.blanches.length} cartes blanches)`);
+out.push(`_${TYPES.bmc.rule}_ Chaque joueur garde 5 cartes blanches en main toute la partie (une carte jouée est remplacée). 🔞 = carte distribuée seulement si le maître du jeu active le mode NSFW.\n`);
+out.push(`### Cartes noires (${C.BMC.noires.length - nsfw(C.BMC.noires)} gentilles, ${nsfw(C.BMC.noires)} 🔞)`);
+C.BMC.noires.forEach((c, i) => out.push(`${i + 1}. ${c.nsfw ? '🔞 ' : ''}${c.t.replace(/-{3,}/g, '____')}`));
+out.push(`\n### Cartes blanches (${C.BMC.blanches.length - nsfw(C.BMC.blanches)} gentilles, ${nsfw(C.BMC.blanches)} 🔞)`);
+C.BMC.blanches.forEach((c, i) => out.push(`${i + 1}. ${c.nsfw ? '🔞 ' : ''}${c.t}`));
 
 h('Le Bac'); out.push(`_${TYPES.bac.rule}_\n\nLettres : ${C.BAC.letters.split('').join(' ')}\n\nCatégories (5 tirées au hasard) : ${C.BAC.cats.join(' · ')}`);
-
-h(`Malédictions (${C.CURSES.length})`); C.CURSES.forEach((c, i) => out.push(`${i + 1}. ${c.t}`));
 
 const M = C.MEDIA;
 const ready = arr => arr.filter(x => x.src || x.img || (x.layers && x.layers.length)).length;
 h('Cases média : à préparer');
 out.push(`Les réponses sont prêtes. Il ne manque que les fichiers : déposez-les dans \`public/media/\` et remplacez \`src: null\` par le chemin dans \`src/content.js\`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.\n`);
 out.push(`Bonus +1 : sur les blind tests, l'animateur peut valider « ✓ + bonus » si l'équipe donne en plus l'année ou le réalisateur (indiqués entre parenthèses).\n`);
-for (const [key, title, field] of [['bt_actuel', 'Blind test — musique actuelle'], ['bt_intemporel', 'Blind test — musique intemporelle'], ['bt_series', 'Blind test — génériques de séries'], ['bt_films', 'Blind test — musiques de films'], ['paroles', "N'oubliez pas les paroles"], ['envers', "Musique à l'envers"], ['replique', 'Réplique culte'], ['pochette', 'Pochette floutée (images)'], ['unenote', 'Une seule note'], ['instruments', 'Couche par couche (pistes séparées)']]) {
+for (const [key, title, field] of [['bt_actuel', 'Blind test — musique actuelle'], ['bt_intemporel', 'Blind test — musique intemporelle'], ['bt_ecrans', 'Blind test — séries & films (génériques et musiques de films)'], ['replique', 'Réplique culte'], ['pochette', 'Pochette floutée (images)'], ['unenote', 'Une seule note'], ['instruments', 'Couche par couche (pistes séparées)']]) {
   out.push(`\n### ${title} — ${ready(M[key])}/${M[key].length} fichiers prêts`);
   out.push(`_${TYPES[key].rule}_\n`);
   M[key].forEach((x, i) => out.push(`${i + 1}. ${x.answer}${x.bonus ? ` _(bonus : ${x.bonus})_` : ''}${x.src || x.img || (x.layers && x.layers.length) ? ' ✅' : ''}`));

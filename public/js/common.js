@@ -129,5 +129,43 @@ export const sfx = {
   fail: () => [392, 370, 349, 330].forEach((f, i) => tone(f, i === 3 ? .7 : .3, 'sawtooth', .12, i * .3, i === 3 ? 260 : undefined)),
   ding: () => tone(880, .4, 'sine', .2),
   curse: () => { tone(110, 1.2, 'sawtooth', .2, 0, 55); tone(116, 1.2, 'square', .1, 0, 58); },
-  taunt: () => { tone(600, .08, 'square', .1); tone(900, .1, 'square', .1, .09); }
+  taunt: () => { tone(600, .08, 'square', .1); tone(900, .1, 'square', .1, .09); },
+  bip: () => tone(880, .16, 'sine', .3),
+  bipGo: () => { tone(1320, .45, 'sine', .32); tone(660, .45, 'triangle', .12); }
 };
+
+// ── Décompte « bip bip bip » de 2 s avant chaque question ou épreuve
+// Pas de décompte quand on choisit (cible, menu, duo/carré/cash…), ni pour le Buzzer 10 s qui a le sien.
+const NO_CD = new Set(['pick', 'theme', 'mode', 'ready', 'running', 'decide', 'judge', 'answer', 'review', 'vote']);
+export function countdown({ parent = document.body, onTick } = {}) {
+  const el = document.createElement('div');
+  el.id = 'countdown'; el.className = 'hidden';
+  parent.appendChild(el);
+  let key = '', armed = false, last = null, shown = '';
+  return S => {
+    const ch = S && S.ch;
+    const ok = S && !S.paused && S.phase === 'challenge' && ch && ch.startsAt && ch.kind !== 'buzz10' && !(ch.stage && NO_CD.has(ch.stage));
+    const total = (S && S.meta && S.meta.timers.cd) || 2000;
+    const left = ok ? ch.startsAt - gameNow(S) : null;
+    const k = ok ? `${ch.cell}|${ch.startsAt}|${ch.stage || ''}|${ch.i ?? ''}|${ch.level ?? ''}` : '';
+    // on ne lance le décompte que s'il peut se jouer en entier (pas après un « relancer l'extrait », ni en arrivant en retard)
+    if (k !== key) { key = k; armed = ok && left >= total * 0.75; last = null; }
+    let html = '';
+    if (armed && left !== null && left > 0 && left <= total) {
+      const n = Math.ceil(left / 1000);
+      html = `<div class="cd-box"><span>${esc(ch.fallback ? 'Culture G' : ch.label || '')}</span><b class="n${n}">${n}</b></div>`;
+      if (last !== n) { last = n; onTick && onTick(n); }
+    } else if (armed && left !== null && left <= 0 && left > -650) {
+      html = `<div class="cd-box go"><span>${esc(ch.fallback ? 'Culture G' : ch.label || '')}</span><b>GO !</b></div>`;
+      if (last !== 0) { last = 0; onTick && onTick(0); }
+    }
+    if (html !== shown) { shown = html; el.innerHTML = html; el.classList.toggle('hidden', !html); }
+  };
+}
+
+// ── Blanc Manger Coco : la carte noire complétée, les morceaux de cartes blanches en surbrillance
+export function bmcSentence(black, parts) {
+  const bits = String(black || '').split(/-{3,}/);
+  if (bits.length === 1) bits.push('');
+  return bits.map((b, i) => esc(b) + (i < bits.length - 1 ? (parts && parts[i] ? `<mark>${esc(parts[i])}</mark>` : '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>') : '')).join('');
+}

@@ -38,8 +38,9 @@ L'ordi reste branché à la télé (plateau, son, vidéos) ; le maître du jeu p
 
 Ce que voit et peut faire le maître du jeu :
 
-- **En cours** : la **réponse attendue** (bonne réponse, bonus, toutes les questions d'un Burger Quiz / Millionnaire, sondage complet de la Famille en or, lettre du Bac…), la réponse de chaque équipe en direct, et les actions du moment : lancer le dé à la place d'une équipe ou **choisir sa valeur**, relancer le dé, corriger la case d'arrivée, envoyer sur n'importe quelle case, donner la main à une autre équipe, valider ✓ / ✓ + bonus / ✗ un buzz, **annuler un buzz**, **relancer l'extrait** (ou reflouter la pochette), choisir la cible / le menu / « je continue » à la place d'une équipe, corriger le Bac, accepter ou refuser un cash, **effacer la réponse** d'une équipe (elle peut répondre à nouveau), **écarter ou réintégrer** une équipe de l'épreuve, +15 s / +30 s, révéler maintenant, passer, **rejouer l'épreuve** (même question, réponses et points remis à zéro) ou **autre question** sur la même case, ±1 pt après la révélation.
+- **En cours** : la **réponse attendue** (bonne réponse, bonus, toutes les questions d'un Burger Quiz / Millionnaire, carte noire du Blanc Manger Coco, lettre du Bac…), la réponse de chaque équipe en direct, et les actions du moment : lancer le dé à la place d'une équipe ou **choisir sa valeur**, relancer le dé, corriger la case d'arrivée, envoyer sur n'importe quelle case, donner la main à une autre équipe, valider ✓ / ✓ + bonus / ✗ un buzz, **annuler un buzz**, **relancer l'extrait** (ou reflouter la pochette), choisir la cible / le menu / « je continue » à la place d'une équipe, corriger le Bac, accepter ou refuser un cash, **choisir la carte la plus drôle** au Blanc Manger Coco, **effacer la réponse** d'une équipe (elle peut répondre à nouveau), **écarter ou réintégrer** une équipe de l'épreuve, +15 s / +30 s, révéler maintenant, passer, **rejouer l'épreuve** (même question, réponses et points remis à zéro) ou **autre question** sur la même case, ±1 pt après la révélation.
 - **Équipes** : score (±1 ou valeur exacte), position du pion (sans déclencher la case), tours à passer (bloquer / débloquer), jokers (rendre / retirer), effets (×2, bouclier, ÷2), malédictions, renommer, joueurs (changer d'équipe, retirer).
+- **🔞 Mode NSFW** (salle d'attente et onglet Partie) : désactivé par défaut, seules les cartes gentilles du Blanc Manger Coco sont distribuées. Activé, il ajoute les cartes de cul, sur la religion et l'humour limite (en cours de partie, 2 cartes de chaque main sont remplacées pour que ça se sente tout de suite). Le désactiver retire ces cartes des mains.
 - **Partie** : ⏸ **pause** (chronos arrêtés, son coupé, téléphones bloqués), ±15 min de jeu, fin de partie, journal.
 - **Historique** : chaque étape (lancer, épreuve, révélation) et chaque correction crée un point de retour. **↩️ Annuler la dernière étape** ou **Revenir ici** remet scores, pions, dé et épreuve comme ils étaient (25 derniers points gardés).
 
@@ -47,12 +48,19 @@ Ce que voit et peut faire le maître du jeu :
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
 
-- **Questions** : Culture G en *Duo, carré ou cash* ×2 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis · Grand mensonge · A contrario · Plus ou moins · Sans réponse, Donne-moi l'expression ×2 et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
-- **Blind tests** : actuel, intemporel, séries, films · N'oubliez pas les paroles · À l'envers · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
+- **Questions** : Culture G en *Duo, carré ou cash* ×3 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis ×2 · Grand mensonge · A contrario · Plus ou moins · Donne-moi l'expression ×2 et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
+- **Cartes** : Blanc Manger Coco ×2 (voir plus bas)
+- **Blind tests** : actuel, intemporel, séries & films ×2 · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
 - **Visuel** : Pochette floutée · Affiche mystère (indices un par un) · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
-- **Buzzers** : Buzzer 10 s · Famille en or
-- **Pièges** : Duel · Vol de points · Malédiction
+- **Buzzer** : Buzzer 10 s
+- **Pièges** : Duel · Vol de points · Échange de place
 - Repasser par **Départ** rapporte 2 pts. Sur les blind tests, l'animateur peut valider « ✓ + bonus » (+1) si l'équipe donne aussi l'année ou le réalisateur.
+
+**Décompte** : avant chaque question ou épreuve, la télé affiche un décompte de 2 secondes avec « bip, bip, BIP » (les téléphones l'affichent aussi et vibrent). Pas de décompte quand on choisit une cible, un menu ou duo/carré/cash, ni sur le Buzzer 10 s qui a le sien.
+
+**Titre débile** : le téléphone affiche le titre avec un trou entre chaque mot (et au début, et à la fin). On écrit son mot dans UN seul trou ; la télé montre ensuite les titres avec le mot ajouté en surbrillance.
+
+**Blanc Manger Coco** : chaque joueur a 5 cartes blanches sur son téléphone, gardées toute la partie (une carte jouée est remplacée). Une carte noire est tirée ; chacun choisit la carte qui la complète (deux cartes, dans l'ordre, si la carte noire a deux trous). Les propositions s'affichent sur la télé, anonymes, et le maître du jeu choisit la plus drôle : 2 pts pour l'équipe du joueur. Sans maître du jeu, l'animateur clique sur la carte gagnante à la télé. Les cartes sont dans `src/content.js` (`BMC`), `nsfw: true` = réservée au mode NSFW.
 
 **Jokers** (une fois chacun, depuis le téléphone) : Points ×2, Relancer le dé, Voleur (3 pts), Blocage (l'équipe saute son tour), Bouclier, 50/50.
 

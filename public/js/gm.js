@@ -2,7 +2,7 @@
 //  Téléphone du MAÎTRE DU JEU : voit les réponses, corrige, annule, met en pause.
 //  Accès : /gm?room=ABCD + code secret (variable GM_PIN côté Cloudflare, 1234 par défaut).
 // ─────────────────────────────────────────────────────────────
-import { $, esc, connect, gameNow, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake } from './common.js';
+import { $, esc, connect, gameNow, toast, fmtSec, LETTERS, OPT_COLORS, keepAwake, bmcSentence } from './common.js';
 
 const params = new URLSearchParams(location.search);
 let room = (params.get('room') || localStorage.getItem('nq_gm_room') || '').toUpperCase();
@@ -90,6 +90,11 @@ document.addEventListener('change', e => {
   s.value = '';
 });
 
+// Option NSFW : cartes de cul, religion et humour limite au Blanc Manger Coco
+const nsfwBlock = () => `<div class="p ${S.nsfw ? 'warn' : ''}"><h3>🔞 Mode NSFW <span class="r">${S.nsfw ? 'ACTIVÉ' : 'désactivé'}</span></h3>
+    <div class="sub">${S.nsfw ? 'Toutes les cartes du Blanc Manger Coco sont en jeu : cul, religion, humour limite. Vous êtes prévenus.' : 'Par défaut, seules les cartes gentilles sont distribuées. Cochez pour ajouter les cartes de cul, sur la religion et l\'humour limite.'}</div>
+    ${S.nsfw ? B('😇 Revenir aux cartes gentilles', 'setNsfw', { on: false }) : B('🔞 Activer le mode NSFW', 'setNsfw', { on: true }, 'ko', { confirm: 'Activer le mode NSFW ? Les cartes de cul, sur la religion et l\'humour limite seront distribuées.' })}</div>`;
+
 // ── Rendu ────────────────────────────────────────────────────
 function render(force) {
   if (!S) return;
@@ -146,7 +151,7 @@ function lobbyHTML() {
     ${S.teams.map(t => `<div class="trow">${dot(t.color)}<div class="nm">${esc(t.name)}<span>${S.players[t.id] || 0} joueur(s)</span></div>${B('✕', 'removeTeam', { teamId: t.id }, 'sm', { confirm: `Retirer ${t.name} ?` })}</div>`).join('') || '<div class="sub">Aucune équipe pour l\'instant.</div>'}
     <div class="line"><label>Durée</label>${sel('setDuration', 'min', [[45, '45 min'], [60, '1 h'], [90, '1 h 30'], [120, '2 h'], [150, '2 h 30'], [180, '3 h']], {}, `${S.durationMin} min`)}</div>
     ${B(S.teams.length >= 2 ? '🚀 Lancer la partie' : S.teams.length === 1 ? '🧪 Lancer en mode test (1 équipe)' : '🧪 Tester le plateau (sans équipe)', 'start', {}, 'y big')}
-  </div>`;
+  </div>${nsfwBlock()}`;
 }
 function endHTML() {
   const r = (S.ranking || []).map(id => team(id));
@@ -208,8 +213,13 @@ function expectHTML(ch) {
       <h3>Les marches suivantes</h3>${(ch.ladder || []).map((q, i) => i > ch.level ? `<div class="sub">${i + 1}. ${esc(q.q)} → <b>${esc(q.o[q.a])}</b></div>` : '').join('')}`;
   } else if (k === 'number') {
     body = `<div class="q">${esc(ch.q.q)}</div><div class="ans">${Number(ch.q.a).toLocaleString('fr-FR')} ${esc(ch.q.u || '')}</div>${ch.q.f ? `<div class="fun">💡 ${esc(ch.q.f)}</div>` : ''}`;
-  } else if (k === 'famille') {
-    body = `<div class="q">${esc(ch.q.q)}</div><div class="olist">${ch.q.r.map((r, i) => `<div class="good"><span class="L" style="background:var(--ink)">${i + 1}</span><span style="flex:1">${esc(r.l)}</span><b>${r.p}</b></div>`).join('')}</div>`;
+  } else if (k === 'bmc') {
+    const black = ch.black ? ch.black.t : '';
+    body = `<div class="bmc-black bmc-sm">${bmcSentence(black, [])}</div>`;
+    if (S.phase === 'challenge' && ch.stage === 'write') body += `<div class="sub">${ch.done} / ${ch.total} joueur(s) ont joué. ${S.nsfw ? '🔞 Mode NSFW' : '😇 Cartes gentilles'}</div>`;
+    else if (ch.entries && ch.entries.length) body += `<div class="olist">${ch.entries.map((e, i) => { const t = e.teamId ? team(e.teamId) : null;
+      return `<div class="${S.phase === 'reveal' && ch.winner === i ? 'good' : ''}" style="flex-direction:column;align-items:stretch"><span>${i + 1}. ${bmcSentence(black, e.parts)}</span>${t ? `<small>${dot(t.color)} ${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${ch.winner === i ? ' 🏆' : ''}</small>` : ''}</div>`; }).join('')}</div>`;
+    return `<div class="p expect"><h3>🃏 Carte noire</h3>${body}</div>`;
   } else if (k === 'bac') {
     body = `<div class="ans">Lettre ${esc(ch.letter)}</div><div class="sub">${ch.cats.map(esc).join(' · ')}</div>`;
   } else if (k === 'open') {
@@ -235,13 +245,13 @@ function teamStatus(ch, id) {
     if (ch.winner === id) return ['✓ a trouvé', 'good'];
     return ['peut buzzer', ''];
   }
+  if (k === 'bmc') { const r = (ch.teamDone || {})[id]; return r ? [`🃏 ${r[0]} / ${r[1]} joueur(s) ont joué`, r[0] === r[1] ? 'good' : ''] : ['aucun joueur connecté', '']; }
   if (k === 'buzz10') { const ms = ch.taps[id]; return ms === undefined ? ['n\'a pas buzzé', ''] : ms < 0 ? ['faux départ', 'bad'] : [`${(ms / 1000).toFixed(2).replace('.', ',')} s`, Math.abs(ms - 10000) <= 1000 ? 'good' : '']; }
   if (k === 'dcc' && ch.stage === 'mode') return [ch.modes[id] ? `a choisi ${ch.modes[id]}` : 'choisit…', ''];
   if (ch.participants && !ch.participants.includes(id)) return ['ne joue pas', ''];
   if (a === undefined) return [ch.kind === 'open' && ch.stage === 'vote' ? (ch.votes[id] ? `a voté pour ${team(ch.votes[id]).name}` : 'vote…') : '… pas encore répondu', ''];
   if (k === 'open') return [`« ${a.v} »${ch.stage === 'vote' ? (ch.votes[id] ? ` · a voté pour ${team(ch.votes[id]).name}` : ' · vote…') : ''}`, ''];
   if (k === 'bac') return [a.v.map(w => w || '—').join(' · '), ''];
-  if (k === 'famille') return [a.v.join(' · '), ''];
   if (k === 'number' || (ch.q && ch.q.n !== undefined)) {
     const target = k === 'number' ? ch.q.a : ch.q.n;
     return [`${Number(a.v).toLocaleString('fr-FR')} (écart ${Math.abs(a.v - target).toLocaleString('fr-FR')})`, a.v === target ? 'good' : ''];
@@ -281,6 +291,11 @@ function stageActions(ch) {
   if (ch.stage === 'pick') out.push(`<h3>Choisir à sa place</h3>${teamsChips('pick', ch.teamId)}`);
   if (ch.kind === 'series' && ch.stage === 'theme') out.push(`<h3>Choisir le menu à sa place</h3><div class="btns">${ch.themes.map((th, i) => B(esc(th.name), 'theme', { i })).join('')}</div>`);
   if (ch.kind === 'millions' && ch.stage === 'decide') out.push(`<div class="btns">${B('💰 Continuer', 'decide', { go: true }, 'ok')}${B('✋ S\'arrêter', 'decide', { go: false }, 'ko')}</div>`);
+  if (ch.kind === 'bmc' && ch.stage === 'judge') {
+    out.push(`<h3>🏆 Touchez la plus drôle (cartes anonymes)</h3>${(ch.entries || []).map((e, i) => `<button class="b bmc-pick" data-a="bmcPick" data-p="${esc(JSON.stringify({ i }))}"><b>${i + 1}</b><span>${bmcSentence(ch.black.t, e.parts)}</span></button>`).join('')}
+      <div class="btns">${B('Personne ne gagne', 'next', {}, '', { confirm: 'Ne donner les points à personne ?' })}</div>`);
+  }
+  if (ch.kind === 'bmc' && ch.stage === 'write') out.push(`<div class="btns">${B('▶ Passer au choix sans attendre', 'next', {}, 'y')}</div>`);
   if (ch.kind === 'dcc' && ch.stage === 'mode') out.push(`<div class="btns">${B('Passer à la question ▶ (carré par défaut)', 'next', {}, 'y')}</div>`);
   if (ch.kind === 'bac' && ch.stage === 'review') {
     out.push(`<h3>Correction : touchez un mot pour le valider / refuser</h3><table class="bac"><tr><th></th>${ch.cats.map(c => `<th>${esc(c)}</th>`).join('')}</tr>
@@ -359,6 +374,7 @@ function tabGame() {
       <div class="btns">${B('−15 min', 'addGameTime', { min: -15 })}${B('+15 min', 'addGameTime', { min: 15 })}${B('+30 min', 'addGameTime', { min: 30 })}</div></div>
     ${playing ? `<div class="p"><div class="btns">${S.paused ? B('▶️ Reprendre le jeu', 'resume', {}, 'y big') : B('⏸ Mettre en pause', 'pause', {}, 'big')}</div>
       <div class="sub">La pause arrête les chronos, coupe le son de la télé et bloque les téléphones.</div></div>` : ''}
+    ${nsfwBlock()}
     <div class="p"><h3>ℹ️ Partie ${esc(S.code)}</h3>
       <div class="sub">Joueurs : ${esc(location.host)}/${esc(S.code)} · ${S.teams.length} équipe(s) · manche ${S.round}${S.test ? ' · mode test' : ''}</div>
       <div class="sub">Télé : ${S.gmOnline > 1 ? `${S.gmOnline} maîtres du jeu connectés` : 'vous êtes le maître du jeu'}.</div></div>

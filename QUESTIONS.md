@@ -7,18 +7,18 @@
 
 | Case | Épreuve | Case | Épreuve |
 |---|---|---|---|
-| 0 | Départ | 16 | Famille en or |
+| 0 | Départ | 16 | Culture G |
 | 1 | Culture G | 17 | Duel |
 | 2 | BT Actuel | 18 | Affiche mystère |
-| 3 | Emojis | 19 | BT Séries |
+| 3 | Emojis | 19 | BT Séries & films |
 | 4 | Vol de points | 20 | A contrario |
-| 5 | BT Films | 21 | Le Bac |
-| 6 | Plus ou moins | 22 | À l'envers |
+| 5 | BT Séries & films | 21 | Le Bac |
+| 6 | Plus ou moins | 22 | Emojis |
 | 7 | Millionnaire | 23 | Donne-moi l'expression |
 | 8 | Buzzer 10 s | 24 | Culture G |
 | 9 | Pochette floutée | 25 | Une seule note |
-| 10 | N'oubliez pas les paroles | 26 | Réplique culte |
-| 11 | Malédiction | 27 | Sans réponse |
+| 10 | Blanc Manger Coco | 26 | Réplique culte |
+| 11 | Échange de place | 27 | Blanc Manger Coco |
 | 12 | Burger Quiz | 28 | Couche par couche |
 | 13 | Grand mensonge | 29 | Donne-moi l'expression |
 | 14 | BT Intemporel | 30 | À la noix |
@@ -622,29 +622,6 @@ _Cinq questions de plus en plus dures, seule l'équipe qui joue répond. 1, 2, 3
    - **Le faucon pèlerin** ✅ · L'aigle royal · Le guépard · Le martinet
    - _Le faucon pèlerin, plus de 300 km/h en piqué._
 
-## Sans réponse possible (18 questions)
-
-_Pas de bonne réponse : écrivez la plus drôle, puis votez. La plus votée prend 2 pts._
-
-1. Que dit un poisson rouge quand il fait le tour de son bocal pour la 3 000e fois ?
-2. Si les chats avaient un compte en banque, ils dépenseraient tout dans quoi ?
-3. Quel est le pire nom possible pour un chirurgien esthétique ?
-4. Qu'est-ce que Dieu a dit en voyant l'ornithorynque pour la première fois ?
-5. Quel serait le slogan publicitaire de la gastro ?
-6. Où partent vraiment les chaussettes qui disparaissent dans la machine à laver ?
-7. Quel est le dernier message que ton frigo enverrait avant de mourir ?
-8. Quelle est la pire phrase à dire juste après « Oui, je le veux » ?
-9. Que se passe-t-il vraiment dans un bureau de poste entre 12 h et 14 h ?
-10. Quel est le titre du prochain film X inspiré d'un Disney ?
-11. Si ton slip pouvait parler, il dirait quoi de toi ?
-12. Quel est le pire métier pour quelqu'un qui pète tout le temps ?
-13. Comment s'appelait le 8e nain, celui que Disney a viré ?
-14. Que faisaient vraiment les dinosaures le samedi soir ?
-15. Quelle est la vraie raison pour laquelle le Titanic a coulé ?
-16. Quel est le mot de passe Wi-Fi de Dieu ?
-17. Qu'est-ce qu'on trouve dans l'historique de navigation du Père Noël ?
-18. Quelle serait la pire application de rencontre possible ?
-
 ## Donne-moi l'expression (27 sujets, 2 cases)
 
 _Chaque équipe propose son expression, puis vote pour la meilleure des autres équipes : 2 pts._ Les deux sortes de sujets tombent en alternance.
@@ -682,7 +659,7 @@ _Chaque équipe propose son expression, puis vote pour la meilleure des autres �
 
 ## Titre débile (15 questions)
 
-_Ajoutez UN mot au titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts._ Ex. : Star Wars → Star Wars Zazat · Autant en emporte le vent → Autant en emporte le vent des globes.
+_Glissez UN mot n'importe où dans le titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts._ Le téléphone affiche le titre avec un trou entre chaque mot (et au début, et à la fin) : on écrit son mot dans un seul trou. Ex. : Star Wars → Star Wars Zazat · Le Parrain → Le Parrain Charcutier.
 
 1. Star Wars
 2. Autant en emporte le vent
@@ -700,22 +677,123 @@ _Ajoutez UN mot au titre pour le rendre débile. Écrivez, puis votez pour le me
 14. Les Visiteurs
 15. Pirates des Caraïbes
 
-## Une famille en or (12 questions)
+## Blanc Manger Coco (23 cartes noires, 87 cartes blanches)
 
-_Trouvez les réponses du sondage. 3 pts pour la 1re, 2 pour les 2e et 3e, 1 pour les autres._
+_Complétez la carte noire avec une de vos cartes blanches. Le maître du jeu choisit la plus drôle : 2 pts pour l'équipe du joueur._ Chaque joueur garde 5 cartes blanches en main toute la partie (une carte jouée est remplacée). 🔞 = carte distribuée seulement si le maître du jeu active le mode NSFW.
 
-1. **Une excuse pour ne pas aller à une soirée** : 1. Je suis malade (32) · 2. Je suis fatigué (24) · 3. Les enfants (18) · 4. Le boulot (14) · 5. Panne de voiture (8)
-2. **Un truc qu'on fait en cachette aux toilettes** : 1. Le téléphone (38) · 2. Lire (20) · 3. Fumer (15) · 4. Pleurer (12) · 5. Manger (9) · 6. Dormir (6)
-3. **Un truc dans le sac à main d'une mamie** : 1. Mouchoirs (30) · 2. Bonbons (25) · 3. Porte-monnaie (18) · 4. Lunettes (12) · 5. Photos des petits-enfants (8) · 6. Parapluie (7)
-4. **Une raison de se faire larguer** : 1. Tromper (35) · 2. Ronfler (18) · 3. Être jaloux (15) · 4. Être radin (12) · 5. La belle-mère (10) · 6. Les chaussettes qui traînent (10)
-5. **Un truc qui pue** : 1. Les pieds (34) · 2. La poubelle (22) · 3. Un pet (18) · 4. Le fromage (14) · 5. Un œuf pourri (7) · 6. Ton ex (5)
-6. **Un truc qu'on fait en se levant le matin** : 1. Aller aux toilettes (30) · 2. Boire un café (25) · 3. Prendre une douche (18) · 4. Regarder son téléphone (15) · 5. Se brosser les dents (7) · 6. Râler (5)
-7. **Un mot qu'on crie quand on se cogne le petit orteil** : 1. Putain (40) · 2. Merde (25) · 3. Aïe / Ouille (15) · 4. Bordel (10) · 5. Ta mère (6) · 6. Nom de Dieu (4)
-8. **Une raison de ne pas aller au sport** : 1. La fatigue (33) · 2. La flemme (28) · 3. La météo (15) · 4. Les courbatures (12) · 5. L'apéro (7) · 6. Netflix (5)
-9. **Un truc qu'on dit à un repas de famille et qu'on regrette** : 1. La politique (30) · 2. L'héritage (20) · 3. « T'as grossi » (18) · 4. « C'est pour quand le bébé ? » (15) · 5. Parler de son ex (10) · 6. La religion (7)
-10. **Un animal qu'on ne veut pas trouver dans son lit** : 1. Une araignée (35) · 2. Un serpent (25) · 3. Un rat (18) · 4. Un cafard (12) · 5. Une punaise de lit (6) · 6. Sa belle-mère (4)
-11. **Un truc qui dure moins longtemps que prévu** : 1. Les vacances (30) · 2. Le couple (22) · 3. Le salaire (20) · 4. La batterie du téléphone (12) · 5. Le régime (10) · 6. Monsieur au lit (6)
-12. **Un truc qu'on achète en soldes et qu'on ne porte jamais** : 1. Des chaussures (30) · 2. Une robe (22) · 3. Un jean (15) · 4. Un pull (13) · 5. Un maillot de bain (10) · 6. Un manteau (10)
+### Cartes noires (19 gentilles, 4 🔞)
+1. ____, quand je te vois faire, je me dis que c'est tout un art !
+2. Bon, ____, on l'a tous fait un jour ou l'autre.
+3. ____ c'est comme tout, il y a la théorie et la pratique.
+4. ____, c'est bien. ____, c'est mieux.
+5. ____ a marqué à coup sûr le premier jour du reste de ma vie !
+6. ____, mes beaux-parents dominent allègrement le classement, et de loin !
+7. ____ et ____ : ou comment allier l'utile à l'agréable !
+8. 🔞 Oui mon enfant, Dieu pardonne tout, même ____.
+9. 🔞 Au fond, ce qui manquait le plus à Auschwitz, c'était ____.
+10. Entre ____ et une vie de famille, il faut choisir !
+11. Papa, c'est quoi ____ ?
+12. Homme, 45 ans, célibataire, bonne situation, cherche ____.
+13. 🔞 ____ c'est un détail à l'échelle de l'humanité.
+14. ____ c'est un concept… On pourrait essayer !
+15. Le seul truc qui m'embête vraiment avec la mondialisation, c'est ____.
+16. Petit SMS pour vous souhaiter beaucoup de bonheur et ____ pour cette nouvelle année !
+17. Sans ____, la fête est moins folle !
+18. C'est quoi déjà ton truc qui marche bien contre les maux de gorge ? ____
+19. 🔞 Le meilleur moyen pour lutter contre la surnatalité en Afrique, c'est ____.
+20. Les plus belles histoires commencent toujours par ____.
+21. Le truc le plus romantique à la Saint-Valentin, c'est ____.
+22. J'ai une technique simple pour réveiller en douceur un nourrisson : ____.
+23. ____ : l'essayer, c'est l'adopter !
+
+### Cartes blanches (58 gentilles, 29 🔞)
+1. Le cannabis thérapeutique
+2. 🔞 Un petit désaccord sur la notion de consentement
+3. Les punks à chien
+4. 🔞 La sodomie pour les nuls
+5. 🔞 Marc Dutroux
+6. 🔞 Xavier Dupont de Ligonnès
+7. 🔞 Le petit Grégory
+8. 🔞 Se taper la nounou
+9. 🔞 La ceinture de chasteté
+10. Saga Africa, ambiance de la brousse
+11. 🔞 Enfiler sa burka
+12. 🔞 Mettre bébé dans la cave
+13. Les boulettes de viande Ikea
+14. Traiter les femmes avec respect
+15. 🔞 Commencer avec le doigt, finir avec le bras
+16. La France
+17. Marion Maréchal-Le Pen
+18. 🔞 Se faire choper en matant un porno
+19. 🔞 Une faciale
+20. 🔞 Une tournante
+21. 🔞 Le concours national du lancer de nain
+22. Ta maman
+23. La première bière du vendredi soir
+24. 🔞 Ta sœur, qui est aussi ta mère
+25. 🔞 Le point G
+26. 🔞 Égorger le mouton dans la baignoire
+27. 🔞 Un sextoy pour chien
+28. 🔞 Un plan cul fiable
+29. 🔞 Un plan cul pas fiable
+30. Les rudiments de l'hygiène corporelle
+31. 100 balles et un Mars
+32. 🔞 Éjaculer après 14 secondes
+33. 🔞 Relire Mein Kampf
+34. 🔞 Les femmes qui font le poirier après l'amour
+35. Être en galère de PQ
+36. Le plus-que-parfait du subjonctif
+37. La mentalité parisienne
+38. L'acharnement thérapeutique
+39. 🔞 L'archevêque de Paris
+40. Le passage du salaire brut au net
+41. Le bilan
+42. Vladimir Poutine
+43. 🔞 Les filles de joie
+44. Le cassoulet William Saurin
+45. 🔞 La roulette russe
+46. Un 18 trous
+47. Un test de grossesse
+48. Une poire de lavement
+49. Perdre 1,2 kg quand on pèse 123 kg
+50. Le string qui dépasse
+51. Les francs-maçons
+52. Une thèse sur les modèles prédictifs de la susceptibilité des cellules souches pluripotentes
+53. Le connard qui ne récure jamais les toilettes
+54. La cuite du siècle
+55. La droite décomplexée
+56. 🔞 Les bienfaits de la colonisation
+57. 🔞 Une histoire d'amour avec un curé de 62 ans
+58. La beauf attitude
+59. 🔞 Un couscous aux lardons
+60. Vivelle Dop Fixation Béton
+61. Tenir la chandelle
+62. Les activités extraconjugales
+63. La France d'en bas
+64. Les sans-dents
+65. L'amant de ma femme
+66. Céline Dion
+67. Le plombier polonais
+68. Être VIP au Macumba
+69. Aménager un espace pour les roux
+70. L'égalité homme-femme
+71. La légitime défense
+72. 2 heures sous la douche
+73. Tonton qui raconte sa blague pour la 40e fois
+74. Une chaussette orpheline
+75. Le Tupperware jamais rendu
+76. Les chaussettes dans les sandales
+77. Une raclette en plein mois d'août
+78. Réussir son créneau du premier coup
+79. La sieste de 14 h
+80. Le dessert de belle-maman
+81. Le voisin qui tond la pelouse le dimanche à 8 h
+82. La Macarena au mariage du cousin
+83. Le dernier carré de chocolat
+84. Rater la dernière marche de l'escalier
+85. Le mot de passe « 123456 »
+86. Marcher dans une flaque en chaussettes
+87. Mettre son pull à l'envers toute la journée
 
 ## Le Bac
 
@@ -724,25 +802,6 @@ _Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d'autre ne l'a.
 Lettres : A B C D F G L M N P R S T
 
 Catégories (5 tirées au hasard) : Un prénom · Une ville · Un chanteur ou une chanteuse · Un film · Une série · Un truc dans le sac à main de mamie · Une excuse pour être en retard · Un truc qui pue · Un truc à ne pas dire à sa belle-mère · Une insulte gentille · Une marque · Un animal · Un truc qu'on fait aux toilettes · Un métier · Un truc qu'on cache à ses parents · Un plat qui fait péter · Un truc qu'on trouve sous un lit · Une raison de divorcer
-
-## Malédictions (16)
-
-1. Reculez de 3 cases. Le karma, ça pique.
-2. Perdez 2 points. Cadeau de la maison.
-3. Vous passez votre prochain tour. Allez réfléchir à vos actes.
-4. Vos prochains points gagnés sont divisés par deux. Comme votre QI.
-5. Donnez 2 points à l'équipe dernière au classement. Robin des Bois, version nulle.
-6. Vous perdez un joker au hasard. Fallait l'utiliser, radins.
-7. Retour à la case Départ. Oui, c'est violent. Non, on ne s'excuse pas.
-8. Pendant 2 tours, toutes vos réponses à voix haute se font en chantant.
-9. Pendant 2 tours, interdiction de dire « oui » et « non ». Chaque faute = un gage choisi par les autres.
-10. Jusqu'à votre prochain tour, toute l'équipe parle avec l'accent marseillais. Peuchère.
-11. Jusqu'à la fin de la partie, vous appelez l'animateur « Votre Majesté ».
-12. Votre capitaine fait 10 squats. Maintenant. Tout le monde regarde.
-13. Pendant 2 tours, toute l'équipe parle d'elle-même à la troisième personne.
-14. Racontez votre pire honte, sinon −3 points. L'assemblée juge.
-15. Un joueur de votre équipe imite un animal choisi par les autres pendant 30 secondes.
-16. Vous devez complimenter sincèrement l'équipe en tête. Ça fait mal, hein ?
 
 ## Cases média : à préparer
 
@@ -765,10 +824,10 @@ _Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts._
 9. Papaoutai — Stromae _(bonus : 2013)_
 10. Espresso — Sabrina Carpenter _(bonus : 2024)_
 
-### Blind test — musique intemporelle — 0/10 fichiers prêts
+### Blind test — musique intemporelle — 1/10 fichiers prêts
 _Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts._
 
-1. Bohemian Rhapsody — Queen _(bonus : 1975)_
+1. Bohemian Rhapsody — Queen _(bonus : 1975)_ ✅
 2. Billie Jean — Michael Jackson _(bonus : 1983)_
 3. Hotel California — Eagles _(bonus : 1976)_
 4. Smells Like Teen Spirit — Nirvana _(bonus : 1991)_
@@ -779,10 +838,10 @@ _Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts._
 9. Africa — Toto _(bonus : 1982)_
 10. Sweet Dreams — Eurythmics _(bonus : 1983)_
 
-### Blind test — génériques de séries — 0/10 fichiers prêts
-_Buzzez dès que vous reconnaissez le générique. 2 pts._
+### Blind test — séries & films (génériques et musiques de films) — 2/21 fichiers prêts
+_Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts._
 
-1. Friends
+1. Friends ✅
 2. Game of Thrones
 3. Les Simpson
 4. Stranger Things
@@ -792,48 +851,17 @@ _Buzzez dès que vous reconnaissez le générique. 2 pts._
 8. Plus belle la vie
 9. Mission impossible (la série)
 10. Les Mystères de l'Ouest
-
-### Blind test — musiques de films — 0/10 fichiers prêts
-_Buzzez dès que vous reconnaissez le film. 2 pts._
-
-1. Star Wars _(bonus : 1977 · George Lucas)_
-2. Les Dents de la mer _(bonus : 1975 · Steven Spielberg)_
-3. Titanic _(bonus : 1997 · James Cameron)_
-4. Le Bon, la Brute et le Truand _(bonus : 1966 · Sergio Leone)_
-5. Pirates des Caraïbes _(bonus : 2003 · Gore Verbinski)_
-6. Rocky _(bonus : 1976 · John G. Avildsen)_
-7. Le Parrain _(bonus : 1972 · Francis Ford Coppola)_
-8. Indiana Jones (Les Aventuriers de l'arche perdue) _(bonus : 1981 · Steven Spielberg)_
-9. Le Fabuleux Destin d'Amélie Poulain _(bonus : 2001 · Jean-Pierre Jeunet)_
-10. SOS Fantômes _(bonus : 1984 · Ivan Reitman)_
-
-### N'oubliez pas les paroles — 0/10 fichiers prêts
-_La musique coupe : chantez la suite. 2 pts._
-
-1. Les Lacs du Connemara — Michel Sardou
-2. Alexandrie Alexandra — Claude François
-3. Femme Like U — K-Maro
-4. L'Aventurier — Indochine
-5. Les Démons de minuit — Images
-6. Je l'aime à mourir — Francis Cabrel
-7. Foule sentimentale — Alain Souchon
-8. Tous les mêmes — Stromae
-9. Ça plane pour moi — Plastic Bertrand
-10. Les Sardines — Patrick Sébastien
-
-### Musique à l'envers — 0/10 fichiers prêts
-_Le morceau passe à l'envers. Buzzez ! 2 pts._
-
-1. Gangnam Style — PSY
-2. Macarena — Los del Río
-3. YMCA — Village People
-4. La Danse des canards — J.J. Lionel
-5. Billie Jean — Michael Jackson
-6. Despacito — Luis Fonsi
-7. Wannabe — Spice Girls
-8. Happy — Pharrell Williams
-9. Asereje (The Ketchup Song) — Las Ketchup
-10. Mambo No. 5 — Lou Bega
+11. Star Wars _(bonus : 1977 · George Lucas)_
+12. Les Dents de la mer _(bonus : 1975 · Steven Spielberg)_
+13. Titanic _(bonus : 1997 · James Cameron)_
+14. Le Bon, la Brute et le Truand _(bonus : 1966 · Sergio Leone)_
+15. Pirates des Caraïbes _(bonus : 2003 · Gore Verbinski)_
+16. Rocky _(bonus : 1976 · John G. Avildsen)_
+17. Le Parrain _(bonus : 1972 · Francis Ford Coppola)_
+18. Indiana Jones (Les Aventuriers de l'arche perdue) _(bonus : 1981 · Steven Spielberg)_
+19. Le Fabuleux Destin d'Amélie Poulain _(bonus : 2001 · Jean-Pierre Jeunet)_
+20. SOS Fantômes _(bonus : 1984 · Ivan Reitman)_
+21. Jurassic Park _(bonus : 1993 · Steven Spielberg)_ ✅
 
 ### Réplique culte — 0/10 fichiers prêts
 _Une réplique, trouvez le film. 2 pts._
@@ -849,19 +877,20 @@ _Une réplique, trouvez le film. 2 pts._
 9. Kaamelott (série) _(bonus : 2005 · Alexandre Astier)_
 10. La Haine _(bonus : 1995 · Mathieu Kassovitz)_
 
-### Pochette floutée (images) — 0/10 fichiers prêts
+### Pochette floutée (images) — 1/11 fichiers prêts
 _L'image se défloute. Buzzez dès que vous savez. 2 pts._
 
-1. Thriller — Michael Jackson
-2. Abbey Road — The Beatles
-3. Nevermind — Nirvana
-4. The Dark Side of the Moon — Pink Floyd
-5. Racine carrée — Stromae
-6. Back in Black — AC/DC
-7. 21 — Adele
-8. Brol — Angèle
-9. Random Access Memories — Daft Punk
-10. Rumours — Fleetwood Mac
+1. A Night at the Opera — Queen ✅
+2. Thriller — Michael Jackson
+3. Abbey Road — The Beatles
+4. Nevermind — Nirvana
+5. The Dark Side of the Moon — Pink Floyd
+6. Racine carrée — Stromae
+7. Back in Black — AC/DC
+8. 21 — Adele
+9. Brol — Angèle
+10. Random Access Memories — Daft Punk
+11. Rumours — Fleetwood Mac
 
 ### Une seule note — 0/10 fichiers prêts
 _Une note. Une seule. Buzzez si vous reconnaissez : 3 pts._

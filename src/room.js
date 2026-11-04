@@ -67,7 +67,7 @@ export class GameRoom extends DurableObject {
     }
 
     const att = ws.deserializeAttachment() || {};
-    const err = G.handle(this.s, msg, { now, pid: att.pid, host: !!att.host, gm: !!att.gm, rng: Math.random });
+    const err = G.handle(this.s, msg, { now, pid: att.pid, host: !!att.host, gm: !!att.gm, rng: Math.random, online: this.onlinePids() });
     if (err) { ws.send(JSON.stringify({ t: 'error', text: err })); }
     else {
       await this.save();
@@ -77,7 +77,7 @@ export class GameRoom extends DurableObject {
 
   async alarm() {
     if (!this.s) return;
-    if (G.tick(this.s, Date.now())) { await this.save(); this.broadcast(); }
+    if (G.tick(this.s, Date.now(), Math.random, this.onlinePids())) { await this.save(); this.broadcast(); }
     else await this.schedule();
   }
 
@@ -97,6 +97,13 @@ export class GameRoom extends DurableObject {
     const d = G.nextDeadline(this.s);
     if (d) await this.ctx.storage.setAlarm(Math.max(d, Date.now() + 50));
     else await this.ctx.storage.deleteAlarm();
+  }
+
+  // téléphones de joueurs actuellement connectés (pour distribuer les cartes du Blanc Manger Coco)
+  onlinePids() {
+    const out = [];
+    for (const w of this.ctx.getWebSockets()) { if (w.readyState !== 1) continue; const a = w.deserializeAttachment() || {}; if (a.role === 'phone' && a.pid) out.push(a.pid); }
+    return out;
   }
 
   gmCount() {

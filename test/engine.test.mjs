@@ -1,6 +1,6 @@
 // Simulation complète du moteur : 3 équipes, chaque type de case, jokers, vannes, fin de partie.
 import * as G from '../src/game.js';
-import { QCM } from '../src/content.js';
+import { QCM, BMC } from '../src/content.js';
 
 let now = 1_700_000_000_000;
 let seed = 42;
@@ -48,6 +48,8 @@ function playChallenge() {
     const modes = ['duo', 'carre', 'cash'];
     ids.forEach((id, i) => check(send(pidOf(id), { t: 'mode', mode: modes[i % 3] }) === null, 'choix duo/carré/cash'));
     check(s.ch.stage === 'q', 'dcc : passage à la question');
+    check(s.ch.startsAt - now >= 2000 && send(pidOf(ids[1]), { t: 'answer', value: 0 }) !== null, 'dcc : décompte de 2 s avant la question');
+    now = s.ch.startsAt;
     const v = G.view(s, { pid: pidOf(ids[0]), role: 'phone' });
     check(v.ch.duo[ids[0]] && v.ch.duo[ids[0]].length === 2 && Object.keys(v.ch.duo).length === 1, 'duo : 2 propositions, visibles seulement par l\'équipe');
     send(pidOf(ids[0]), { t: 'answer', value: s.ch.duo[ids[0]][0] });
@@ -89,7 +91,17 @@ function playChallenge() {
   } else if (ch.kind === 'number') {
     for (const id of ids) send(pidOf(id), { t: 'answer', value: String(Math.round(ch.q.a * (0.5 + rng()))) });
   } else if (ch.kind === 'open') {
-    for (const id of ids) send(pidOf(id), { t: 'answer', value: 'Une blague nulle de ' + id });
+    if (ch.q.words) {
+      // Titre débile : le mot est glissé n'importe où dans le titre
+      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 0, word: '' } }) !== null, 'titre débile : mot vide refusé');
+      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 99, word: 'Zazat' } }) !== null, 'titre débile : position hors du titre refusée');
+      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 1, word: 'Zazat' } }) === null, 'titre débile : mot inséré');
+      const w = ch.q.words;
+      check(s.ch.answers[ids[0]].v === [w[0], 'Zazat', ...w.slice(1)].join(' ') && s.ch.answers[ids[0]].ins === 1, 'titre débile : mot au bon endroit');
+      send(pidOf(ids[1]), { t: 'answer', value: { pos: 0, word: 'Mega' } });
+      send(pidOf(ids[2]), { t: 'answer', value: { pos: w.length, word: 'Zizi' } });
+      check(s.ch.answers[ids[2]].v.endsWith(' Zizi'), 'titre débile : mot à la fin');
+    } else for (const id of ids) send(pidOf(id), { t: 'answer', value: 'Une blague nulle de ' + id });
     check(s.ch.stage === 'vote', 'passage au vote');
     const own = send(pidOf(ids[0]), { t: 'vote', teamId: ids[0] });
     check(own !== null, 'vote pour soi refusé');
@@ -99,8 +111,32 @@ function playChallenge() {
     check(s.ch.stage === 'review', 'bac en correction');
     host({ action: 'bacToggle', teamId: ids[0], i: 0 });
     check(host({ action: 'bacValidate' }) === null, 'bac validé');
-  } else if (ch.kind === 'famille') {
-    ids.forEach((id, i) => send(pidOf(id), { t: 'answer', value: i === 0 ? ['téléphone', 'pieds', 'merde'] : ['n\'importe quoi', 'putain'] }));
+  } else if (ch.kind === 'bmc') {
+    const pids = Object.keys(s.players);
+    check(ch.stage === 'write' && ch.players.length === pids.length, 'bmc : tous les joueurs ont des cartes');
+    check(!s.nsfw && !BMC.noires.find(c => c.t === ch.black.t).nsfw, 'bmc : carte noire gentille par défaut');
+    for (const p of pids) {
+      const h = s.bmc.hands[p];
+      check(h.length === 5 && h.every(i => !BMC.blanches[i].nsfw), 'bmc : 5 cartes gentilles en main');
+      const v = G.view(s, { pid: p, role: 'phone' });
+      check(v.bmcHand && v.bmcHand.length === 5 && !v.bmc && !v.ch.picks && !v.ch.players, 'bmc : chacun ne voit que sa main');
+    }
+    const p0 = pids[0], hand0 = [...s.bmc.hands[p0]];
+    check(send(p0, { t: 'bmc', cards: [999] }) !== null, 'bmc : carte hors de la main refusée');
+    const pick = hand0.slice(0, ch.black.n);
+    check(send(p0, { t: 'bmc', cards: pick }) === null, 'bmc : carte jouée');
+    check(send(p0, { t: 'bmc', cards: pick }) !== null, 'bmc : on ne joue qu\'une fois');
+    check(s.bmc.hands[p0].length === 5 && pick.every(i => !s.bmc.hands[p0].includes(i)), 'bmc : la main est complétée à 5');
+    for (const p of pids.slice(1)) send(p, { t: 'bmc', cards: s.bmc.hands[p].slice(0, ch.black.n) });
+    check(s.ch.stage === 'judge' && s.ch.entries.length === pids.length, 'bmc : toutes les cartes jouées, au tour du jury');
+    const vj = G.view(s, { role: 'tv', host: true }), vg = G.view(s, { role: 'gm', host: true, gm: true }, {});
+    check(vj.ch.entries.every(e => !e.teamId && !e.pid && !e.name) && vg.ch.entries.every(e => !e.teamId && !e.pid), 'bmc : cartes anonymes pendant le choix');
+    const win = s.ch.entries[1], wt = s.teams.find(t => t.id === win.teamId), before = wt.score;
+    check(host({ action: 'bmcPick', i: 99 }) !== null, 'bmc : carte inconnue refusée');
+    check(host({ action: 'bmcPick', i: 1 }) === null && s.phase === 'reveal', 'bmc : le jury choisit');
+    check(wt.score > before, 'bmc : points pour l\'équipe du gagnant');
+    const vr = G.view(s, { role: 'tv' });
+    check(vr.ch.entries[1].teamId === win.teamId && !vr.ch.entries[1].pid, 'bmc : auteurs dévoilés à la révélation, sans identifiant');
   } else if (ch.kind === 'buzz10') {
     send(pidOf(ids[0]), { t: 'buzz' }); // faux départ
     now = ch.goAt; G.tick(s, now, rng);
@@ -162,6 +198,13 @@ check(send(pidOf(B.id), { t: 'joker', kind: 'double' }) === null, 'joker double'
 check(send(pidOf(A.id), { t: 'taunt', to: B.id, text: 'Vous êtes nuls' }) === null, 'vanne');
 check(send(pidOf(A.id), { t: 'taunt', to: B.id, text: 'Encore' }) !== null, 'anti-spam vannes');
 check(s.feed.some(f => f.k === 'taunt'), 'vanne dans le fil');
+
+// ── option NSFW (téléphone du maître du jeu)
+check(Object.values(s.bmc.hands).flat().every(i => !BMC.blanches[i].nsfw), 'mains gentilles tant que le NSFW est coupé');
+check(host({ action: 'setNsfw', on: true }) === null && s.nsfw === true, 'NSFW activé');
+for (let k = 0; k < 6; k++) { const p = Object.keys(s.bmc.hands)[0]; s.bmc.played.push(...s.bmc.hands[p].splice(0, 5)); G.handle(s, { t: 'host', action: 'setNsfw', on: false }, { now, host: true, rng }); G.handle(s, { t: 'host', action: 'setNsfw', on: true }, { now, host: true, rng }); }
+check(Object.values(s.bmc.hands).flat().some(i => BMC.blanches[i].nsfw), 'NSFW : des cartes limites arrivent dans les mains');
+check(host({ action: 'setNsfw', on: false }) === null && Object.values(s.bmc.hands).flat().every(i => !BMC.blanches[i].nsfw) && Object.values(s.bmc.hands).every(h => h.length === 5), 'NSFW coupé : cartes limites retirées, mains complètes');
 
 // ── partie libre jusqu'à la fin du temps
 now = s.endAt + 1;
