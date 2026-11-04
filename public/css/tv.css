@@ -38,6 +38,9 @@ section { position: absolute; inset: 0; }
 .cell.here { outline: 5px solid var(--ink); outline-offset: 3px; z-index: 2; transform: scale(1.04); }
 .cell.dest { animation: pulse .6s infinite; outline: 5px dashed var(--ink); outline-offset: 3px; z-index: 2; }
 .cell.dep .lab { font-size: 26px; }
+body.testmode .cell { cursor: pointer; }
+body.testmode .cell:hover { outline: 4px dashed var(--ink); outline-offset: 2px; z-index: 2; }
+#gotoSel { font: inherit; font-size: 15px; padding: 8px 10px; border-radius: 10px; max-width: 260px; }
 #center { grid-column: 2 / 10; grid-row: 2 / 8; background: var(--panel); border-radius: 36px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; padding: 30px; text-align: center; }
 #center .logo b { font-size: 92px; }
 #center .logo span { font-size: 36px; }

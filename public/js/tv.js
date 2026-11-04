@@ -55,8 +55,9 @@ function onState(first) {
   if (S.phase === 'lobby') return renderLobby();
   if (S.phase === 'end') return renderEnd();
   $('#game').classList.remove('hidden');
-  if (S.move && S.move.n !== lastMoveN) { lastMoveN = S.move.n; if (!first) { rollAnimUntil = Date.now() + S.meta.timers.roll; sfx.dice(); } }
+  if (S.move && S.move.n !== lastMoveN) { lastMoveN = S.move.n; if (!first && !S.move.test) { rollAnimUntil = Date.now() + S.meta.timers.roll; sfx.dice(); } }
   syncPawns(first);
+  document.body.classList.toggle('testmode', !!(S.host && S.test && S.phase !== 'lobby' && S.phase !== 'end'));
   renderBoard(); renderSide(); renderHostbar(); renderOverlay(true); syncAudio();
 }
 
@@ -172,7 +173,7 @@ function renderBoard() {
     const rolling = Date.now() < rollAnimUntil;
     const cell = S.meta.board[S.move.to];
     box = `<div class="turnbox">${dieHTML(rolling ? 1 + Math.floor(Math.random() * 6) : S.move.roll, rolling ? 'rolling' : '')}
-      <div class="txt"><span class="what">${esc(team(S.move.teamId).name)} ${rolling ? 'lance…' : `fait <b style="color:var(--yellow)">${S.move.roll}</b>${S.move.rerolled ? ' (relancé !)' : ''}`}</span>
+      <div class="txt"><span class="what">${esc(team(S.move.teamId).name)} ${S.move.test ? 'est téléportée 🧪' : rolling ? 'lance…' : `fait <b style="color:var(--yellow)">${S.move.roll}</b>${S.move.rerolled ? ' (relancé !)' : ''}`}</span>
       ${rolling ? '' : `<span class="dest-l">→ Case ${S.move.to} · <span class="c-${cell.group}">${esc(cell.label)}</span></span>`}
       ${!rolling && S.phase === 'rolled' ? `<span class="what">On y va ? (ou joker relance…) <b data-dl="${S.deadline}" class="cd"></b></span>` : ''}</div></div>`;
     if (rolling) scheduleRollFrame();
@@ -211,6 +212,7 @@ function renderSide() {
 }
 $('#scores').addEventListener('click', e => { const b = e.target.closest('[data-adj]'); if (b) host('adjust', { teamId: b.dataset.adj, delta: Number(b.dataset.d) }); });
 
+let lastHostbar = '';
 function renderHostbar() {
   if (!S.host) return;
   const ch = S.ch, b = [];
@@ -227,9 +229,11 @@ function renderHostbar() {
     b.push(`<button class="main" data-h="next">Tour suivant ▶</button>`);
     if (ch && ch.kind === 'dcc' && Object.values(ch.modes || {}).includes('cash')) b.push(`<span class="hint">Cliquez sur une réponse cash pour l'accepter ou la refuser.</span>`);
   }
+  if (S.test) b.push(`<select id="gotoSel" title="Mode test : aller directement sur une case"><option value="">🧪 Aller à la case…</option>${S.meta.board.map((c, i) => `<option value="${i}">${i} · ${esc(c.label)}</option>`).join('')}</select>`);
   b.push(`<button data-h="end">Fin de partie 🏁</button>`);
   b.push(`<span class="hint">Espace = action principale · survol d'une équipe = ±1 pt</span>`);
-  $('#hostbar').innerHTML = b.join('');
+  const html = b.join('');
+  if (html !== lastHostbar) { $('#hostbar').innerHTML = html; lastHostbar = html; } // évite de refermer la liste « Aller à la case » à chaque mise à jour
 }
 $('#hostbar').addEventListener('click', e => {
   const btn = e.target.closest('[data-h]'); if (!btn) return;
@@ -237,8 +241,19 @@ $('#hostbar').addEventListener('click', e => {
   if (a === 'end' && !confirm('Terminer la partie maintenant ?')) return;
   host(a, a === 'judge' ? { ok: btn.dataset.ok === '1', bonus: btn.dataset.bonus === '1' } : {});
 });
+// Mode test : choisir une case dans la liste, ou cliquer une case du plateau
+$('#hostbar').addEventListener('change', e => {
+  if (e.target.id !== 'gotoSel' || e.target.value === '') return;
+  host('goto', { cell: Number(e.target.value) });
+  e.target.value = '';
+});
+$('#board').addEventListener('click', e => {
+  if (!S || !S.host || !S.test || S.phase === 'lobby' || S.phase === 'end') return;
+  const c = e.target.closest('.cell[data-i]'); if (!c) return;
+  host('goto', { cell: Number(c.dataset.i) });
+});
 addEventListener('keydown', e => {
-  if (!S || !S.host || e.target.tagName === 'INPUT') return;
+  if (!S || !S.host || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
   if (e.code === 'Space' || e.code === 'Enter') {
     e.preventDefault();
     const main = $('#hostbar .main'); if (main) main.click();

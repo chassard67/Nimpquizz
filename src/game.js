@@ -319,6 +319,18 @@ function hostAction(s, msg, ctx, rng) {
     s.move.to = i; s.move.passed = false;
     return null;
   }
+  // Mode test : l'animateur envoie le pion directement sur n'importe quelle case
+  if (a === 'goto') {
+    if (!s.test) return 'Réservé au mode test.';
+    const i = Number(msg.cell);
+    if (!Number.isInteger(i) || i < 0 || i >= BOARD.length) return 'Case inconnue.';
+    const tm = active(s);
+    s.ch = null;
+    s.move = { at: ctx.now - ROLL_ANIM_MS, teamId: tm.id, from: tm.pos, roll: 0, to: i, passed: false, n: ++s.moveSeq, test: true };
+    feed(s, 'info', `Mode test : ${tm.name} est téléportée sur « ${TYPES[BOARD[i]].label} ».`);
+    applyMove(s, ctx, rng);
+    return null;
+  }
   if (a === 'roll') {
     if (s.phase !== 'roll') return 'Pas le moment de lancer.';
     doRoll(s, active(s), rng, ctx.now); return null;

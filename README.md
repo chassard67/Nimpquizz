@@ -22,7 +22,7 @@ Chaque `git push` sur `main` redéploie automatiquement.
 
 Seul l'écran qui a créé la partie peut l'animer ; une autre télé ouverte sur la même partie est simple spectatrice.
 
-**Mode test** : on peut lancer la partie avec une seule équipe, ou sans aucune (une « Équipe Test » est créée). L'animateur peut lancer le dé depuis la télé (bouton « 🎲 Lancer le dé pour… »). Les cases Duel, Vol et Échange sont passées faute d'adversaire.
+**Mode test** : on peut lancer la partie avec une seule équipe, ou sans aucune (une « Équipe Test » est créée). L'animateur peut lancer le dé depuis la télé (bouton « 🎲 Lancer le dé pour… »). Pour tester une case précise, choisir **🧪 Aller à la case…** dans la barre animateur, ou cliquer directement sur une case du plateau : le pion y est téléporté et l'épreuve démarre. Les cases Duel, Vol et Échange sont passées faute d'adversaire.
 
 ## Les cases (32)
 
