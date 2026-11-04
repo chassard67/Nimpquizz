@@ -550,7 +550,7 @@ export const MEDIA = {
     { src: null, answer: "Espresso — Sabrina Carpenter", bonus: "2024" }
   ],
   bt_intemporel: [
-    { src: null, answer: "Bohemian Rhapsody — Queen", bonus: "1975" },
+    { src: "/media/queen-bohemian-rhapsody.mp3", answer: "Bohemian Rhapsody — Queen", bonus: "1975" },
     { src: null, answer: "Billie Jean — Michael Jackson", bonus: "1983" },
     { src: null, answer: "Hotel California — Eagles", bonus: "1976" },
     { src: null, answer: "Smells Like Teen Spirit — Nirvana", bonus: "1991" },
@@ -562,7 +562,7 @@ export const MEDIA = {
     { src: null, answer: "Sweet Dreams — Eurythmics", bonus: "1983" }
   ],
   bt_series: [
-    { src: null, answer: "Friends" }, { src: null, answer: "Game of Thrones" }, { src: null, answer: "Les Simpson" },
+    { src: "/media/friends.mp3", answer: "Friends" }, { src: null, answer: "Game of Thrones" }, { src: null, answer: "Les Simpson" },
     { src: null, answer: "Stranger Things" }, { src: null, answer: "Dallas" }, { src: null, answer: "X-Files" },
     { src: null, answer: "Kaamelott" }, { src: null, answer: "Plus belle la vie" }, { src: null, answer: "Mission impossible (la série)" },
     { src: null, answer: "Les Mystères de l'Ouest" }
@@ -577,7 +577,8 @@ export const MEDIA = {
     { src: null, answer: "Le Parrain", bonus: "1972 · Francis Ford Coppola" },
     { src: null, answer: "Indiana Jones (Les Aventuriers de l'arche perdue)", bonus: "1981 · Steven Spielberg" },
     { src: null, answer: "Le Fabuleux Destin d'Amélie Poulain", bonus: "2001 · Jean-Pierre Jeunet" },
-    { src: null, answer: "SOS Fantômes", bonus: "1984 · Ivan Reitman" }
+    { src: null, answer: "SOS Fantômes", bonus: "1984 · Ivan Reitman" },
+    { src: "/media/jurassic-park.mp3", answer: "Jurassic Park", bonus: "1993 · Steven Spielberg" }
   ],
   paroles: [
     { src: null, answer: "Les Lacs du Connemara — Michel Sardou" },
@@ -611,6 +612,7 @@ export const MEDIA = {
     { src: null, answer: "La Haine", bonus: "1995 · Mathieu Kassovitz" }
   ],
   pochette: [
+    { img: "/media/queen-a-night-at-the-opera.jpg", answer: "A Night at the Opera — Queen" },
     { img: null, answer: "Thriller — Michael Jackson" }, { img: null, answer: "Abbey Road — The Beatles" },
     { img: null, answer: "Nevermind — Nirvana" }, { img: null, answer: "The Dark Side of the Moon — Pink Floyd" },
     { img: null, answer: "Racine carrée — Stromae" }, { img: null, answer: "Back in Black — AC/DC" },
