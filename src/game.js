@@ -35,7 +35,7 @@ export const TYPES = {
   bt_jeux:       { label: 'BT Jeux vidéo', group: 'bt', kind: 'media', media: 'audio', rule: 'Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1 avec le bonus).' },
   bt_ecrans:     { label: 'BT Séries & films', group: 'bt', kind: 'media', media: 'audio', rule: 'Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts.' },
   replique:      { label: 'Réplique culte', group: 'bt', kind: 'media', media: 'audio', rule: 'Une réplique, trouvez le film. 2 pts.' },
-  pochette:      { label: 'Pochette floutée', group: 'v', kind: 'media', media: 'image', rule: 'L\'image se défloute. Buzzez dès que vous savez. 2 pts.' },
+  pochette:      { label: 'Pochette floutée', group: 'v', kind: 'media', media: 'image', rule: 'La pochette se défloute petit à petit : buzzez dès que vous reconnaissez l\'artiste. 2 pts.' },
   buzz10:        { label: 'Buzzer 10 s', group: 'bz', kind: 'buzz10', rule: 'Au GO, comptez 10 secondes dans votre tête et appuyez. Le plus proche prend 2 pts.' },
   duel:          { label: 'Duel', group: 's', kind: 'duel', rule: 'Choisissez un adversaire. Le premier qui trouve gagne 3 pts.' },
   vol:           { label: 'Vol de points', group: 's', kind: 'target', rule: 'Choisissez une victime : vous lui volez 3 pts.' },
@@ -793,7 +793,7 @@ function applyMove(s, ctx, rng) {
 }
 
 // Question par défaut d'une fiche QCM sans « question : »
-const QCM_Q = { bt_musique: 'Quel est ce morceau ?', bt_ecrans: 'De quelle série ou de quel film vient cette musique ?', bt_jeux: 'De quel jeu vidéo vient cette musique ?', replique: 'De quel film vient cette réplique ?', pochette: 'Qu\'est-ce que c\'est ?' };
+const QCM_Q = { bt_musique: 'Quel est ce morceau ?', bt_ecrans: 'De quelle série ou de quel film vient cette musique ?', bt_jeux: 'De quel jeu vidéo vient cette musique ?', replique: 'De quel film vient cette réplique ?', pochette: 'Quel est cet artiste ?' };
 
 // ─── démarrage d'une case ────────────────────────────────────
 function startCell(s, type, ctx, rng, gains = {}) {

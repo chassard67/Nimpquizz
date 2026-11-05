@@ -72,7 +72,7 @@ const M = C.MEDIA;
 const ready = arr => arr.filter(x => x.src || x.img || (x.layers && x.layers.length)).length;
 h('Cases média');
 out.push(`Les blind tests se remplissent avec les fichiers déposés dans \`public/media/<dossier>/\` : voir \`public/media/LISEZ-MOI.txt\`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.\n`);
-for (const [key, title, folder] of [['bt_musique', 'BT Musique', 'musique'], ['bt_ecrans', 'BT Séries & films', 'cinema'], ['bt_jeux', 'BT Jeux vidéo', 'jeux-videos'], ['replique', 'Réplique culte', 'citations'], ['pochette', 'Pochette floutée (toutes les images, sauf « pochette : non »)', '*']]) {
+for (const [key, title, folder] of [['bt_musique', 'BT Musique', 'musique'], ['bt_ecrans', 'BT Séries & films', 'cinema'], ['bt_jeux', 'BT Jeux vidéo', 'jeux-videos'], ['replique', 'Réplique culte', 'citations'], ['pochette', 'Pochette floutée', 'pochettes']]) {
   const items = MEDIA_INDEX[key] || [];
   out.push(`\n### ${title} — ${items.length} question${items.length > 1 ? 's' : ''}${folder !== '*' ? ` (dossier \`${folder}/\`)` : ''}`);
   out.push(`_${TYPES[key].rule}_\n`);

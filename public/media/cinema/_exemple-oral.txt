@@ -2,4 +2,4 @@
 # Fichiers : Friends.mp3 (+ Friends.jpg si vous voulez une image à la réponse)
 reponse : Friends
 bonus : 1994
-pochette : non
+

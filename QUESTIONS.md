@@ -828,8 +828,8 @@ _Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1
 _Une réplique, trouvez le film. 2 pts._
 
 
-### Pochette floutée (toutes les images, sauf « pochette : non ») — 0 question
-_L'image se défloute. Buzzez dès que vous savez. 2 pts._
+### Pochette floutée — 0 question (dossier `pochettes/`)
+_La pochette se défloute petit à petit : buzzez dès que vous reconnaissez l'artiste. 2 pts._
 
 
 ### Une seule note — 0/10 fichiers prêts (à renseigner dans `src/content.js`)

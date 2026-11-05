@@ -5,7 +5,8 @@
 //
 //  Un élément = des fichiers qui portent le même nom :
 //    Queen - Bohemian Rhapsody.mp3   l'extrait (mp3, m4a, ogg, wav)
-//    Queen - Bohemian Rhapsody.jpg   l'image (jpg, jpeg, png, webp) : pochette floutée + affichée à la réponse
+//    Queen - Bohemian Rhapsody.jpg   l'image (jpg, jpeg, png, webp) : affichée à la réponse
+//  Pochette floutée : seulement le dossier pochettes/ (une image = une question, nom du fichier = l'artiste).
 //    Queen - Bohemian Rhapsody.txt   la fiche (facultative) : réponse, bonus, mode oral ou QCM…
 //  Sans fiche : la réponse est le nom du fichier, réponse à l'oral.
 //  Les fichiers qui commencent par _ (exemples, brouillons) sont ignorés.
@@ -23,7 +24,8 @@ export const FOLDERS = {
   musique: { type: 'bt_musique', label: 'BT Musique' },
   cinema: { type: 'bt_ecrans', label: 'BT Séries & films' },
   'jeux-videos': { type: 'bt_jeux', label: 'BT Jeux vidéo' },
-  citations: { type: 'replique', label: 'Réplique culte' }
+  citations: { type: 'replique', label: 'Réplique culte' },
+  pochettes: { type: 'pochette', label: 'Pochette floutée' }
 };
 const AUDIO = ['.mp3', '.m4a', '.ogg', '.wav', '.aac'];
 const IMAGE = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
@@ -108,20 +110,18 @@ for (const [folder, { type }] of Object.entries(FOLDERS)) {
         if (k.length) item.qcm.k = k;
       }
     } else if (mode !== 'oral') warn(where, `mode « ${fiche.mode} » inconnu : réponse orale`);
-    if (no(fiche.cover)) item.noCover = true;      // l'image n'ira pas dans « Pochette floutée »
-    if (g.audio) index[FOLDERS[folder].type].push(item);
-    // les images (sauf « pochette : non ») alimentent la case Pochette floutée
-    if (g.image && !item.noCover) {
-      const p = { id: item.id + '#img', img: item.cover, answer: item.answer, folder };
-      if (item.bonus) p.bonus = item.bonus;
-      if (item.info) p.info = item.info;
-      if (item.qcm) p.qcm = item.qcm;
-      (index.pochette = index.pochette || []).push(p);
-    }
+    if (folder === 'pochettes') {
+      // Pochette floutée : l'image seule, la réponse est le nom du fichier (l'artiste)
+      if (g.audio) warn(where, 'extrait audio ignoré dans pochettes/ (seule l\'image compte)');
+      if (!g.image) continue;
+      const p = { id: item.id, img: item.cover, answer: item.answer, folder };
+      for (const k of ['bonus', 'info', 'joke', 'qcm']) if (item[k]) p[k] = item[k];
+      index.pochette.push(p);
+    } else if (g.audio) index[FOLDERS[folder].type].push(item);
+    else warn(where, 'image sans extrait audio du même nom (ignorée : les pochettes à deviner vont dans pochettes/)');
     counts[folder] = (counts[folder] || 0) + 1;
   }
 }
-index.pochette = index.pochette || [];
 
 const content = `// FICHIER GÉNÉRÉ par scripts/build-media.mjs : ne pas modifier à la main.
 // Il est refait à chaque déploiement à partir des dossiers de public/media/.

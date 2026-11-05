@@ -1,0 +1,6 @@
+# Pochette floutée : déposez juste l'image, nommée avec l'artiste à deviner
+#   Michael Jackson.jpg   → réponse attendue : Michael Jackson
+# La fiche est facultative, par exemple pour ajouter l'album en bonus :
+#   Michael Jackson.txt
+reponse : Michael Jackson
+bonus : Thriller (1982)

@@ -24,7 +24,9 @@ writeFileSync(join(M, 'citations/Les Visiteurs.txt'), Buffer.from('reponse : Les
 put('citations/Les Visiteurs.mp3');
 put('jeux-videos/Tetris.mp3');
 put('jeux-videos/Mario.txt', 'mode : qcm\npropositions : Mario | Sonic\n');      // fiche sans son : ignorée
-put('cinema/Titanic.png');                                                    // image seule → Pochette floutée
+put('cinema/Titanic.png');                                                    // image seule hors pochettes/ : ignorée
+put('pochettes/Michael Jackson.jpg');
+put('pochettes/Daft Punk.png'); put('pochettes/Daft Punk.txt', 'bonus : Discovery (2001)\n');
 const log = execFileSync('node', [join(tmp, 'scripts/build-media.mjs')], { encoding: 'utf8' });
 const idx = (await import(join(tmp, 'src/media-index.js'))).MEDIA_INDEX;
 rmSync(tmp, { recursive: true, force: true });
@@ -38,7 +40,8 @@ check(queen.src === '/media/musique/Queen%20-%20Bohemian%20Rhapsody.mp3', 'noms 
 const jp = cin[0];
 check(jp.qcm && jp.qcm.o.length === 4 && jp.qcm.o[0] === 'Jurassic Park' && jp.qcm.q === 'De quel film ?', 'fiche QCM : question et 4 propositions, la bonne en premier');
 check(idx.replique[0].bonus === 'Jean-Marie Poiré', 'fiche Windows-1252 (accents) lue correctement');
-check(idx.pochette.length === 2 && idx.pochette.some(p => /Titanic/.test(p.answer)) && !idx.pochette.some(p => /Jurassic/.test(p.answer)), 'Pochette floutée : toutes les images sauf « pochette : non »');
+check(idx.pochette.length === 2 && idx.pochette.every(p => p.folder === 'pochettes') && idx.pochette.some(p => p.answer === 'Michael Jackson') && idx.pochette.find(p => p.answer === 'Daft Punk').bonus === 'Discovery (2001)', 'Pochette floutée : seulement le dossier pochettes/, réponse = nom du fichier');
+check(/Titanic.*ignorée/.test(log), 'image hors pochettes/ sans son : signalée et ignorée');
 check(/Mario.*sans extrait/.test(log), 'fiche sans fichier du même nom signalée');
 check(!JSON.stringify(idx).includes('exemple'), 'fichiers _exemple ignorés');
 
