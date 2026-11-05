@@ -207,7 +207,7 @@ function expectHTML(ch) {
       ${h.map((x, i) => `<div class="sub" data-ghint="${i}">Indice ${i + 1} (${(i + 1) * 10} s) : <b>${esc(x)}</b> <span></span></div>`).join('')}
       ${S.phase === 'challenge' ? `<div class="sub">Vaut en ce moment : <b id="ctrPts"></b></div>` : ''}`;
   } else if (k === 'media') {
-    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>${ch.item && ch.item.info ? `<div class="fun">💡 ${esc(ch.item.info)}</div>` : ''}${ch.item && ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
+    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>${ch.item && ch.item.info ? `<div class="fun">💡 ${esc(ch.item.info)}</div>` : ''}${ch.item && ch.item.joke ? `<div class="q">😜 ${esc(ch.item.joke)}</div>` : ''}${ch.item && ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
   } else if (k === 'series' && ch.type === 'video') {
     body = `<div class="q">🎬 ${esc(ch.item && ch.item.label || 'Vidéo')}</div>${(ch.qs || []).map((q, i) => `<div class="sub">Question ${i ? 'bonus' : ''}${ch.i === i && ch.stage === 'q' ? ' (en cours)' : ''}</div>${qBlock(q)}`).join('')}`;
   } else if (k === 'series') {
@@ -237,7 +237,7 @@ function expectHTML(ch) {
     body = ch.stage === 'pick' ? `<div class="q">${esc(team(ch.teamId).name)} doit choisir ${k === 'duel' ? 'son adversaire' : 'sa victime'}.</div>` : qBlock(ch.q, ch.answers);
   } else if (k === 'dcc' && ch.item) {
     // fiche QCM d'un dossier média : réponse de la fiche + bonus (à donner à la main : ±1 après la révélation)
-    body = `<div class="sub">${ch.media === 'image' ? '🖼' : '🎵'} ${esc(ch.item.answer)}${ch.item.bonus ? ` · bonus : ${esc(ch.item.bonus)} (+1 à la main)` : ''}</div>${qBlock(ch.q, ch.answers)}${ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
+    body = `<div class="sub">${ch.media === 'image' ? '🖼' : '🎵'} ${esc(ch.item.answer)}${ch.item.bonus ? ` · bonus : ${esc(ch.item.bonus)} (+1 à la main)` : ''}</div>${qBlock(ch.q, ch.answers)}${ch.item.joke ? `<div class="q">😜 ${esc(ch.item.joke)}</div>` : ''}${ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
   } else if (ch.q) body = qBlock(ch.q, ch.answers);
   else body = `<div class="q">${esc(ch.summary || ch.text || ch.rule || '')}</div>`;
   return `<div class="p expect"><h3>✓ Réponse attendue</h3>${body}</div>`;

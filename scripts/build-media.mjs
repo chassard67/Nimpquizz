@@ -43,7 +43,7 @@ function readText(path) {
 const KEYS = {
   reponse: 'answer', 'réponse': 'answer', bonus: 'bonus', mode: 'mode', question: 'question',
   propositions: 'options', choix: 'options', accepte: 'accept', 'accepté': 'accept', aussi: 'accept',
-  debut: 'start', 'début': 'start', pochette: 'cover', image: 'cover', info: 'info', anecdote: 'info'
+  debut: 'start', 'début': 'start', pochette: 'cover', image: 'cover', info: 'info', anecdote: 'info', blague: 'joke', boutade: 'joke'
 };
 function parseFiche(text, file) {
   const out = {};
@@ -95,6 +95,7 @@ for (const [folder, { type }] of Object.entries(FOLDERS)) {
     if (g.image) item.cover = url(folder, g.image);
     if (fiche.bonus) item.bonus = fiche.bonus;
     if (fiche.info) item.info = fiche.info;
+    if (fiche.joke) item.joke = fiche.joke;
     if (fiche.start) item.start = secs(fiche.start);
     const mode = (fiche.mode || 'oral').toLowerCase();
     if (/qcm|carr|cash|duo|choix/.test(mode)) {

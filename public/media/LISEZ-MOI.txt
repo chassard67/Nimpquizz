@@ -23,6 +23,8 @@ LA FICHE .txt (une ligne « clé : valeur » par info, # = commentaire)
   reponse      : la réponse attendue (affichée au maître du jeu et à la télé)
   bonus        : l'info qui vaut +1 (année, réalisateur, jeu…)
   info         : une anecdote affichée à la révélation
+  blague       : une boutade affichée en grand à la révélation
+                 (pas de réponse attendue, juste pour rire)
   debut        : où commence l'extrait, en secondes ou 1:05
   pochette     : non  → l'image ne sert pas en « Pochette floutée »
                         (utile quand le titre est écrit dessus)

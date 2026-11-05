@@ -410,7 +410,7 @@ const RENDER = {
       : `<div class="media-vis ${ch.stage === 'answer' ? 'paused' : ''}">${bars}</div>${layers}`;
     // à la réponse : l'image du dossier (pochette, affiche…) à la place des barres de son, et l'anecdote
     const revVisual = ch.media === 'audio' && ch.item.cover ? `<img class="pochette" src="${esc(ch.item.cover)}" alt="">` : visual;
-    if (rev) return [`<div class="big-center">${revVisual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${ch.item.bonus ? `<div class="rule">${esc(ch.item.bonus)}</div>` : ''}${ch.item.info ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(ch.item.info)}</div>` : ''}${revFooter(ch)}</div>`, ''];
+    if (rev) return [`<div class="big-center">${revVisual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${ch.item.bonus ? `<div class="rule">${esc(ch.item.bonus)}</div>` : ''}${ch.item.info ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(ch.item.info)}</div>` : ''}${ch.item.joke ? `<div class="joke">😜 ${esc(ch.item.joke)}</div>` : ''}${revFooter(ch)}</div>`, ''];
     const buzzer = ch.stage === 'answer' ? team(ch.buzzer) : null;
     const excl = ch.excluded.length ? `<div class="rule">Grillés : ${ch.excluded.map(id => esc(team(id).name)).join(', ')}</div>` : '';
     return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center">${visual}${excl}</div>
@@ -463,7 +463,10 @@ RENDER.dcc = (ch, rev) => {
     const ok = rev && ch.ok ? (ch.ok[id] ? 'ok' : 'ko') : '';
     return `<div class="dw ${ok} ${rev && m === 'cash' && S.host ? 'toggle' : ''}" data-cash="${rev && m === 'cash' ? id : ''}">${dot(t.color)}<span>${esc(t.name)}</span><b class="m-${m}">${MODE[m] || '…'}</b>${ans ? `<i>${ans}</i>` : ''}</div>`; }).join('')}</div>`;
   if (!rev) return [`${med}<div class="question">${esc(q.q)}</div>${modes}<div class="rule">Les propositions sont sur vos téléphones (sauf pour les fous du cash).</div>`, answeredSide(ch).join('')];
-  return [med + qcmBlock(ch, true) + modes + revFooter(ch), ''];
+  // fiche d'un dossier média : le titre de la chanson et la blague éventuelle
+  const song = ch.item && ch.item.answer ? `<div class="mid" style="color:var(--yellow);text-align:center">🎵 ${esc(ch.item.answer)}</div>` : '';
+  const joke = ch.item && ch.item.joke ? `<div class="joke">😜 ${esc(ch.item.joke)}</div>` : '';
+  return [med + song + qcmBlock(ch, true) + joke + modes + revFooter(ch), ''];
 };
 
 // ── Burger Quiz / vidéo culte : questions en série
