@@ -812,9 +812,52 @@ Catégories (5 tirées au hasard) : Un prénom · Une ville · Un chanteur ou un
 Les blind tests se remplissent avec les fichiers déposés dans `public/media/<dossier>/` : voir `public/media/LISEZ-MOI.txt`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.
 
 
-### BT Musique — 0 question (dossier `musique/`)
+### BT Musique — 43 questions (dossier `musique/`)
 _Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus)._
 
+1. Partir un jour — 2Be3 _(bonus : 1996)_ · QCM : Filip Nikolic / Philippe Nikolik / Frank Delay / Adel Kachermi
+2. a-ha - Take on Me · oral
+3. ABBA - Mamma Mia · oral
+4. ACDC - Highway to Hell · oral
+5. Alain Souchon - Foule sentimentale · oral
+6. Amel Bent - Ma philosophie · oral
+7. Barbie Girl — Aqua _(bonus : Aqua est un groupe danois)_ · QCM : 1997 / 1995 / 1999 / 1959, le même jour que la poupée
+8. Djadja — Aya Nakamura · QCM : Non / Oui / Seulement Djadja / Même pas elle
+9. Black Eyed Peas - I Gotta Feeling · oral
+10. Black M - Sur ma route · oral
+11. Bob Marley & The Wailers - Could You Be Loved · oral
+12. Bob Sinclar - Love Generation · oral
+13. Britney Spears - ...Baby One More Time · oral
+14. Britney Spears - Toxic · oral
+15. J'irai où tu iras — Céline Dion & Jean-Jacques Goldman _(bonus : 1995)_ · oral
+16. Céline Dion - Pour que tu m'aimes encore · oral
+17. Chic - Le Freak · oral
+18. Claude François - Alexandrie Alexandra · oral
+19. Coldplay - Viva La Vida · oral
+20. Coolio - Gangsta's Paradise · oral
+21. Dadju - Reine · oral
+22. Daft Punk - One More Time · oral
+23. Début de soirée - Nuit de folie (Version originale 1988) · oral
+24. Smoke on the Water — Deep Purple _(bonus : 1972)_ · QCM : L'incendie du casino de Montreux pendant un concert de Frank Zappa / La fumée d'un bateau à vapeur sur le lac Léman / Un barbecue raté au bord du lac de Genève / Le premier essai de machine à fumée du groupe
+25. Eiffel 65 - Blue (Da Ba Dee) (Video Edit) · oral
+26. Indila - Dernière danse · oral
+27. Allumer le feu — Johnny Hallyday _(bonus : 1998)_ · QCM : Pascal Obispo / Zazie / Jean-Jacques Goldman / Le pompier de service du Stade de France
+28. Color Gitano — Kendji Girac _(bonus : 2014)_ · QCM : Une / Deux / Trois / Aucune, c'était une balle de ping-pong
+29. Kenny Loggins - Footloose · oral
+30. Tu m'oublieras — Larusso _(bonus : 1998)_ · oral
+31. LMFAO - Party Rock Anthem · oral
+32. Louise Attaque - J't'emmène au vent · oral
+33. Manau - La tribu de Dana · oral
+34. All I Want for Christmas Is You — Mariah Carey _(bonus : 1994)_ · oral
+35. Jerusalema — Master KG feat. Nomcebo Zikode _(bonus : 2019)_ · oral
+36. Michael Jackson - Beat It · oral
+37. Michel Sardou - Les lacs du Connemara · oral
+38. MIKA - Relax, Take It Easy · oral
+39. Miley Cyrus - Flowers · oral
+40. Ricchi e Poveri - Sarà perché ti amo · oral
+41. Chandelier — Sia _(bonus : 2014)_ · QCM : Loïc Nottet / Loïc Notté / Laurent Maistret / Jean-Marie Bigard en tutu
+42. Papaoutai — Stromae _(bonus : 2013)_ · oral
+43. Taylor Swift - Shake It Off · oral
 
 ### BT Séries & films — 0 question (dossier `cinema/`)
 _Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts._
@@ -828,9 +871,18 @@ _Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1
 _Une réplique, trouvez le film. 2 pts._
 
 
-### Pochette floutée — 0 question (dossier `pochettes/`)
+### Pochette floutée — 9 questions (dossier `pochettes/`)
 _La pochette se défloute petit à petit : buzzez dès que vous reconnaissez l'artiste. 2 pts._
 
+1. Amy Winehouse · oral
+2. Bob Marley · oral
+3. Daft Punk · oral
+4. Louise attaque · oral
+5. Michael Jackson · oral
+6. Nirvana · oral
+7. Pink Floyd · oral
+8. Red Hot Chilli Peppers · oral
+9. Rolling Stones · oral
 
 ### Une seule note — 0/10 fichiers prêts (à renseigner dans `src/content.js`)
 _Une note. Une seule. Buzzez si vous reconnaissez : 3 pts._
