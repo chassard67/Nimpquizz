@@ -12,7 +12,8 @@ const root = new URL('..', import.meta.url).pathname;
 const tmp = mkdtempSync(join(tmpdir(), 'nq-'));
 mkdirSync(join(tmp, 'scripts')); mkdirSync(join(tmp, 'src')); 
 cpSync(join(root, 'scripts/build-media.mjs'), join(tmp, 'scripts/build-media.mjs'));
-cpSync(join(root, 'public/media'), join(tmp, 'public/media'), { recursive: true });
+// seulement la structure et les exemples, pas les vrais fichiers déposés
+cpSync(join(root, 'public/media'), join(tmp, 'public/media'), { recursive: true, filter: src => !/\.(mp3|m4a|ogg|wav|aac|jpe?g|png|webp|gif)$/i.test(src) && !(/\.txt$/i.test(src) && !/(_exemple|LISEZ-MOI)/i.test(src)) });
 const M = join(tmp, 'public/media');
 const put = (p, c = 'x') => writeFileSync(join(M, p), c);
 put('musique/Village People - YMCA.mp3');                                    // sans fiche
