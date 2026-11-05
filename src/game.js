@@ -15,7 +15,7 @@ export const BOARD = [
 export const TYPES = {
   depart:        { label: 'Départ', group: 'dep', kind: 'info' },
   culture:       { label: 'Culture G', group: 'q', kind: 'dcc', rule: 'Duo, carré ou cash ? Choisissez avant de voir les réponses : duo 1 pt, carré 2 pts, cash 4 pts. +1 pour l\'équipe qui joue.' },
-  contrario:     { label: 'A contrario', group: 'q', kind: 'qcm', rule: 'Titre ou expression à l\'envers : retrouvez l\'original. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
+  contrario:     { label: 'A contrario', group: 'q', kind: 'media', media: 'text', rule: 'Tout est à l\'envers : retrouvez l\'original ! Buzzez et répondez à voix haute. 3 pts sans indice, 2 après le 1er, 1 après le 2e.' },
   burger:        { label: 'Burger Quiz', group: 'q', kind: 'series', rule: 'L\'équipe qui joue choisit un thème parmi 3. Trois questions, tout le monde répond : 2 pts / 1 pt chacune.' },
   millions:      { label: 'Millionnaire', group: 'q', kind: 'millions', rule: 'Cinq questions de plus en plus dures, seule l\'équipe qui joue répond. 1, 2, 3, 5 puis 8 pts. On peut s\'arrêter à tout moment ; palier assuré à 2 pts.' },
   affiche:       { label: 'Affiche mystère', group: 'v', kind: 'affiche', rule: 'Les indices de l\'affiche tombent un par un. Répondez tôt : 4 pts au 1er indice, 3, 2, puis 1. +1 pour l\'équipe qui joue.' },
@@ -55,7 +55,7 @@ export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#
 export const T = {
   grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
   bac: 75000, review: 120000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
-  media: 45000, mediaAnswer: 15000, reveal: 120000,
+  media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000,
   mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
   cd: 2200,                  // décompte « bip bip bip » (2 s) avant une question qui s'enchaîne
   bmcWrite: 60000, bmcJudge: 120000
@@ -76,14 +76,14 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
+  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hint: 10000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
   ladder: LADDER, dcc: DCC_PTS, bmcPts: BMC_PTS,
   cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
 
 // Banques de questions à choix multiples par type de case
 const POOLS = {
-  noix: QCM.noix, emojis: QCM.emojis, mensonge: QCM.mensonge, contrario: CONTRARIO
+  noix: QCM.noix, emojis: QCM.emojis, mensonge: QCM.mensonge
 };
 // Épreuves où l'on écrit puis l'on vote
 const OPEN_POOLS = {
@@ -703,7 +703,7 @@ function gmAction(s, a, msg, ctx, rng) {
     if (ch.kind !== 'media' || ch.stage !== 'answer') return 'Personne n\'a buzzé.';
     feed(s, 'info', `Buzz de ${tn(s, ch.buzzer)} annulé, on reprend !`);
     ch.buzzer = null; ch.stage = 'play';
-    ch.deadline = now + (ch.remaining || 15000); s.deadline = ch.deadline;
+    resumePlay(s, ch, now);
     return null;
   }
   if (a === 'pick') {
@@ -743,7 +743,7 @@ function gmAction(s, a, msg, ctx, rng) {
       ch.blocked.push(id);
       if (ch.kind === 'media') {
         if (!ch.excluded.includes(id)) ch.excluded.push(id);
-        if (ch.stage === 'answer' && ch.buzzer === id) { ch.buzzer = null; ch.stage = 'play'; ch.deadline = now + (ch.remaining || 15000); s.deadline = ch.deadline; }
+        if (ch.stage === 'answer' && ch.buzzer === id) { ch.buzzer = null; ch.stage = 'play'; resumePlay(s, ch, now); }
         if (s.teams.every(x => ch.excluded.includes(x.id))) resolve(s, ctx, rng);
       } else if (ch.participants) {
         ch.participants = ch.participants.filter(x => x !== id);
@@ -804,7 +804,7 @@ function startCell(s, type, ctx, rng, gains = {}) {
     return toReveal(s, ctx, s.ch.text);
   }
   if (meta.media) {
-    const pool = (MEDIA[type] || []).filter(x => x.src || x.img || (Array.isArray(x.layers) && x.layers.length));
+    const pool = meta.media === 'text' ? CONTRARIO : (MEDIA[type] || []).filter(x => x.src || x.img || (Array.isArray(x.layers) && x.layers.length));
     if (!pool.length) {
       s.ch = { ...base, kind: 'qcm', fallback: type, q: culturePick(s, rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm,
         rule: 'Le contenu de cette case n\'est pas encore chargé. Question de consolation, 2 pts / 1 pt.' };
@@ -1143,7 +1143,13 @@ function judgeMedia(s, ok, ctx, rng) {
   feed(s, 'info', `${tm.name} se plante. Les autres peuvent buzzer !`);
   ch.buzzer = null; ch.stage = 'play';
   if (s.teams.every(x => ch.excluded.includes(x.id))) return resolve(s, ctx, rng);
-  ch.deadline = ctx.now + (ch.remaining || 15000); s.deadline = ch.deadline;
+  resumePlay(s, ch, ctx.now);
+}
+// Reprise après un buzz : le temps passé à répondre ne compte pas (indices, couches, floutage)
+function resumePlay(s, ch, now) {
+  if (ch.buzzAt && ch.buzzAt >= ch.startsAt) ch.startsAt += now - ch.buzzAt;
+  ch.buzzAt = null;
+  ch.deadline = now + (ch.remaining || 15000); s.deadline = ch.deadline;
 }
 
 function pickTarget(s, tm, targetId, ctx, rng) {
@@ -1316,8 +1322,10 @@ function resolve(s, ctx, rng) {
       const w = team(s, ch.winner);
       let pts = ch.type === 'unenote' ? 3 : 2;
       if (ch.media === 'layers') { const n = ch.item.layers.length; ch.layerAt = Math.min(n, 1 + Math.floor((ch.buzzAt - ch.startsAt) / T.layer)); pts = Math.max(1, n + 1 - ch.layerAt); }
+      if (ch.media === 'text') { ch.hintsSeen = Math.min((ch.item.hints || []).length, Math.floor(Math.max(0, ch.buzzAt - ch.startsAt) / T.hint)); pts = Math.max(1, 3 - ch.hintsSeen); }
       award(s, w, pts + (ch.bonus ? 1 : 0));
-      summary = `${w.name} a trouvé${ch.bonus ? ', avec le bonus en prime' : ''} !`;
+      summary = ch.media === 'text' ? `${w.name} a trouvé ${ch.hintsSeen ? `avec ${ch.hintsSeen} indice${ch.hintsSeen > 1 ? 's' : ''}` : 'sans aucun indice'} : ${pts} pt${pts > 1 ? 's' : ''} !`
+        : `${w.name} a trouvé${ch.bonus ? ', avec le bonus en prime' : ''} !`;
     }
     else summary = 'Personne n\'a trouvé. Vous n\'avez aucune culture.';
   }
@@ -1438,7 +1446,9 @@ export function view(s, viewer = {}, extra = {}) {
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;
     if (ch.q && ch.q.clues && viewer.role !== 'tv') delete ch.q.clues;
-    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label };
+    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
+      // A contrario : la phrase pour tout le monde, les indices seulement pour la télé (elle les affiche à 10 s et 20 s)
+      q: ch.item.q, nh: ch.item.hints ? ch.item.hints.length : undefined, hints: viewer.role === 'tv' ? ch.item.hints : undefined };
     if (ch.duo && me) ch.duo = { [me.teamId]: ch.duo[me.teamId] }; else if (ch.duo) ch.duo = {};
     const hideOthers = ch.kind !== 'bac' || ch.stage === 'write';
     if (ch.answers && !(ch.kind === 'open' && ch.stage === 'vote') && hideOthers) {

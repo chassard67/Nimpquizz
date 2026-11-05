@@ -29,9 +29,11 @@ out.push(`\n### Général (${count(C.QCM.culture)})`);
 C.QCM.culture.forEach((q, i) => qcm(q, i + 1));
 for (const th of Object.values(C.CULTURE_THEMES)) { out.push(`\n### ${th.label} (${count(th.q)})`); th.q.forEach((q, i) => qcm(q, i + 1)); }
 
-for (const [key, title, arr] of [['noix', 'Question à la noix', C.QCM.noix], ['emojis', 'Emojis', C.QCM.emojis], ['contrario', 'A contrario', C.CONTRARIO]]) {
+for (const [key, title, arr] of [['noix', 'Question à la noix', C.QCM.noix], ['emojis', 'Emojis', C.QCM.emojis]]) {
   h(`${title} (${count(arr)})`); out.push(`_${TYPES[key].rule}_\n`); arr.forEach((q, i) => qcm(q, i + 1));
 }
+h(`A contrario (${count(C.CONTRARIO)})`); out.push(`_${TYPES.contrario.rule}_\n`);
+C.CONTRARIO.forEach((q, i) => out.push(`${i + 1}. « ${q.q} » → **${q.answer}** · indices : ${q.hints.join(' / ')}`));
 h(`Le grand mensonge (${count(C.QCM.mensonge)})`); out.push(`_${TYPES.mensonge.rule}_\n`);
 C.QCM.mensonge.forEach((q, i) => { out.push(`${i + 1}. ${q.o.map((o, k) => k === q.a ? `**${o}** ❌ MENSONGE` : o).join(' · ')}`); if (q.f) out.push(`   - _${q.f}_`); });
 

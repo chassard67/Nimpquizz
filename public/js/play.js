@@ -323,7 +323,8 @@ function renderChallenge() {
   if (ch.kind === 'media') {
     if (ch.excluded.includes(t.id)) return wait('Grillés pour celle-là 🔥 Laissez les autres chercher.', '🙊');
     if (ch.stage === 'answer') return ch.buzzer === t.id ? wait('À VOUS ! Dites la réponse à voix haute 🎤', '🔔') : wait(`${esc(team(ch.buzzer).name)} a buzzé…`, '😱');
-    return html(`<div class="center"><h1>${ch.media === 'image' ? 'Quel est cet album ?' : 'Écoutez bien…'}</h1><button class="buzzer" id="bz">BUZZ</button><p class="msg">${timer}</p></div>`,
+    const head = ch.media === 'text' ? `<h2>À l'endroit, ça donne… ?</h2><h1>« ${esc(ch.item.q || '')} »</h1>` : `<h1>${ch.media === 'image' ? 'Quel est cet album ?' : 'Écoutez bien…'}</h1>`;
+    return html(`<div class="center">${head}<button class="buzzer" id="bz">BUZZ</button><p class="msg">${ch.media === 'text' ? 'Indices sur la télé 📺 · réponse à voix haute · ' : ''}${timer}</p></div>`,
       () => $('#bz').onclick = () => { buzz(200); send({ t: 'buzz' }); });
   }
   wait('Regardez la télé !', '👀');

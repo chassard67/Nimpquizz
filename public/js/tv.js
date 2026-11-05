@@ -401,8 +401,12 @@ const RENDER = {
     const bars = Array.from({ length: 30 }, (_, i) => `<i style="background:${OPT_COLORS[i % 4]};animation-delay:${-(i * 137 % 900)}ms"></i>`).join('');
     const layerNames = ['🥁 Batterie', '🎸 Basse', '🎹 Le reste', '🎤 Voix', '➕', '➕'];
     const layers = ch.media === 'layers' ? `<div class="layers">${(ch.item.layers || []).map((_, i) => `<span data-layer="${i}" class="${rev ? 'on' : ''}">${layerNames[i] || '➕'}</span>`).join('')}</div>` : '';
+    // A contrario : la phrase à l'envers, puis 2 indices qui tombent à 10 s et 20 s
+    const hints = ch.media === 'text' ? `<div class="ctr-hints">${(ch.item.hints || Array(ch.item.nh || 0).fill('')).map((h, i) => `<div class="ctr-hint ${rev ? 'on' : ''}" data-hint="${i}"><span>Indice ${i + 1}</span><b>${rev ? esc(h) : ''}</b></div>`).join('')}</div>` : '';
     const visual = ch.media === 'image'
       ? `<img class="pochette" id="poch" src="${esc(ch.item.img)}" alt="" style="filter:blur(${rev ? 0 : 40}px)">`
+      : ch.media === 'text'
+      ? `<div class="ctr-q">« ${esc(ch.item.q || '')} »</div>${hints}`
       : `<div class="media-vis ${ch.stage === 'answer' ? 'paused' : ''}">${bars}</div>${layers}`;
     if (rev) return [`<div class="big-center">${visual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${revFooter(ch)}</div>`, ''];
     const buzzer = ch.stage === 'answer' ? team(ch.buzzer) : null;
@@ -614,6 +618,15 @@ function tickTimers() {
     const k = Math.min(S.ch.q.clues ? S.ch.q.clues.length : 4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue));
     document.querySelectorAll('[data-clue]').forEach(el => { const show = Number(el.dataset.clue) < k; if (show && el.style.visibility === 'hidden') { el.style.visibility = 'visible'; el.classList.add('pop'); sfx.ding(); } });
     const ap = $('#affPts'); if (ap) ap.textContent = `Indice ${k} sur ${S.ch.q.clues ? S.ch.q.clues.length : 4} · une bonne réponse maintenant vaut ${Math.max(1, (S.ch.q.clues ? S.ch.q.clues.length : 4) + 1 - k)} pt${k < 4 ? 's' : ''}`;
+  }
+  // A contrario : indices révélés à 10 s et 20 s d'écoute (le temps de réponse après un buzz ne compte pas)
+  if (S.ch && S.ch.media === 'text' && S.phase === 'challenge' && S.ch.item && S.ch.item.hints) {
+    const shown = S.ch.stage === 'answer' && S.ch.buzzAt ? S.ch.buzzAt : now;
+    const k = Math.floor(Math.max(0, shown - S.ch.startsAt) / S.meta.timers.hint);
+    document.querySelectorAll('[data-hint]').forEach(el => {
+      const i = Number(el.dataset.hint);
+      if (i < k && !el.classList.contains('on')) { el.classList.add('on', 'pop'); el.querySelector('b').textContent = S.ch.item.hints[i]; sfx.ding(); }
+    });
   }
   const p = $('#poch');
   if (p && S.phase === 'challenge' && S.ch && S.ch.stage === 'play') {

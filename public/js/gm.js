@@ -201,7 +201,12 @@ function qBlock(q, answers) {
 function expectHTML(ch) {
   const k = ch.kind;
   let body = '';
-  if (k === 'media') {
+  if (k === 'media' && ch.media === 'text') {
+    const h = ch.item.hints || [];
+    body = `<div class="q">« ${esc(ch.item.q)} »</div><div class="ans">${esc(ch.item.answer)}</div>
+      ${h.map((x, i) => `<div class="sub" data-ghint="${i}">Indice ${i + 1} (${(i + 1) * 10} s) : <b>${esc(x)}</b> <span></span></div>`).join('')}
+      ${S.phase === 'challenge' ? `<div class="sub">Vaut en ce moment : <b id="ctrPts"></b></div>` : ''}`;
+  } else if (k === 'media') {
     body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>`;
   } else if (k === 'series' && ch.type === 'video') {
     body = `<div class="q">🎬 ${esc(ch.item && ch.item.label || 'Vidéo')}</div>${(ch.qs || []).map((q, i) => `<div class="sub">Question ${i ? 'bonus' : ''}${ch.i === i && ch.stage === 'q' ? ' (en cours)' : ''}</div>${qBlock(q)}`).join('')}`;
@@ -285,7 +290,7 @@ function stageActions(ch) {
       out.push(`<div class="buzzbox" style="background:${t.color}"><b>🔔 ${esc(t.name)}</b>a buzzé : on écoute sa réponse</div>
         <div class="btns">${B('✓ Bonne réponse', 'judge', { ok: true }, 'ok big')}${ch.item && ch.item.bonus ? B('✓ + bonus (+1)', 'judge', { ok: true, bonus: true }, 'ok') : ''}${B('✗ Raté', 'judge', { ok: false }, 'ko')}${B('↩️ Annuler le buzz', 'unbuzz')}</div>`);
     }
-    out.push(`<div class="btns">${B(ch.media === 'image' ? '🔁 Reflouter l\'image' : '🔁 Relancer l\'extrait', 'replay')}</div>`);
+    out.push(`<div class="btns">${B(ch.media === 'image' ? '🔁 Reflouter l\'image' : ch.media === 'text' ? '🔁 Recommencer (indices recachés)' : '🔁 Relancer l\'extrait', 'replay')}</div>`);
   }
   if (ch.stage === 'video') out.push(`<div class="btns">${B('🔁 Relancer la vidéo', 'replay')}${B('▶ Passer aux questions', 'mediaDone', {}, 'y')}</div>`);
   if (ch.stage === 'pick') out.push(`<h3>Choisir à sa place</h3>${teamsChips('pick', ch.teamId)}`);
@@ -336,7 +341,7 @@ function revealHTML() {
     ${ch.kind ? expectHTML(ch) : ''}
     <div class="p"><h3>🧮 Points (corriger si besoin)</h3>${gains}</div>
     <div class="p"><div class="btns">
-      ${ch.kind === 'media' && ch.item ? B('🔁 Rejouer l\'extrait', 'replay') : ''}
+      ${ch.kind === 'media' && ch.item && ch.media !== 'text' ? B('🔁 Rejouer l\'extrait', 'replay') : ''}
       ${S.canRestart ? B('🔄 Rejouer l\'épreuve', 'restart', {}, '', { confirm: 'Rejouer cette épreuve depuis le début ? Les points gagnés ici seront retirés.' }) : ''}
       ${S.canRestart ? B('🔀 Autre question', 'newQuestion', {}, '', { confirm: 'Rejouer la case avec une autre question ? Les points gagnés ici seront retirés.' }) : ''}
     </div></div>`;
@@ -397,6 +402,14 @@ function tabHist() {
 function tickTimers() {
   if (!S) return;
   const now = gameNow(S);
+  // A contrario : indices déjà affichés à la télé et points en jeu
+  const ch = S.ch;
+  if (ch && ch.media === 'text' && S.phase === 'challenge' && ch.item) {
+    const at = ch.stage === 'answer' && ch.buzzAt ? ch.buzzAt : now;
+    const k = Math.min((ch.item.hints || []).length, Math.floor(Math.max(0, at - ch.startsAt) / S.meta.timers.hint));
+    document.querySelectorAll('[data-ghint]').forEach(el => { el.querySelector('span').textContent = Number(el.dataset.ghint) < k ? '· affiché ✓' : ''; });
+    const p = $('#ctrPts'); if (p) { const v = Math.max(1, 3 - k); p.textContent = `${v} pt${v > 1 ? 's' : ''}${ch.stage === 'answer' ? ' (au moment du buzz)' : ''}`; }
+  }
   const dl = S.deadline && S.phase !== 'lobby' && S.phase !== 'end' ? Math.max(0, S.deadline - now) : null;
   const c = $('#clock'); if (c) c.textContent = dl === null ? '' : S.paused ? '⏸' : fmtSec(dl) + ' s';
   const cc = $('#chClock'); if (cc) cc.textContent = dl === null ? '' : fmtSec(dl) + ' s';

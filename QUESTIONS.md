@@ -333,32 +333,36 @@ _Devinez le titre ou l'expression. 2 pts pour l'équipe qui joue, 1 pt pour les 
 20. 🧈💶🧈 (expression)
    - Faire son beurre · **Le beurre et l'argent du beurre** ✅ · Compter pour du beurre · Beurrer la tartine
 
-## A contrario (11 questions)
+## A contrario (26 questions)
 
-_Titre ou expression à l'envers : retrouvez l'original. 2 pts pour l'équipe qui joue, 1 pt pour les autres._
+_Tout est à l'envers : retrouvez l'original ! Buzzez et répondez à voix haute. 3 pts sans indice, 2 après le 1er, 1 après le 2e._
 
-1. Le Bruit des moutons
-   - **Le Silence des agneaux** ✅ · La Mélodie du bonheur · Le Cri du loup · Les Moutons de Panurge
-2. Petit-déjeuner chez les génies
-   - **Le Dîner de cons** ✅ · Les Visiteurs · La Cité de la peur · Le Père Noël est une ordure
-3. Le Petit Bleu
-   - **Le Grand Bleu** ✅ · Le Petit Prince · Le Grand Blond avec une chaussure noire · Les Schtroumpfs
-4. Papa, j'ai eu le train
-   - **Maman, j'ai raté l'avion** ✅ · Y a-t-il un pilote dans l'avion ? · Le Crime de l'Orient-Express · Taxi
-5. Le Paysan des carrés
-   - **Le Seigneur des anneaux** ✅ · Le Roi Lion · Le Hobbit · Le Cercle des poètes disparus
-6. Une nuit avec fin
-   - **Un jour sans fin** ✅ · La Nuit au musée · 28 jours plus tard · Le Jour le plus long
-7. Noire-Pluie et les sept géants
-   - **Blanche-Neige et les sept nains** ✅ · Les Sept Mercenaires · Le Géant de fer · Cendrillon
-8. Les Pâlots font du surf
-   - **Les Bronzés font du ski** ✅ · Point Break · Brice de Nice · Camping
-9. La Petite Immobilité
-   - **La Grande Vadrouille** ✅ · Le Petit Baigneur · La Grande Évasion · Les Grandes Gueules
-10. Monter dans les poires (expression)
-   - **Tomber dans les pommes** ✅ · Poireauter · Ramener sa fraise · Avoir la pêche
-11. Avoir le foie sous le pied (expression)
-   - **Avoir le cœur sur la main** ✅ · Casser les pieds · Avoir la main verte · Se faire du mauvais sang
+1. « On doit tirer pépé sous les ronces » → **Faut pas pousser mémé dans les orties** · indices : Expression / Ne pas abuser
+2. « Une dinde sèche » → **Une poule mouillée** · indices : Qualificatif / Peu courageux
+3. « Tripoter le petit paquet » → **Toucher le gros lot** · indices : Expression / Jackpot
+4. « C'est notre première phrase » → **C'est votre dernier mot** · indices : Citation / Jean-Pierre Foucault
+5. « Le mauvais angle » → **Le Bon Coin** · indices : Site web / Achat d'occasion
+6. « Mikado's Quiche » → **Domino's Pizza** · indices : Marque / Livraison à domicile
+7. « Papa, tu as manqué le train » → **Maman, j'ai raté l'avion** · indices : Cinéma / Macaulay Culkin
+8. « Une truite d'août » → **Un poisson d'avril** · indices : Événement / Farce
+9. « Explose-brebis » → **Saute-mouton** · indices : Jeu / Enfantin
+10. « La Paix des astérisques » → **La Guerre des étoiles** · indices : Cinéma / George Lucas
+11. « Brûler le tapis » → **Fumer la moquette** · indices : Expression / Délirer
+12. « Le capitaine Ketchup » → **Le colonel Moutarde** · indices : Personnage / Cluedo
+13. « Soulever une tartine » → **Porter un toast** · indices : Expression / Félicitations
+14. « Le Nord-au-postérieur » → **Le sudoku** · indices : Loisir / Grille de chiffres
+15. « Madame Jardinage » → **Monsieur Bricolage** · indices : Marque / Outillage
+16. « Un compliment pour Z » → **Une plainte contre X** · indices : Juridique / Déposée au commissariat
+17. « Ici-bas » → **Là-haut** · indices : Cinéma / Disney-Pixar
+18. « Le Dieu se dénude en Dior » → **Le diable s'habille en Prada** · indices : Cinéma / Meryl Streep
+19. « Et ton popotin, c'est du chapon ? » → **Et mon cul, c'est du poulet ?** · indices : Expression / Populaire
+20. « Lever les cuisses » → **Baisser les bras** · indices : Expression / Abandon
+21. « Toi, ministre » → **Moi, président** · indices : Citation / François Hollande
+22. « Toubib Accoucheur » → **Doc Gynéco** · indices : Musique / Ministère A.M.E.R.
+23. « Le Bruit des moutons » → **Le Silence des agneaux** · indices : Cinéma / Anthony Hopkins
+24. « Se placer en file d'échalotes » → **Se mettre en rang d'oignons** · indices : Expression / Sur une seule ligne
+25. « On a couru sur la Terre » → **On a marché sur la Lune** · indices : BD / Tintin
+26. « Whitney, tout va bien » → **Houston, on a un problème** · indices : Citation / Apollo 13
 
 ## Le grand mensonge (12 questions)
 

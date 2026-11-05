@@ -284,3 +284,12 @@ body.gmon #hostbar { display: none; }
 .bmc-entry.win { outline: 6px solid var(--yellow); box-shadow: 10px 10px 0 var(--yellow); }
 .bmc-entry.toggle { cursor: pointer; }
 body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow); }
+
+/* A contrario */
+.ctr-q { font-family: var(--display); font-size: 84px; line-height: 1.1; text-align: center; color: var(--ink); max-width: 1200px; transform: rotate(-1.5deg); }
+.ctr-hints { display: flex; gap: 30px; margin-top: 30px; }
+.ctr-hint { background: var(--panel); border-radius: 22px; padding: 18px 30px; min-width: 380px; display: flex; flex-direction: column; gap: 6px; opacity: .45; }
+.ctr-hint span { font-size: 22px; color: var(--muted); font-weight: 900; }
+.ctr-hint b { font-family: var(--display); font-weight: 400; font-size: 44px; color: var(--yellow); min-height: 52px; }
+.ctr-hint.on { opacity: 1; box-shadow: 6px 6px 0 var(--q); }
+.ctr-hint.pop { animation: pop .4s cubic-bezier(.2, 1.6, .4, 1); }

@@ -227,19 +227,35 @@ export const CULTURE_THEMES = {
   ] }
 };
 
-// ─── A CONTRARIO : titre ou expression inversé, retrouvez l'original
+// ─── A CONTRARIO : titre ou expression « à l'envers », on buzze et on répond à l'oral.
+//  Le maître du jeu valide. hints = 2 indices affichés au bout de 10 s puis 20 s si personne n'a buzzé.
 export const CONTRARIO = [
-  { q: "Le Bruit des moutons", o: ["Le Silence des agneaux", "La Mélodie du bonheur", "Le Cri du loup", "Les Moutons de Panurge"], a: 0 },
-  { q: "Petit-déjeuner chez les génies", o: ["Le Dîner de cons", "Les Visiteurs", "La Cité de la peur", "Le Père Noël est une ordure"], a: 0 },
-  { q: "Le Petit Bleu", o: ["Le Grand Bleu", "Le Petit Prince", "Le Grand Blond avec une chaussure noire", "Les Schtroumpfs"], a: 0 },
-  { q: "Papa, j'ai eu le train", o: ["Maman, j'ai raté l'avion", "Y a-t-il un pilote dans l'avion ?", "Le Crime de l'Orient-Express", "Taxi"], a: 0 },
-  { q: "Le Paysan des carrés", o: ["Le Seigneur des anneaux", "Le Roi Lion", "Le Hobbit", "Le Cercle des poètes disparus"], a: 0 },
-  { q: "Une nuit avec fin", o: ["Un jour sans fin", "La Nuit au musée", "28 jours plus tard", "Le Jour le plus long"], a: 0 },
-  { q: "Noire-Pluie et les sept géants", o: ["Blanche-Neige et les sept nains", "Les Sept Mercenaires", "Le Géant de fer", "Cendrillon"], a: 0 },
-  { q: "Les Pâlots font du surf", o: ["Les Bronzés font du ski", "Point Break", "Brice de Nice", "Camping"], a: 0 },
-  { q: "La Petite Immobilité", o: ["La Grande Vadrouille", "Le Petit Baigneur", "La Grande Évasion", "Les Grandes Gueules"], a: 0 },
-  { q: "Monter dans les poires (expression)", o: ["Tomber dans les pommes", "Poireauter", "Ramener sa fraise", "Avoir la pêche"], a: 0 },
-  { q: "Avoir le foie sous le pied (expression)", o: ["Avoir le cœur sur la main", "Casser les pieds", "Avoir la main verte", "Se faire du mauvais sang"], a: 0 }
+  { q: "On doit tirer pépé sous les ronces", answer: "Faut pas pousser mémé dans les orties", hints: ["Expression", "Ne pas abuser"] },
+  { q: "Une dinde sèche", answer: "Une poule mouillée", hints: ["Qualificatif", "Peu courageux"] },
+  { q: "Tripoter le petit paquet", answer: "Toucher le gros lot", hints: ["Expression", "Jackpot"] },
+  { q: "C'est notre première phrase", answer: "C'est votre dernier mot", hints: ["Citation", "Jean-Pierre Foucault"] },
+  { q: "Le mauvais angle", answer: "Le Bon Coin", hints: ["Site web", "Achat d'occasion"] },
+  { q: "Mikado's Quiche", answer: "Domino's Pizza", hints: ["Marque", "Livraison à domicile"] },
+  { q: "Papa, tu as manqué le train", answer: "Maman, j'ai raté l'avion", hints: ["Cinéma", "Macaulay Culkin"] },
+  { q: "Une truite d'août", answer: "Un poisson d'avril", hints: ["Événement", "Farce"] },
+  { q: "Explose-brebis", answer: "Saute-mouton", hints: ["Jeu", "Enfantin"] },
+  { q: "La Paix des astérisques", answer: "La Guerre des étoiles", hints: ["Cinéma", "George Lucas"] },
+  { q: "Brûler le tapis", answer: "Fumer la moquette", hints: ["Expression", "Délirer"] },
+  { q: "Le capitaine Ketchup", answer: "Le colonel Moutarde", hints: ["Personnage", "Cluedo"] },
+  { q: "Soulever une tartine", answer: "Porter un toast", hints: ["Expression", "Félicitations"] },
+  { q: "Le Nord-au-postérieur", answer: "Le sudoku", hints: ["Loisir", "Grille de chiffres"] },
+  { q: "Madame Jardinage", answer: "Monsieur Bricolage", hints: ["Marque", "Outillage"] },
+  { q: "Un compliment pour Z", answer: "Une plainte contre X", hints: ["Juridique", "Déposée au commissariat"] },
+  { q: "Ici-bas", answer: "Là-haut", hints: ["Cinéma", "Disney-Pixar"] },
+  { q: "Le Dieu se dénude en Dior", answer: "Le diable s'habille en Prada", hints: ["Cinéma", "Meryl Streep"] },
+  { q: "Et ton popotin, c'est du chapon ?", answer: "Et mon cul, c'est du poulet ?", hints: ["Expression", "Populaire"] },
+  { q: "Lever les cuisses", answer: "Baisser les bras", hints: ["Expression", "Abandon"] },
+  { q: "Toi, ministre", answer: "Moi, président", hints: ["Citation", "François Hollande"] },
+  { q: "Toubib Accoucheur", answer: "Doc Gynéco", hints: ["Musique", "Ministère A.M.E.R."] },
+  { q: "Le Bruit des moutons", answer: "Le Silence des agneaux", hints: ["Cinéma", "Anthony Hopkins"] },
+  { q: "Se placer en file d'échalotes", answer: "Se mettre en rang d'oignons", hints: ["Expression", "Sur une seule ligne"] },
+  { q: "On a couru sur la Terre", answer: "On a marché sur la Lune", hints: ["BD", "Tintin"] },
+  { q: "Whitney, tout va bien", answer: "Houston, on a un problème", hints: ["Citation", "Apollo 13"] }
 ];
 
 // ─── AFFICHE MYSTÈRE : les indices tombent un par un, moins on en voit, plus ça rapporte
