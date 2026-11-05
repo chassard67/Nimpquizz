@@ -1,0 +1,8 @@
+mode : qcm
+question : Combien de balles a-t-il reçues dans la poitrine en avril 2024 ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : Une | Deux | Trois | Aucune, c'était une balle de ping-pong
+accepte : 1 | une | une seule
+reponse : Color Gitano — Kendji Girac
+bonus : 2014
+info : Blessé par balle à Biscarrosse en avril 2024, il s'en est remis.

@@ -1,0 +1,8 @@
+mode : qcm
+question : Qui a composé la musique de cette chanson ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : Pascal Obispo | Zazie | Jean-Jacques Goldman | Le pompier de service du Stade de France
+accepte : Obispo | Pascal Obispo
+reponse : Allumer le feu — Johnny Hallyday
+bonus : 1998
+info : Paroles de Zazie, musique de Pascal Obispo.

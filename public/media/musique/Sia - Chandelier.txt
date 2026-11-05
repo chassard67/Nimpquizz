@@ -1,0 +1,8 @@
+mode : qcm
+question : Qui a dansé sur cette chanson dans « Danse avec les stars » ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : Loïc Nottet | Loïc Notté | Laurent Maistret | Jean-Marie Bigard en tutu
+accepte : Nottet | Loic Nottet
+reponse : Chandelier — Sia
+bonus : 2014
+info : Saison 6 (2015), avec Denitsa Ikonomova.

@@ -1,0 +1,6 @@
+mode : qcm
+question : Quelqu'un a déjà compris ce qu'elle dit dans la chanson ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : Non | Oui | Seulement Djadja | Même pas elle
+accepte : non | personne | jamais
+reponse : Djadja — Aya Nakamura

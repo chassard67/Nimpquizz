@@ -1,0 +1,8 @@
+mode : qcm
+question : De quel événement vient le titre de la chanson ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : L'incendie du casino de Montreux pendant un concert de Frank Zappa | La fumée d'un bateau à vapeur sur le lac Léman | Un barbecue raté au bord du lac de Genève | Le premier essai de machine à fumée du groupe
+accepte : incendie | casino de Montreux | Montreux
+reponse : Smoke on the Water — Deep Purple
+bonus : 1972
+info : Décembre 1971 : un spectateur tire une fusée éclairante, le casino brûle, la fumée s'étale sur le lac.

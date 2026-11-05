@@ -1,0 +1,7 @@
+mode : qcm
+question : Comment s'appelait le chanteur du groupe, décédé en 2009 ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : Filip Nikolic | Philippe Nikolik | Frank Delay | Adel Kachermi
+accepte : Nikolic | Filip Nikolic | Philip Nikolic
+reponse : Partir un jour — 2Be3
+bonus : 1996

@@ -1,0 +1,7 @@
+mode : qcm
+question : En quelle année est sortie cette chanson ?
+# la bonne réponse en premier (le jeu mélange)
+propositions : 1997 | 1995 | 1999 | 1959, le même jour que la poupée
+accepte : 97
+reponse : Barbie Girl — Aqua
+bonus : Aqua est un groupe danois
