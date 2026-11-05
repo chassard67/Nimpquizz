@@ -207,7 +207,7 @@ function expectHTML(ch) {
       ${h.map((x, i) => `<div class="sub" data-ghint="${i}">Indice ${i + 1} (${(i + 1) * 10} s) : <b>${esc(x)}</b> <span></span></div>`).join('')}
       ${S.phase === 'challenge' ? `<div class="sub">Vaut en ce moment : <b id="ctrPts"></b></div>` : ''}`;
   } else if (k === 'media') {
-    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>`;
+    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>${ch.item && ch.item.info ? `<div class="fun">💡 ${esc(ch.item.info)}</div>` : ''}${ch.item && ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
   } else if (k === 'series' && ch.type === 'video') {
     body = `<div class="q">🎬 ${esc(ch.item && ch.item.label || 'Vidéo')}</div>${(ch.qs || []).map((q, i) => `<div class="sub">Question ${i ? 'bonus' : ''}${ch.i === i && ch.stage === 'q' ? ' (en cours)' : ''}</div>${qBlock(q)}`).join('')}`;
   } else if (k === 'series') {
@@ -235,6 +235,9 @@ function expectHTML(ch) {
     body = `${(ch.q.clues || []).map((c, i) => `<div class="sub">Indice ${i + 1} : ${esc(c)}</div>`).join('')}${qBlock(ch.q, ch.answers)}`;
   } else if (k === 'duel' || k === 'target') {
     body = ch.stage === 'pick' ? `<div class="q">${esc(team(ch.teamId).name)} doit choisir ${k === 'duel' ? 'son adversaire' : 'sa victime'}.</div>` : qBlock(ch.q, ch.answers);
+  } else if (k === 'dcc' && ch.item) {
+    // fiche QCM d'un dossier média : réponse de la fiche + bonus (à donner à la main : ±1 après la révélation)
+    body = `<div class="sub">${ch.media === 'image' ? '🖼' : '🎵'} ${esc(ch.item.answer)}${ch.item.bonus ? ` · bonus : ${esc(ch.item.bonus)} (+1 à la main)` : ''}</div>${qBlock(ch.q, ch.answers)}${ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
   } else if (ch.q) body = qBlock(ch.q, ch.answers);
   else body = `<div class="q">${esc(ch.summary || ch.text || ch.rule || '')}</div>`;
   return `<div class="p expect"><h3>✓ Réponse attendue</h3>${body}</div>`;
@@ -292,6 +295,7 @@ function stageActions(ch) {
     }
     out.push(`<div class="btns">${B(ch.media === 'image' ? '🔁 Reflouter l\'image' : ch.media === 'text' ? '🔁 Recommencer (indices recachés)' : '🔁 Relancer l\'extrait', 'replay')}</div>`);
   }
+  if (ch.kind === 'dcc' && ch.item && ch.media === 'audio') out.push(`<div class="btns">${B('🔁 Relancer l\'extrait', 'replay')}</div>`);
   if (ch.stage === 'video') out.push(`<div class="btns">${B('🔁 Relancer la vidéo', 'replay')}${B('▶ Passer aux questions', 'mediaDone', {}, 'y')}</div>`);
   if (ch.stage === 'pick') out.push(`<h3>Choisir à sa place</h3>${teamsChips('pick', ch.teamId)}`);
   if (ch.kind === 'series' && ch.stage === 'theme') out.push(`<h3>Choisir le menu à sa place</h3><div class="btns">${ch.themes.map((th, i) => B(esc(th.name), 'theme', { i })).join('')}</div>`);

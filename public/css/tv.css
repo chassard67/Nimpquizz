@@ -293,3 +293,7 @@ body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow)
 .ctr-hint b { font-family: var(--display); font-weight: 400; font-size: 44px; color: var(--yellow); min-height: 52px; }
 .ctr-hint.on { opacity: 1; box-shadow: 6px 6px 0 var(--q); }
 .ctr-hint.pop { animation: pop .4s cubic-bezier(.2, 1.6, .4, 1); }
+
+/* QCM avec son ou image (fiches des dossiers médias) */
+.pochette.mini { width: 300px; height: 300px; align-self: center; }
+.media-vis.mini { height: 110px; width: 520px; align-self: center; }

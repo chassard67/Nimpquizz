@@ -1,0 +1,6 @@
+# Exemple de fiche : réponse à l'oral (le cas le plus courant)
+# À enregistrer sous le même nom que l'extrait : Queen - Bohemian Rhapsody.txt
+reponse : Bohemian Rhapsody — Queen
+bonus : 1975
+info : Le clip est considéré comme l'un des tout premiers clips vidéo modernes.
+debut : 0:40

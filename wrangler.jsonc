@@ -9,6 +9,8 @@
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["GameRoom"] }],
   "observability": { "enabled": true },
+  // avant chaque déploiement (et en local) : liste les fichiers de public/media/<dossier>/ → src/media-index.js
+  "build": { "command": "node scripts/build-media.mjs", "watch_dir": "public/media" },
   // garde les variables saisies dans le tableau de bord Cloudflare (ex. GM_PIN) à chaque déploiement
   "keep_vars": true
 }

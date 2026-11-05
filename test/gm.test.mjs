@@ -1,5 +1,6 @@
 // Maître du jeu : pause, annulation, rejouer, corrections, vues (le MJ voit tout, les téléphones non)
 import * as G from '../src/game.js';
+import { MEDIA_INDEX } from '../src/media-index.js';
 
 let now = 1_700_000_000_000;
 let seed = 99;
@@ -105,7 +106,8 @@ check(gm({ action: 'restoreTo', id: target.id }) === null && s.phase === 'roll',
 check(!G.view(s, { role: 'gm', host: true }).hist.some(h => h.id >= target.id), 'les points suivants disparaissent');
 
 // ── blind test : buzz, annuler le buzz, relancer, valider, puis annuler la validation
-check(gm({ action: 'goto', cell: cellOf('bt_intemporel') }) === null && s.ch.kind === 'media', 'MJ envoie sur le blind test');
+MEDIA_INDEX.bt_musique.push({ id: 'test', src: '/media/musique/test.mp3', answer: 'Bohemian Rhapsody — Queen', bonus: '1975' });
+check(gm({ action: 'goto', cell: cellOf('bt_musique') }) === null && s.ch.kind === 'media', 'MJ envoie sur le blind test');
 now = s.ch.startsAt + 1000;
 check(send(pidOf(Bt), { t: 'buzz' }) === null && s.ch.stage === 'answer', 'buzz');
 check(gm({ action: 'unbuzz' }) === null && s.ch.stage === 'play' && s.ch.buzzer === null, 'annuler le buzz');

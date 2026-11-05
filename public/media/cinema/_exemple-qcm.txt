@@ -1,0 +1,10 @@
+# Exemple : musique de film en QCM
+# Fichiers : Jurassic Park.mp3 + Jurassic Park.jpg + Jurassic Park.txt
+mode : qcm
+question : De quel film vient cette musique ?
+propositions : Jurassic Park | King Kong | Godzilla | Indiana Jones
+reponse : Jurassic Park
+bonus : 1993 · Steven Spielberg
+info : Musique de John Williams.
+# le titre est écrit sur l'affiche : on ne s'en sert pas en Pochette floutée
+pochette : non

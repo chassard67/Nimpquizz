@@ -1,5 +1,6 @@
 // Génère QUESTIONS.md (fiche animateur) à partir de src/content.js
 // Usage : npm run questions
+import { MEDIA_INDEX } from '../src/media-index.js';
 import { writeFileSync } from 'node:fs';
 import * as C from '../src/content.js';
 import { BOARD, TYPES, LADDER } from '../src/game.js';
@@ -69,13 +70,18 @@ h('Le Bac'); out.push(`_${TYPES.bac.rule}_\n\nLettres : ${C.BAC.letters.split(''
 
 const M = C.MEDIA;
 const ready = arr => arr.filter(x => x.src || x.img || (x.layers && x.layers.length)).length;
-h('Cases média : à préparer');
-out.push(`Les réponses sont prêtes. Il ne manque que les fichiers : déposez-les dans \`public/media/\` et remplacez \`src: null\` par le chemin dans \`src/content.js\`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.\n`);
-out.push(`Bonus +1 : sur les blind tests, l'animateur peut valider « ✓ + bonus » si l'équipe donne en plus l'année ou le réalisateur (indiqués entre parenthèses).\n`);
-for (const [key, title, field] of [['bt_actuel', 'Blind test — musique actuelle'], ['bt_intemporel', 'Blind test — musique intemporelle'], ['bt_ecrans', 'Blind test — séries & films (génériques et musiques de films)'], ['replique', 'Réplique culte'], ['pochette', 'Pochette floutée (images)'], ['unenote', 'Une seule note'], ['instruments', 'Couche par couche (pistes séparées)']]) {
-  out.push(`\n### ${title} — ${ready(M[key])}/${M[key].length} fichiers prêts`);
+h('Cases média');
+out.push(`Les blind tests se remplissent avec les fichiers déposés dans \`public/media/<dossier>/\` : voir \`public/media/LISEZ-MOI.txt\`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.\n`);
+for (const [key, title, folder] of [['bt_musique', 'BT Musique', 'musique'], ['bt_ecrans', 'BT Séries & films', 'cinema'], ['bt_jeux', 'BT Jeux vidéo', 'jeux-videos'], ['replique', 'Réplique culte', 'citations'], ['pochette', 'Pochette floutée (toutes les images, sauf « pochette : non »)', '*']]) {
+  const items = MEDIA_INDEX[key] || [];
+  out.push(`\n### ${title} — ${items.length} question${items.length > 1 ? 's' : ''}${folder !== '*' ? ` (dossier \`${folder}/\`)` : ''}`);
   out.push(`_${TYPES[key].rule}_\n`);
-  M[key].forEach((x, i) => out.push(`${i + 1}. ${x.answer}${x.bonus ? ` _(bonus : ${x.bonus})_` : ''}${x.src || x.img || (x.layers && x.layers.length) ? ' ✅' : ''}`));
+  items.forEach((x, i) => out.push(`${i + 1}. ${x.answer}${x.bonus ? ` _(bonus : ${x.bonus})_` : ''}${x.qcm ? ` · QCM : ${x.qcm.o.join(' / ')}` : ' · oral'}`));
+}
+for (const [key, title] of [['unenote', 'Une seule note'], ['instruments', 'Couche par couche (pistes séparées)']]) {
+  out.push(`\n### ${title} — ${ready(M[key])}/${M[key].length} fichiers prêts (à renseigner dans \`src/content.js\`)`);
+  out.push(`_${TYPES[key].rule}_\n`);
+  M[key].forEach((x, i) => out.push(`${i + 1}. ${x.answer}${x.src || (x.layers && x.layers.length) ? ' ✅' : ''}`));
 }
 out.push(`\n### Vidéos cultes — ${ready(M.video)}/${M.video.length} fichiers prêts`);
 out.push(`_${TYPES.video.rule}_ Indiquer \`stop\` (en secondes) : la vidéo se fige à ce moment, puis les questions tombent ; elle reprend à la révélation.\n`);

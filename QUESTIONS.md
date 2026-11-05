@@ -9,7 +9,7 @@
 |---|---|---|---|
 | 0 | Départ | 16 | Culture G |
 | 1 | Culture G | 17 | Duel |
-| 2 | BT Actuel | 18 | Affiche mystère |
+| 2 | BT Musique | 18 | Affiche mystère |
 | 3 | Emojis | 19 | BT Séries & films |
 | 4 | Vol de points | 20 | A contrario |
 | 5 | BT Séries & films | 21 | Le Bac |
@@ -20,8 +20,8 @@
 | 10 | Blanc Manger Coco | 26 | Réplique culte |
 | 11 | Échange de place | 27 | Blanc Manger Coco |
 | 12 | Burger Quiz | 28 | Couche par couche |
-| 13 | Grand mensonge | 29 | Donne-moi l'expression |
-| 14 | BT Intemporel | 30 | À la noix |
+| 13 | Grand mensonge | 29 | BT Jeux vidéo |
+| 14 | BT Musique | 30 | À la noix |
 | 15 | Vidéo culte | 31 | Titre débile |
 
 ## Culture G — Duo, carré ou cash (72 questions)
@@ -807,96 +807,32 @@ Lettres : A B C D F G L M N P R S T
 
 Catégories (5 tirées au hasard) : Un prénom · Une ville · Un chanteur ou une chanteuse · Un film · Une série · Un truc dans le sac à main de mamie · Une excuse pour être en retard · Un truc qui pue · Un truc à ne pas dire à sa belle-mère · Une insulte gentille · Une marque · Un animal · Un truc qu'on fait aux toilettes · Un métier · Un truc qu'on cache à ses parents · Un plat qui fait péter · Un truc qu'on trouve sous un lit · Une raison de divorcer
 
-## Cases média : à préparer
+## Cases média
 
-Les réponses sont prêtes. Il ne manque que les fichiers : déposez-les dans `public/media/` et remplacez `src: null` par le chemin dans `src/content.js`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.
-
-Bonus +1 : sur les blind tests, l'animateur peut valider « ✓ + bonus » si l'équipe donne en plus l'année ou le réalisateur (indiqués entre parenthèses).
+Les blind tests se remplissent avec les fichiers déposés dans `public/media/<dossier>/` : voir `public/media/LISEZ-MOI.txt`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.
 
 
-### Blind test — musique actuelle — 0/10 fichiers prêts
-_Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts._
+### BT Musique — 0 question (dossier `musique/`)
+_Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus)._
 
-1. Flowers — Miley Cyrus _(bonus : 2023)_
-2. Blinding Lights — The Weeknd _(bonus : 2019)_
-3. As It Was — Harry Styles _(bonus : 2022)_
-4. Bad Guy — Billie Eilish _(bonus : 2019)_
-5. Tout oublier — Angèle feat. Roméo Elvis _(bonus : 2018)_
-6. Djadja — Aya Nakamura _(bonus : 2018)_
-7. Calm Down — Rema & Selena Gomez _(bonus : 2022)_
-8. Shape of You — Ed Sheeran _(bonus : 2017)_
-9. Papaoutai — Stromae _(bonus : 2013)_
-10. Espresso — Sabrina Carpenter _(bonus : 2024)_
 
-### Blind test — musique intemporelle — 1/10 fichiers prêts
-_Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts._
-
-1. Bohemian Rhapsody — Queen _(bonus : 1975)_ ✅
-2. Billie Jean — Michael Jackson _(bonus : 1983)_
-3. Hotel California — Eagles _(bonus : 1976)_
-4. Smells Like Teen Spirit — Nirvana _(bonus : 1991)_
-5. Hey Jude — The Beatles _(bonus : 1968)_
-6. Le Sud — Nino Ferrer _(bonus : 1975)_
-7. Les Champs-Élysées — Joe Dassin _(bonus : 1969)_
-8. I Will Survive — Gloria Gaynor _(bonus : 1978)_
-9. Africa — Toto _(bonus : 1982)_
-10. Sweet Dreams — Eurythmics _(bonus : 1983)_
-
-### Blind test — séries & films (génériques et musiques de films) — 2/21 fichiers prêts
+### BT Séries & films — 0 question (dossier `cinema/`)
 _Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts._
 
-1. Friends ✅
-2. Game of Thrones
-3. Les Simpson
-4. Stranger Things
-5. Dallas
-6. X-Files
-7. Kaamelott
-8. Plus belle la vie
-9. Mission impossible (la série)
-10. Les Mystères de l'Ouest
-11. Star Wars _(bonus : 1977 · George Lucas)_
-12. Les Dents de la mer _(bonus : 1975 · Steven Spielberg)_
-13. Titanic _(bonus : 1997 · James Cameron)_
-14. Le Bon, la Brute et le Truand _(bonus : 1966 · Sergio Leone)_
-15. Pirates des Caraïbes _(bonus : 2003 · Gore Verbinski)_
-16. Rocky _(bonus : 1976 · John G. Avildsen)_
-17. Le Parrain _(bonus : 1972 · Francis Ford Coppola)_
-18. Indiana Jones (Les Aventuriers de l'arche perdue) _(bonus : 1981 · Steven Spielberg)_
-19. Le Fabuleux Destin d'Amélie Poulain _(bonus : 2001 · Jean-Pierre Jeunet)_
-20. SOS Fantômes _(bonus : 1984 · Ivan Reitman)_
-21. Jurassic Park _(bonus : 1993 · Steven Spielberg)_ ✅
 
-### Réplique culte — 0/10 fichiers prêts
+### BT Jeux vidéo — 0 question (dossier `jeux-videos/`)
+_Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1 avec le bonus)._
+
+
+### Réplique culte — 0 question (dossier `citations/`)
 _Une réplique, trouvez le film. 2 pts._
 
-1. Les Visiteurs _(bonus : 1993 · Jean-Marie Poiré)_
-2. Le Dîner de cons _(bonus : 1998 · Francis Veber)_
-3. La Cité de la peur _(bonus : 1994 · Alain Berbérian)_
-4. OSS 117 : Le Caire, nid d'espions _(bonus : 2006 · Michel Hazanavicius)_
-5. Bienvenue chez les Ch'tis _(bonus : 2008 · Dany Boon)_
-6. Le Père Noël est une ordure _(bonus : 1982 · Jean-Marie Poiré)_
-7. Astérix & Obélix : Mission Cléopâtre _(bonus : 2002 · Alain Chabat)_
-8. Les Tontons flingueurs _(bonus : 1963 · Georges Lautner)_
-9. Kaamelott (série) _(bonus : 2005 · Alexandre Astier)_
-10. La Haine _(bonus : 1995 · Mathieu Kassovitz)_
 
-### Pochette floutée (images) — 1/11 fichiers prêts
+### Pochette floutée (toutes les images, sauf « pochette : non ») — 0 question
 _L'image se défloute. Buzzez dès que vous savez. 2 pts._
 
-1. A Night at the Opera — Queen ✅
-2. Thriller — Michael Jackson
-3. Abbey Road — The Beatles
-4. Nevermind — Nirvana
-5. The Dark Side of the Moon — Pink Floyd
-6. Racine carrée — Stromae
-7. Back in Black — AC/DC
-8. 21 — Adele
-9. Brol — Angèle
-10. Random Access Memories — Daft Punk
-11. Rumours — Fleetwood Mac
 
-### Une seule note — 0/10 fichiers prêts
+### Une seule note — 0/10 fichiers prêts (à renseigner dans `src/content.js`)
 _Une note. Une seule. Buzzez si vous reconnaissez : 3 pts._
 
 1. Seven Nation Army — The White Stripes
@@ -910,7 +846,7 @@ _Une note. Une seule. Buzzez si vous reconnaissez : 3 pts._
 9. Satisfaction — The Rolling Stones
 10. Thunderstruck — AC/DC
 
-### Couche par couche (pistes séparées) — 0/10 fichiers prêts
+### Couche par couche (pistes séparées) — 0/10 fichiers prêts (à renseigner dans `src/content.js`)
 _Batterie, puis basse, puis le reste… Buzzez tôt : 4 pts, puis 3, 2, 1._
 
 1. Billie Jean — Michael Jackson

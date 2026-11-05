@@ -1,0 +1,47 @@
+=====================================================================
+  MÉDIAS DU GRAND N'IMPORTE QUIZ
+=====================================================================
+
+UN DOSSIER = UNE CASE DU PLATEAU
+  musique/       → BT Musique (2 cases sur le plateau)
+  cinema/        → BT Séries & films (génériques, musiques de films)
+  jeux-videos/   → BT Jeux vidéo
+  citations/     → Réplique culte
+  Toutes les images (sauf « pochette : non ») alimentent aussi la case
+  « Pochette floutée ».
+
+UNE QUESTION = DES FICHIERS QUI PORTENT LE MÊME NOM
+  Queen - Bohemian Rhapsody.mp3   l'extrait (mp3, m4a, ogg, wav)
+  Queen - Bohemian Rhapsody.jpg   l'image (jpg, png, webp) : affichée
+                                  à la réponse + Pochette floutée
+  Queen - Bohemian Rhapsody.txt   la fiche (facultative)
+
+  Sans fiche : la réponse attendue est le nom du fichier
+  (« Queen - Bohemian Rhapsody »), et on répond à l'oral.
+
+LA FICHE .txt (une ligne « clé : valeur » par info, # = commentaire)
+  reponse      : la réponse attendue (affichée au maître du jeu et à la télé)
+  bonus        : l'info qui vaut +1 (année, réalisateur, jeu…)
+  info         : une anecdote affichée à la révélation
+  debut        : où commence l'extrait, en secondes ou 1:05
+  pochette     : non  → l'image ne sert pas en « Pochette floutée »
+                        (utile quand le titre est écrit dessus)
+  mode         : oral (par défaut) ou qcm
+  -- seulement en mode qcm (duo, carré ou cash) --
+  question     : la question posée (sinon « C'est quoi ? »)
+  propositions : 4 choix séparés par |, LA BONNE RÉPONSE EN PREMIER
+                 (le jeu les mélange)
+  accepte      : autres réponses acceptées en cash, séparées par |
+
+  Voir les fichiers _exemple-....txt dans chaque dossier
+  (les fichiers qui commencent par _ sont ignorés par le jeu).
+
+POINTS
+  Oral : buzz, réponse à voix haute, le maître du jeu valide : 2 pts
+         (+1 avec le bonus).
+  QCM  : duo 1 pt, carré 2 pts, cash 4 pts (+1 pour l'équipe qui joue).
+
+AJOUTER DES FICHIERS
+  Sur GitHub : ouvrir le dossier → Add file → Upload files → glisser
+  les .mp3 / .jpg / .txt → Commit. Cloudflare redéploie tout seul
+  (1 à 2 min) : les nouvelles questions sont dans le jeu.

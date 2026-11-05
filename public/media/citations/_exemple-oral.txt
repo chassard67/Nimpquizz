@@ -1,0 +1,3 @@
+# Exemple : réplique culte, réponse à l'oral
+reponse : Le Dîner de cons
+bonus : 1998 · Francis Veber

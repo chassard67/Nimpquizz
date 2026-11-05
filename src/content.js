@@ -414,78 +414,16 @@ export const INVENTE = [
   { q: "quelqu'un qui ne comprend jamais les blagues" }
 ];
 
-// ─── MÉDIAS : à préparer. Les réponses sont déjà là, il ne manque que les fichiers.
-//  Déposez le fichier dans public/media/ et remplacez src: null par le chemin, ex. src: "/media/queen.mp3".
-//  Une entrée sans fichier est ignorée. Si une case n'a aucun fichier, elle donne une question de Culture G.
-//    audio      : { src, answer, start (s), bonus }       bonus = info pour le +1 (année, réalisateur…)
-//    pochette   : { img, answer }
+// ─── MÉDIAS
+//  BT Musique, BT Séries & films, BT Jeux vidéo, Réplique culte et Pochette floutée se remplissent
+//  tout seuls avec les fichiers déposés dans public/media/<dossier>/ (voir public/media/LISEZ-MOI.txt).
+//  Les cases ci-dessous (fichiers spéciaux) se remplissent encore ici : déposez le fichier dans public/media/
+//  et remplacez src: null par son chemin, ex. src: "/media/seven-nation-army-note.mp3".
 //    une note   : { src, answer }                          extrait d'une seule note / d'un seul accord
 //    couche     : { layers: [src batterie, src basse, src guitare/clavier, src voix], answer }
 //                 (pistes séparées avec un outil comme Demucs, toutes de même durée)
 //    vidéo      : { src, start, stop, qs: [question, question bonus facultative] }
 export const MEDIA = {
-  bt_actuel: [
-    { src: null, answer: "Flowers — Miley Cyrus", bonus: "2023" },
-    { src: null, answer: "Blinding Lights — The Weeknd", bonus: "2019" },
-    { src: null, answer: "As It Was — Harry Styles", bonus: "2022" },
-    { src: null, answer: "Bad Guy — Billie Eilish", bonus: "2019" },
-    { src: null, answer: "Tout oublier — Angèle feat. Roméo Elvis", bonus: "2018" },
-    { src: null, answer: "Djadja — Aya Nakamura", bonus: "2018" },
-    { src: null, answer: "Calm Down — Rema & Selena Gomez", bonus: "2022" },
-    { src: null, answer: "Shape of You — Ed Sheeran", bonus: "2017" },
-    { src: null, answer: "Papaoutai — Stromae", bonus: "2013" },
-    { src: null, answer: "Espresso — Sabrina Carpenter", bonus: "2024" }
-  ],
-  bt_intemporel: [
-    { src: "/media/queen-bohemian-rhapsody.mp3", answer: "Bohemian Rhapsody — Queen", bonus: "1975" },
-    { src: null, answer: "Billie Jean — Michael Jackson", bonus: "1983" },
-    { src: null, answer: "Hotel California — Eagles", bonus: "1976" },
-    { src: null, answer: "Smells Like Teen Spirit — Nirvana", bonus: "1991" },
-    { src: null, answer: "Hey Jude — The Beatles", bonus: "1968" },
-    { src: null, answer: "Le Sud — Nino Ferrer", bonus: "1975" },
-    { src: null, answer: "Les Champs-Élysées — Joe Dassin", bonus: "1969" },
-    { src: null, answer: "I Will Survive — Gloria Gaynor", bonus: "1978" },
-    { src: null, answer: "Africa — Toto", bonus: "1982" },
-    { src: null, answer: "Sweet Dreams — Eurythmics", bonus: "1983" }
-  ],
-  // Blind test séries & films : génériques de séries et musiques de films mélangés
-  bt_ecrans: [
-    { src: "/media/friends.mp3", answer: "Friends" }, { src: null, answer: "Game of Thrones" }, { src: null, answer: "Les Simpson" },
-    { src: null, answer: "Stranger Things" }, { src: null, answer: "Dallas" }, { src: null, answer: "X-Files" },
-    { src: null, answer: "Kaamelott" }, { src: null, answer: "Plus belle la vie" }, { src: null, answer: "Mission impossible (la série)" },
-    { src: null, answer: "Les Mystères de l'Ouest" },
-    { src: null, answer: "Star Wars", bonus: "1977 · George Lucas" },
-    { src: null, answer: "Les Dents de la mer", bonus: "1975 · Steven Spielberg" },
-    { src: null, answer: "Titanic", bonus: "1997 · James Cameron" },
-    { src: null, answer: "Le Bon, la Brute et le Truand", bonus: "1966 · Sergio Leone" },
-    { src: null, answer: "Pirates des Caraïbes", bonus: "2003 · Gore Verbinski" },
-    { src: null, answer: "Rocky", bonus: "1976 · John G. Avildsen" },
-    { src: null, answer: "Le Parrain", bonus: "1972 · Francis Ford Coppola" },
-    { src: null, answer: "Indiana Jones (Les Aventuriers de l'arche perdue)", bonus: "1981 · Steven Spielberg" },
-    { src: null, answer: "Le Fabuleux Destin d'Amélie Poulain", bonus: "2001 · Jean-Pierre Jeunet" },
-    { src: null, answer: "SOS Fantômes", bonus: "1984 · Ivan Reitman" },
-    { src: "/media/jurassic-park.mp3", answer: "Jurassic Park", bonus: "1993 · Steven Spielberg" }
-  ],
-  replique: [
-    { src: null, answer: "Les Visiteurs", bonus: "1993 · Jean-Marie Poiré" },
-    { src: null, answer: "Le Dîner de cons", bonus: "1998 · Francis Veber" },
-    { src: null, answer: "La Cité de la peur", bonus: "1994 · Alain Berbérian" },
-    { src: null, answer: "OSS 117 : Le Caire, nid d'espions", bonus: "2006 · Michel Hazanavicius" },
-    { src: null, answer: "Bienvenue chez les Ch'tis", bonus: "2008 · Dany Boon" },
-    { src: null, answer: "Le Père Noël est une ordure", bonus: "1982 · Jean-Marie Poiré" },
-    { src: null, answer: "Astérix & Obélix : Mission Cléopâtre", bonus: "2002 · Alain Chabat" },
-    { src: null, answer: "Les Tontons flingueurs", bonus: "1963 · Georges Lautner" },
-    { src: null, answer: "Kaamelott (série)", bonus: "2005 · Alexandre Astier" },
-    { src: null, answer: "La Haine", bonus: "1995 · Mathieu Kassovitz" }
-  ],
-  pochette: [
-    { img: "/media/queen-a-night-at-the-opera.jpg", answer: "A Night at the Opera — Queen" },
-    { img: null, answer: "Thriller — Michael Jackson" }, { img: null, answer: "Abbey Road — The Beatles" },
-    { img: null, answer: "Nevermind — Nirvana" }, { img: null, answer: "The Dark Side of the Moon — Pink Floyd" },
-    { img: null, answer: "Racine carrée — Stromae" }, { img: null, answer: "Back in Black — AC/DC" },
-    { img: null, answer: "21 — Adele" }, { img: null, answer: "Brol — Angèle" },
-    { img: null, answer: "Random Access Memories — Daft Punk" }, { img: null, answer: "Rumours — Fleetwood Mac" }
-  ],
   unenote: [
     { src: null, answer: "Seven Nation Army — The White Stripes" }, { src: null, answer: "A Hard Day's Night — The Beatles (l'accord d'ouverture)" },
     { src: null, answer: "Billie Jean — Michael Jackson" }, { src: null, answer: "Another One Bites the Dust — Queen" },

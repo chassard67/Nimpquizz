@@ -2,14 +2,15 @@
 //  LE GRAND N'IMPORTE QUIZ — moteur de jeu (pur, sans réseau)
 //  L'état est un objet JSON. handle() applique un message, tick() gère les chronos.
 // ─────────────────────────────────────────────────────────────
+import { MEDIA_INDEX } from './media-index.js';
 import { QCM, NUMBERS, BAC, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO, AFFICHES, BURGER, MILLIONS, DOUBLESENS, TITRES, INVENTE, BMC } from './content.js';
 
 // 32 cases : 10 en haut, 6 à droite, 10 en bas, 6 à gauche
 export const BOARD = [
-  'depart', 'culture', 'bt_actuel', 'emojis', 'vol', 'bt_ecrans', 'plusoumoins', 'millions', 'buzz10', 'pochette',
-  'bmc', 'echange', 'burger', 'mensonge', 'bt_intemporel', 'video',
+  'depart', 'culture', 'bt_musique', 'emojis', 'vol', 'bt_ecrans', 'plusoumoins', 'millions', 'buzz10', 'pochette',
+  'bmc', 'echange', 'burger', 'mensonge', 'bt_musique', 'video',
   'culture', 'duel', 'affiche', 'bt_ecrans', 'contrario', 'bac', 'emojis', 'expression', 'culture', 'unenote',
-  'replique', 'bmc', 'instruments', 'expression', 'noix', 'titredebile'
+  'replique', 'bmc', 'instruments', 'bt_jeux', 'noix', 'titredebile'
 ];
 
 export const TYPES = {
@@ -30,8 +31,8 @@ export const TYPES = {
   titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Glissez UN mot n\'importe où dans le titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
   bac:           { label: 'Le Bac', group: 'q', kind: 'bac', rule: 'Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d\'autre ne l\'a.' },
   bmc:           { label: 'Blanc Manger Coco', group: 'cm', kind: 'bmc', rule: 'Complétez la carte noire avec une de vos cartes blanches. Le maître du jeu choisit la plus drôle : 2 pts pour l\'équipe du joueur.' },
-  bt_actuel:     { label: 'BT Actuel', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts.' },
-  bt_intemporel: { label: 'BT Intemporel', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts.' },
+  bt_musique:    { label: 'BT Musique', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus).' },
+  bt_jeux:       { label: 'BT Jeux vidéo', group: 'bt', kind: 'media', media: 'audio', rule: 'Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1 avec le bonus).' },
   bt_ecrans:     { label: 'BT Séries & films', group: 'bt', kind: 'media', media: 'audio', rule: 'Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts.' },
   replique:      { label: 'Réplique culte', group: 'bt', kind: 'media', media: 'audio', rule: 'Une réplique, trouvez le film. 2 pts.' },
   pochette:      { label: 'Pochette floutée', group: 'v', kind: 'media', media: 'image', rule: 'L\'image se défloute. Buzzez dès que vous savez. 2 pts.' },
@@ -791,6 +792,9 @@ function applyMove(s, ctx, rng) {
   s.chSnap = { at: ctx.now, n: s.move.n, data: snap(s) };
 }
 
+// Question par défaut d'une fiche QCM sans « question : »
+const QCM_Q = { bt_musique: 'Quel est ce morceau ?', bt_ecrans: 'De quelle série ou de quel film vient cette musique ?', bt_jeux: 'De quel jeu vidéo vient cette musique ?', replique: 'De quel film vient cette réplique ?', pochette: 'Qu\'est-ce que c\'est ?' };
+
 // ─── démarrage d'une case ────────────────────────────────────
 function startCell(s, type, ctx, rng, gains = {}) {
   const now = ctx.now;
@@ -804,7 +808,9 @@ function startCell(s, type, ctx, rng, gains = {}) {
     return toReveal(s, ctx, s.ch.text);
   }
   if (meta.media) {
-    const pool = meta.media === 'text' ? CONTRARIO : (MEDIA[type] || []).filter(x => x.src || x.img || (Array.isArray(x.layers) && x.layers.length));
+    // fichiers déposés dans public/media/<dossier>/ (index généré) + entrées écrites dans content.js
+    const pool = meta.media === 'text' ? CONTRARIO
+      : [...(MEDIA_INDEX[type] || []), ...(MEDIA[type] || []).filter(x => x.src || x.img || (Array.isArray(x.layers) && x.layers.length))];
     if (!pool.length) {
       s.ch = { ...base, kind: 'qcm', fallback: type, q: culturePick(s, rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm,
         rule: 'Le contenu de cette case n\'est pas encore chargé. Question de consolation, 2 pts / 1 pt.' };
@@ -816,6 +822,13 @@ function startCell(s, type, ctx, rng, gains = {}) {
       // vidéo culte : la vidéo d'abord, les questions ensuite
       const dur = item.stop != null ? Math.max(3000, (item.stop - (item.start || 0)) * 1000 + 1500) : T.video;
       s.ch = { ...base, media: 'video', item, qs: (item.qs || []).map(q => shuffleQ(q, rng)), res: [], stage: 'video', deadline: now + T.grace + dur };
+      s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
+    }
+    if (item.qcm && item.qcm.o && item.qcm.o.length >= 2) {
+      // fiche en mode QCM : duo, carré ou cash, avec le son (ou l'image) qui tourne
+      const q = shuffleQ({ q: item.qcm.q || QCM_Q[type] || 'C\'est quoi ?', o: item.qcm.o, a: item.qcm.a || 0, k: item.qcm.k, f: item.info }, rng);
+      s.ch = { ...base, kind: 'dcc', media: item.src ? 'audio' : 'image', item, q, stage: 'mode', modes: {}, duo: {}, participants: all, answers: {}, fifty: {},
+        rule: TYPES.culture.rule, deadline: now + T.grace + T.mode };
       s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
     }
     s.ch = { ...base, media: meta.media, item, stage: 'play', buzzer: null, excluded: [], deadline: now + T.grace + (meta.media === 'layers' ? Math.max(T.media, item.layers.length * T.layer + 15000) : T.media) };
@@ -891,7 +904,7 @@ function answer(s, tm, value, ctx, rng) {
       ch.answers[tm.id] = { v, cash: true };
     } else {
       const v = Number(value);
-      const allowed = ch.modes[tm.id] === 'duo' ? ch.duo[tm.id] : [0, 1, 2, 3];
+      const allowed = ch.modes[tm.id] === 'duo' ? ch.duo[tm.id] : ch.q.o.map((_, i) => i);
       if (!allowed.includes(v)) return 'Réponse invalide.';
       if (ch.fifty[tm.id] && ch.fifty[tm.id].includes(v)) return 'Cette réponse a été éliminée.';
       ch.answers[tm.id] = { v };
@@ -1018,7 +1031,7 @@ function dccToQuestion(s, ctx, rng) {
   for (const id of ch.participants) {
     if (!ch.modes[id]) ch.modes[id] = 'carre';
     if (ch.modes[id] === 'duo') {
-      const wrong = [0, 1, 2, 3].filter(i => i !== ch.q.a);
+      const wrong = ch.q.o.map((_, i) => i).filter(i => i !== ch.q.a);
       const pair = [ch.q.a, wrong[Math.floor(rng() * wrong.length)]];
       ch.duo[id] = rng() < 0.5 ? pair : pair.reverse();
     }
@@ -1446,7 +1459,7 @@ export function view(s, viewer = {}, extra = {}) {
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;
     if (ch.q && ch.q.clues && viewer.role !== 'tv') delete ch.q.clues;
-    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
+    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, cover: undefined, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
       // A contrario : la phrase pour tout le monde, les indices seulement pour la télé (elle les affiche à 10 s et 20 s)
       q: ch.item.q, nh: ch.item.hints ? ch.item.hints.length : undefined, hints: viewer.role === 'tv' ? ch.item.hints : undefined };
     if (ch.duo && me) ch.duo = { [me.teamId]: ch.duo[me.teamId] }; else if (ch.duo) ch.duo = {};

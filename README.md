@@ -68,16 +68,9 @@ Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 �
 
 Tout est dans [`src/content.js`](src/content.js). Le jeu mélange l'ordre des propositions : on peut toujours écrire la bonne réponse en premier. Après une modification, `npm run questions` régénère `QUESTIONS.md`.
 
-**Cases média** : les réponses sont déjà écrites, il ne manque que les fichiers. Déposer le fichier dans `public/media/` et remplacer `src: null` par son chemin :
+**Cases média** : déposez les fichiers dans `public/media/musique/`, `cinema/`, `jeux-videos/` ou `citations/` (sur GitHub : ouvrir le dossier → Add file → Upload files). Un extrait `.mp3`, une image `.jpg` et une fiche `.txt` du même nom forment une question ; sans fiche, la réponse est le nom du fichier et on répond à l'oral. La fiche permet aussi un QCM duo / carré / cash avec le son qui tourne. Mode d'emploi complet et exemples : `public/media/LISEZ-MOI.txt` et les fichiers `_exemple-….txt`. À chaque déploiement, `scripts/build-media.mjs` (lancé tout seul par Cloudflare) fait la liste des fichiers.
 
-```js
-bt_actuel:   [{ src: '/media/flowers.mp3', answer: 'Flowers — Miley Cyrus', start: 30, bonus: '2023' }],
-pochette:    [{ img: '/media/thriller.jpg', answer: 'Thriller — Michael Jackson' }],
-instruments: [{ layers: ['/media/bj-batterie.mp3', '/media/bj-basse.mp3', '/media/bj-reste.mp3', '/media/bj-voix.mp3'], answer: 'Billie Jean' }],
-video:       [{ src: '/media/midi.mp4', start: 12, stop: 19.5, label: '…', qs: [ /* questions */ ] }],
-```
-
-Tant qu'une case n'a aucun fichier, elle donne une question de Culture G « de consolation ». Pour « Couche par couche », les pistes séparées s'obtiennent avec un outil gratuit comme Demucs. Le son et la vidéo sortent de l'ordi relié à la télé.
+« Une seule note », « Couche par couche » et « Vidéo culte » se remplissent encore dans `src/content.js`. Pour « Couche par couche », les pistes séparées s'obtiennent avec un outil gratuit comme Demucs. Le son et la vidéo sortent de l'ordi relié à la télé.
 
 ## Développement
 
@@ -86,7 +79,8 @@ npm install
 npm run dev        # http://localhost:8787
 npm test           # simulation du moteur (toutes les cases, jokers, fin de partie) + actions du maître du jeu
 npm run sim        # partie complète à 3 équipes contre le serveur local (wrangler dev doit tourner)
-npm run questions  # régénère QUESTIONS.md depuis src/content.js
+npm run media      # refait la liste des fichiers de public/media (fait aussi par npm run dev et au déploiement)
+npm run questions  # régénère QUESTIONS.md depuis src/content.js et les dossiers médias
 ```
 
 Structure :

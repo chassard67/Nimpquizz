@@ -1,0 +1,8 @@
+# Exemple de fiche : QCM (les équipes choisissent duo, carré ou cash)
+# À enregistrer sous le même nom que l'extrait : Village People - YMCA.txt
+mode : qcm
+question : Quel est ce tube ?
+propositions : YMCA | In the Navy | Macho Man | Go West
+accepte : Y.M.C.A. | ymca
+reponse : YMCA — Village People
+bonus : 1978

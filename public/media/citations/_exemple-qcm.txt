@@ -1,0 +1,7 @@
+# Exemple : réplique culte en QCM
+# Fichiers : Les Visiteurs - Okayyy.mp3 + Les Visiteurs - Okayyy.txt
+mode : qcm
+question : De quel film vient cette réplique ?
+propositions : Les Visiteurs | Le Dîner de cons | La Cité de la peur | Les Bronzés
+reponse : Les Visiteurs
+bonus : 1993 · Jean-Marie Poiré

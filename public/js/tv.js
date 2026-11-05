@@ -408,7 +408,9 @@ const RENDER = {
       : ch.media === 'text'
       ? `<div class="ctr-q">« ${esc(ch.item.q || '')} »</div>${hints}`
       : `<div class="media-vis ${ch.stage === 'answer' ? 'paused' : ''}">${bars}</div>${layers}`;
-    if (rev) return [`<div class="big-center">${visual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${revFooter(ch)}</div>`, ''];
+    // à la réponse : l'image du dossier (pochette, affiche…) à la place des barres de son, et l'anecdote
+    const revVisual = ch.media === 'audio' && ch.item.cover ? `<img class="pochette" src="${esc(ch.item.cover)}" alt="">` : visual;
+    if (rev) return [`<div class="big-center">${revVisual}<div class="mid" style="color:var(--yellow)">${esc(ch.item.answer || '')}</div>${ch.item.bonus ? `<div class="rule">${esc(ch.item.bonus)}</div>` : ''}${ch.item.info ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(ch.item.info)}</div>` : ''}${revFooter(ch)}</div>`, ''];
     const buzzer = ch.stage === 'answer' ? team(ch.buzzer) : null;
     const excl = ch.excluded.length ? `<div class="rule">Grillés : ${ch.excluded.map(id => esc(team(id).name)).join(', ')}</div>` : '';
     return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center">${visual}${excl}</div>
@@ -440,11 +442,19 @@ RENDER.bmc = (ch, rev) => {
 };
 
 // ── Duo, carré ou cash
+// Son ou image d'une fiche QCM (dossiers public/media)
+function dccMedia(ch, rev) {
+  if (!ch.item || !ch.media) return '';
+  if (ch.media === 'image') return `<img class="pochette mini" id="poch" src="${esc(ch.item.img)}" alt="" style="filter:blur(${rev ? 0 : 40}px)">`;
+  if (rev && ch.item.cover) return `<img class="pochette mini" src="${esc(ch.item.cover)}" alt="">`;
+  return `<div class="media-vis mini">${Array.from({ length: 24 }, (_, i) => `<i style="background:${OPT_COLORS[i % 4]};animation-delay:${-(i * 137 % 900)}ms"></i>`).join('')}</div>`;
+}
 RENDER.dcc = (ch, rev) => {
   const q = ch.q;
+  const med = dccMedia(ch, rev);
   const MODE = { duo: 'Duo', carre: 'Carré', cash: 'Cash' };
   if (!rev && ch.stage === 'mode') {
-    return [`<div class="rule">${esc(ch.rule)}</div><div class="question">${esc(q.q)}</div>
+    return [`<div class="rule">${esc(ch.rule)}</div>${med}<div class="question">${esc(q.q)}</div>
       <div class="dcc-modes"><div><b>Duo</b><span>2 propositions</span><em>1 pt</em></div><div><b>Carré</b><span>4 propositions</span><em>2 pts</em></div><div class="cash"><b>Cash</b><span>sans propositions</span><em>4 pts</em></div></div>`,
       [ring(ch.deadline, ch.deadline - ch.startsAt), statusList(ch.participants, id => !!ch.modes[id], 'Choix des équipes')].join('')];
   }
@@ -452,8 +462,8 @@ RENDER.dcc = (ch, rev) => {
     const ans = rev && a ? (a.cash ? `« ${esc(a.v)} »` : esc(q.o[a.v])) : '';
     const ok = rev && ch.ok ? (ch.ok[id] ? 'ok' : 'ko') : '';
     return `<div class="dw ${ok} ${rev && m === 'cash' && S.host ? 'toggle' : ''}" data-cash="${rev && m === 'cash' ? id : ''}">${dot(t.color)}<span>${esc(t.name)}</span><b class="m-${m}">${MODE[m] || '…'}</b>${ans ? `<i>${ans}</i>` : ''}</div>`; }).join('')}</div>`;
-  if (!rev) return [`<div class="question">${esc(q.q)}</div>${modes}<div class="rule">Les propositions sont sur vos téléphones (sauf pour les fous du cash).</div>`, answeredSide(ch).join('')];
-  return [qcmBlock(ch, true) + modes + revFooter(ch), ''];
+  if (!rev) return [`${med}<div class="question">${esc(q.q)}</div>${modes}<div class="rule">Les propositions sont sur vos téléphones (sauf pour les fous du cash).</div>`, answeredSide(ch).join('')];
+  return [med + qcmBlock(ch, true) + modes + revFooter(ch), ''];
 };
 
 // ── Burger Quiz / vidéo culte : questions en série
@@ -572,10 +582,11 @@ function syncAudio() {
   lastReplayKey = rk;
   syncLayers(ch && ch.kind === 'media' && ch.media === 'layers' && ch.item && ch.item.layers ? ch : null);
   if (ch && ch.type === 'video') syncVideo(ch);
-  if (!ch || ch.kind !== 'media' || ch.media !== 'audio' || !ch.item || !ch.item.src) { if (!audio.paused) audio.pause(); return; }
+  // extrait audio : buzzer (media) ou QCM duo/carré/cash avec le son qui tourne (dcc)
+  if (!ch || (ch.kind !== 'media' && ch.kind !== 'dcc') || ch.media !== 'audio' || !ch.item || !ch.item.src) { if (!audio.paused) audio.pause(); return; }
   const src = new URL(ch.item.src, location.href).href;
   if (audio.src !== src) { audio.src = src; audio.currentTime = ch.item.start || 0; }
-  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
+  const shouldPlay = (S.phase === 'challenge' && (ch.stage === 'play' || ch.kind === 'dcc') && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
   if (ch.stage === 'answer' && S.phase === 'challenge' && !audio.paused) { audio.pause(); sfx.buzz(); }
   if (shouldPlay && audio.paused) audio.play().catch(() => {});
 }
@@ -629,7 +640,7 @@ function tickTimers() {
     });
   }
   const p = $('#poch');
-  if (p && S.phase === 'challenge' && S.ch && S.ch.stage === 'play') {
+  if (p && S.phase === 'challenge' && S.ch && (S.ch.stage === 'play' || S.ch.kind === 'dcc')) {
     const prog = Math.min(1, (now - S.ch.startsAt) / S.meta.timers.media);
     p.style.filter = `blur(${Math.round(40 * (1 - prog))}px)`;
   }
