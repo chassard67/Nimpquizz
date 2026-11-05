@@ -63,17 +63,24 @@ check(s.ch.kind === 'media' && s.ch.item.answer === 'Tetris', 'BT Jeux vidéo jo
 send('a', { t: 'buzz' }); gm({ action: 'judge', ok: true });
 check(s.teams.find(t => t.name === 'Alpha').score === 2, 'buzz + validation : 2 pts');
 gm({ action: 'goto', cell: G.BOARD.indexOf('bt_ecrans') }); now = s.ch.startsAt;
-check(s.ch.kind === 'dcc' && s.ch.media === 'audio' && s.ch.item.src && s.ch.q.o.length === 4 && s.ch.q.q === 'De quel film ?', 'fiche QCM → duo / carré / cash avec le son');
+check(s.ch.kind === 'media' && s.ch.media === 'audio' && s.ch.playMs === 30000 && s.deadline - now === 30000, 'blind test : 30 s d\'écoute maximum, on buzze d\'abord');
+const A = s.teams.find(t => t.name === 'Alpha').id, Bv = s.teams.find(t => t.name === 'Bravo').id;
+const scoreB = s.teams.find(t => t.id === Bv).score;
+now += 3000; send('b', { t: 'buzz' });
+gm({ action: 'judge', ok: true });
+check(s.ch.kind === 'dcc' && s.ch.bonusQcm && s.ch.stage === 'mode' && s.ch.participants.length === 1 && s.ch.participants[0] === Bv, 'bonne réponse validée → question bonus pour l\'équipe qui a trouvé');
+check(s.teams.find(t => t.id === Bv).score === scoreB + 2, 'les 2 pts du blind test sont acquis avant le bonus');
+check(s.ch.q.o.length === 4 && s.ch.q.q === 'De quel film ?', 'la question bonus vient de la fiche');
+check(send('a', { t: 'mode', mode: 'cash' }) !== null, 'les autres équipes ne jouent pas le bonus');
 const vp = G.view(s, { pid: 'a' });
-check(vp.ch.q.a === undefined && !vp.ch.item.qcm && !vp.ch.item.answer && vp.ch.item.src, 'téléphone : ni la bonne réponse ni la fiche');
-send('a', { t: 'mode', mode: 'carre' }); send('b', { t: 'mode', mode: 'cash' });
-now = s.ch.startsAt;                        // après le décompte
-const good = s.ch.q.a;
-send('a', { t: 'answer', value: good }); send('b', { t: 'answer', value: 'jurasic park' });
-check(s.phase === 'reveal' && s.ch.ok[s.teams.find(t => t.name === 'Alpha').id] && s.ch.ok[s.teams.find(t => t.name === 'Bravo').id], 'carré et cash (faute de frappe tolérée) validés');
+check(vp.ch.q.a === undefined && !vp.ch.item.qcm && vp.ch.item.answer === s.ch.item.answer, 'téléphone : le titre trouvé, mais pas la bonne réponse du bonus');
+send('b', { t: 'mode', mode: 'carre' });
+now = s.ch.startsAt;
+send('b', { t: 'answer', value: s.ch.q.a });
+check(s.phase === 'reveal' && s.teams.find(t => t.id === Bv).score === scoreB + 4 && /question bonus/.test(s.ch.summary), 'bonus réussi en carré : +2 (pas de +1 « équipe qui joue »)');
 const pochette = idx.pochette.length;
 gm({ action: 'goto', cell: G.BOARD.indexOf('pochette') }); now = s.ch.startsAt;
-check(s.ch.kind === 'media' && s.ch.media === 'image' && s.ch.item.img, `Pochette floutée tire dans les images des dossiers (${pochette})`);
+check(s.ch.kind === 'media' && s.ch.media === 'image' && s.ch.item.img && s.ch.playMs === 20000, `Pochette floutée : images du dossier pochettes (${pochette}), 20 s maximum`);
 
 console.log(fails.length ? `❌ Médias : ${fails.length} échec(s)` : `✅ Médias : ${ok} vérifications OK`);
 if (fails.length) process.exit(1);

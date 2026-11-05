@@ -188,6 +188,7 @@ function renderChallenge() {
       <button class="btn" id="val">Valider ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
 
   if (ch.kind === 'dcc') {
+    if (!ch.participants.includes(t.id)) return wait(`🎁 Question bonus pour ${esc(team(ch.participants[0]).name)}…`, '🍿');
     const mode = ch.modes[t.id];
     if (ch.stage === 'mode') {
       if (mode) return wait(`${{ duo: 'Duo', carre: 'Carré', cash: 'CASH' }[mode]} ! On attend les autres…`, mode === 'cash' ? '💰' : '👍');

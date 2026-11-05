@@ -28,7 +28,9 @@ LA FICHE .txt (une ligne « clé : valeur » par info, # = commentaire)
                  (pas de réponse attendue, juste pour rire)
   debut        : où commence l'extrait, en secondes ou 1:05
   mode         : oral (par défaut) ou qcm
-  -- seulement en mode qcm (duo, carré ou cash) --
+  -- seulement en mode qcm : QUESTION BONUS --
+     On buzze d'abord et on trouve la chanson à l'oral ; quand le maître du jeu
+     valide, l'équipe qui a trouvé enchaîne sur la question bonus (duo, carré ou cash).
   question     : la question posée (sinon « C'est quoi ? »)
   propositions : 4 choix séparés par |, LA BONNE RÉPONSE EN PREMIER
                  (le jeu les mélange)
@@ -37,10 +39,13 @@ LA FICHE .txt (une ligne « clé : valeur » par info, # = commentaire)
   Voir les fichiers _exemple-....txt dans chaque dossier
   (les fichiers qui commencent par _ sont ignorés par le jeu).
 
+DURÉES
+  Blind test musical : 30 s d'écoute maximum. Pochette floutée : 20 s.
+
 POINTS
-  Oral : buzz, réponse à voix haute, le maître du jeu valide : 2 pts
-         (+1 avec le bonus).
-  QCM  : duo 1 pt, carré 2 pts, cash 4 pts (+1 pour l'équipe qui joue).
+  Buzz + bonne réponse validée par le maître du jeu : 2 pts
+  (+1 avec le « bonus » de la fiche, s'il n'y a pas de question bonus).
+  Question bonus (mode qcm) : duo 1 pt, carré 2 pts, cash 4 pts en plus.
 
 AJOUTER DES FICHIERS
   Sur GitHub : ouvrir le dossier → Add file → Upload files → glisser

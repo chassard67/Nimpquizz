@@ -415,7 +415,7 @@ const RENDER = {
     const excl = ch.excluded.length ? `<div class="rule">Grillés : ${ch.excluded.map(id => esc(team(id).name)).join(', ')}</div>` : '';
     return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center">${visual}${excl}</div>
       ${buzzer ? `<div class="buzzed"><div class="b" style="background:${buzzer.color}"><div class="x">BUZZ !</div><div class="n">${esc(buzzer.name)}</div><div class="s">On vous écoute… 15 secondes</div></div></div>` : ''}`,
-      ring(ch.deadline, ch.stage === 'answer' ? 15000 : Math.max(S.meta.timers.media, ch.deadline - ch.startsAt))];
+      ring(ch.deadline, ch.stage === 'answer' ? 15000 : Math.max(ch.playMs || S.meta.timers.media, ch.deadline - ch.startsAt))];
   }
 };
 
@@ -451,7 +451,8 @@ function dccMedia(ch, rev) {
 }
 RENDER.dcc = (ch, rev) => {
   const q = ch.q;
-  const med = dccMedia(ch, rev);
+  // question bonus d'un blind test : la chanson est trouvée, on l'affiche avec sa pochette
+  const med = ch.bonusQcm && !rev ? `${ch.item.cover ? `<img class="pochette mini" src="${esc(ch.item.cover)}" alt="">` : ''}<div class="mid" style="color:var(--yellow);text-align:center">🎵 ${esc(ch.item.answer)} · 🎁 Question bonus pour ${esc(team(ch.participants[0]).name)}</div>` : dccMedia(ch, rev);
   const MODE = { duo: 'Duo', carre: 'Carré', cash: 'Cash' };
   if (!rev && ch.stage === 'mode') {
     return [`<div class="rule">${esc(ch.rule)}</div>${med}<div class="question">${esc(q.q)}</div>
@@ -589,7 +590,8 @@ function syncAudio() {
   if (!ch || (ch.kind !== 'media' && ch.kind !== 'dcc') || ch.media !== 'audio' || !ch.item || !ch.item.src) { if (!audio.paused) audio.pause(); return; }
   const src = new URL(ch.item.src, location.href).href;
   if (audio.src !== src) { audio.src = src; audio.currentTime = ch.item.start || 0; }
-  const shouldPlay = (S.phase === 'challenge' && (ch.stage === 'play' || ch.kind === 'dcc') && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
+  // l'extrait ne tourne que pendant l'écoute (30 s max) puis à la révélation ; pas pendant la question bonus
+  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
   if (ch.stage === 'answer' && S.phase === 'challenge' && !audio.paused) { audio.pause(); sfx.buzz(); }
   if (shouldPlay && audio.paused) audio.play().catch(() => {});
 }
@@ -644,7 +646,7 @@ function tickTimers() {
   }
   const p = $('#poch');
   if (p && S.phase === 'challenge' && S.ch && (S.ch.stage === 'play' || S.ch.kind === 'dcc')) {
-    const prog = Math.min(1, (now - S.ch.startsAt) / S.meta.timers.media);
+    const prog = Math.min(1, (now - S.ch.startsAt) / (S.ch.playMs || S.meta.timers.image || S.meta.timers.media));
     p.style.filter = `blur(${Math.round(40 * (1 - prog))}px)`;
   }
   if (S && S.startedAt && S.phase !== 'end' && S.phase !== 'lobby') {

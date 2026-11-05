@@ -57,6 +57,8 @@ export const T = {
   grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
   bac: 75000, review: 120000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
   media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000,
+  audio: 30000,              // blind test musical : 30 s d'écoute maximum
+  image: 20000,              // pochette floutée : 20 s maximum
   mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
   cd: 2200,                  // décompte « bip bip bip » (2 s) avant une question qui s'enchaîne
   bmcWrite: 60000, bmcJudge: 120000
@@ -77,7 +79,7 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, buzzMax: 20000, clue: 7000, layer: 8000, hint: 10000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
+  timers: { media: 45000, audio: 30000, image: 20000, buzzMax: 20000, clue: 7000, layer: 8000, hint: 10000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
   ladder: LADDER, dcc: DCC_PTS, bmcPts: BMC_PTS,
   cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
@@ -691,7 +693,7 @@ function gmAction(s, a, msg, ctx, rng) {
     ch.replay = (ch.replay || 0) + 1;
     if (s.phase === 'challenge' && ch.stage === 'play') {
       ch.startsAt = now + 300;
-      ch.deadline = Math.max(ch.deadline, now + (ch.media === 'layers' ? Math.max(T.media, ch.item.layers.length * T.layer + 15000) : T.media));
+      ch.deadline = Math.max(ch.deadline, now + (ch.playMs || playDuration(ch.media, ch.item)));
       s.deadline = ch.deadline;
     } else if (s.phase === 'challenge' && ch.stage === 'video') {
       ch.startsAt = now + 300;
@@ -792,6 +794,13 @@ function applyMove(s, ctx, rng) {
   s.chSnap = { at: ctx.now, n: s.move.n, data: snap(s) };
 }
 
+// Durée d'écoute / d'affichage d'une épreuve au buzzer
+function playDuration(media, item) {
+  if (media === 'layers') return Math.max(T.media, item.layers.length * T.layer + 15000);
+  if (media === 'audio') return T.audio;
+  if (media === 'image') return T.image;
+  return T.media;
+}
 // Question par défaut d'une fiche QCM sans « question : »
 const QCM_Q = { bt_musique: 'Quel est ce morceau ?', bt_ecrans: 'De quelle série ou de quel film vient cette musique ?', bt_jeux: 'De quel jeu vidéo vient cette musique ?', replique: 'De quel film vient cette réplique ?', pochette: 'Quel est cet artiste ?' };
 
@@ -824,14 +833,8 @@ function startCell(s, type, ctx, rng, gains = {}) {
       s.ch = { ...base, media: 'video', item, qs: (item.qs || []).map(q => shuffleQ(q, rng)), res: [], stage: 'video', deadline: now + T.grace + dur };
       s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
     }
-    if (item.qcm && item.qcm.o && item.qcm.o.length >= 2) {
-      // fiche en mode QCM : duo, carré ou cash, avec le son (ou l'image) qui tourne
-      const q = shuffleQ({ q: item.qcm.q || QCM_Q[type] || 'C\'est quoi ?', o: item.qcm.o, a: item.qcm.a || 0, k: item.qcm.k, f: item.info }, rng);
-      s.ch = { ...base, kind: 'dcc', media: item.src ? 'audio' : 'image', item, q, stage: 'mode', modes: {}, duo: {}, participants: all, answers: {}, fifty: {},
-        rule: TYPES.culture.rule, deadline: now + T.grace + T.mode };
-      s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
-    }
-    s.ch = { ...base, media: meta.media, item, stage: 'play', buzzer: null, excluded: [], deadline: now + T.grace + (meta.media === 'layers' ? Math.max(T.media, item.layers.length * T.layer + 15000) : T.media) };
+    const playMs = playDuration(meta.media, item);
+    s.ch = { ...base, media: meta.media, item, playMs, stage: 'play', buzzer: null, excluded: [], deadline: now + T.grace + playMs };
     s.phase = 'challenge'; s.deadline = s.ch.deadline; return;
   }
   if (meta.kind === 'qcm') {
@@ -1021,6 +1024,7 @@ function chooseMode(s, tm, mode, ctx, rng) {
   const ch = s.ch;
   if (s.phase !== 'challenge' || !ch || ch.kind !== 'dcc' || ch.stage !== 'mode') return 'Trop tard pour choisir.';
   if (!DCC_PTS[mode]) return 'Duo, carré ou cash, rien d\'autre.';
+  if (!isParticipant(ch, tm.id)) return 'Ce n\'est pas votre question.';
   if (ch.modes[tm.id]) return 'Déjà choisi.';
   ch.modes[tm.id] = mode;
   if (ch.participants.every(id => ch.modes[id])) dccToQuestion(s, ctx, rng);
@@ -1151,12 +1155,37 @@ function buzz(s, tm, ctx, rng) {
 function judgeMedia(s, ok, ctx, rng) {
   const ch = s.ch;
   const tm = team(s, ch.buzzer);
-  if (ok) { ch.winner = tm.id; return resolve(s, ctx, rng); }
+  if (ok) {
+    ch.winner = tm.id;
+    const q = ch.item && ch.item.qcm;
+    if (q && q.o && q.o.length >= 2) return startBonusQcm(s, ctx, rng);
+    return resolve(s, ctx, rng);
+  }
   ch.excluded.push(tm.id);
   feed(s, 'info', `${tm.name} se plante. Les autres peuvent buzzer !`);
   ch.buzzer = null; ch.stage = 'play';
   if (s.teams.every(x => ch.excluded.includes(x.id))) return resolve(s, ctx, rng);
   resumePlay(s, ch, ctx.now);
+}
+// Question bonus (fiche QCM) : après la bonne réponse validée par le maître du jeu,
+// l'équipe qui a trouvé choisit duo, carré ou cash. Les points du blind test sont acquis tout de suite.
+function startBonusQcm(s, ctx, rng) {
+  const ch = s.ch, w = team(s, ch.winner), it = ch.item, now = ctx.now;
+  ch.basePts = award(s, w, mediaPoints(ch));
+  feed(s, 'points', `${w.name} a trouvé : +${ch.basePts} pt${ch.basePts > 1 ? 's' : ''}. Question bonus ! 🎁`);
+  ch.kind = 'dcc'; ch.bonusQcm = true; ch.stage = 'mode';
+  ch.q = shuffleQ({ q: it.qcm.q || QCM_Q[ch.type] || 'Question bonus', o: it.qcm.o, a: it.qcm.a || 0, k: it.qcm.k, f: it.info }, rng);
+  ch.modes = {}; ch.duo = {}; ch.answers = {}; ch.fifty = {}; ch.participants = [w.id];
+  ch.rule = `Question bonus pour ${w.name} : duo 1 pt, carré 2 pts, cash 4 pts.`;
+  ch.buzzer = null;
+  ch.startsAt = now + 1200; ch.deadline = ch.startsAt + T.mode; s.deadline = ch.deadline;
+}
+// Points d'une bonne réponse au buzzer
+function mediaPoints(ch) {
+  let pts = ch.type === 'unenote' ? 3 : 2;
+  if (ch.media === 'layers') { const n = ch.item.layers.length; ch.layerAt = Math.min(n, 1 + Math.floor((ch.buzzAt - ch.startsAt) / T.layer)); pts = Math.max(1, n + 1 - ch.layerAt); }
+  if (ch.media === 'text') { ch.hintsSeen = Math.min((ch.item.hints || []).length, Math.floor(Math.max(0, ch.buzzAt - ch.startsAt) / T.hint)); pts = Math.max(1, 3 - ch.hintsSeen); }
+  return pts + (ch.bonus ? 1 : 0);
 }
 // Reprise après un buzz : le temps passé à répondre ne compte pas (indices, couches, floutage)
 function resumePlay(s, ch, now) {
@@ -1255,10 +1284,14 @@ function resolve(s, ctx, rng) {
     ch.ok = {};
     for (const [id, a] of Object.entries(ch.answers)) {
       ch.ok[id] = a.cash ? cashMatch(a.v, ch.q) : a.v === ch.q.a;
-      if (ch.ok[id]) award(s, team(s, id), DCC_PTS[ch.modes[id]] + (id === tm.id ? 1 : 0));
+      if (ch.ok[id]) award(s, team(s, id), DCC_PTS[ch.modes[id]] + (id === tm.id && !ch.bonusQcm ? 1 : 0));
     }
     const ok = Object.keys(ch.ok).filter(id => ch.ok[id]);
     const cashers = ok.filter(id => ch.modes[id] === 'cash');
+    if (ch.bonusQcm) {
+      const w = team(s, ch.winner), good = ok.length > 0;
+      summary = `${w.name} a trouvé « ${ch.item.answer} » (+${ch.basePts}) ${good ? `et réussit la question bonus${ch.modes[w.id] === 'cash' ? ' en CASH 💰' : ''} !` : 'mais rate la question bonus.'}`;
+    } else
     summary = cashers.length ? `CASH ! ${cashers.map(id => team(s, id).name).join(', ')} ${cashers.length > 1 ? 'ont' : 'a'} tout misé et gagné. 💰` : ok.length ? `Bonne réponse pour ${ok.map(id => team(s, id).name).join(', ')}.` : 'Personne n\'a trouvé. Ni en duo, ni en carré, ni en rien.';
   } else if (ch.kind === 'affiche') {
     const n = ch.q.clues.length;
@@ -1333,9 +1366,7 @@ function resolve(s, ctx, rng) {
   } else if (ch.kind === 'media') {
     if (ch.winner) {
       const w = team(s, ch.winner);
-      let pts = ch.type === 'unenote' ? 3 : 2;
-      if (ch.media === 'layers') { const n = ch.item.layers.length; ch.layerAt = Math.min(n, 1 + Math.floor((ch.buzzAt - ch.startsAt) / T.layer)); pts = Math.max(1, n + 1 - ch.layerAt); }
-      if (ch.media === 'text') { ch.hintsSeen = Math.min((ch.item.hints || []).length, Math.floor(Math.max(0, ch.buzzAt - ch.startsAt) / T.hint)); pts = Math.max(1, 3 - ch.hintsSeen); }
+      const pts = mediaPoints(ch) - (ch.bonus ? 1 : 0);
       award(s, w, pts + (ch.bonus ? 1 : 0));
       summary = ch.media === 'text' ? `${w.name} a trouvé ${ch.hintsSeen ? `avec ${ch.hintsSeen} indice${ch.hintsSeen > 1 ? 's' : ''}` : 'sans aucun indice'} : ${pts} pt${pts > 1 ? 's' : ''} !`
         : `${w.name} a trouvé${ch.bonus ? ', avec le bonus en prime' : ''} !`;
@@ -1459,7 +1490,9 @@ export function view(s, viewer = {}, extra = {}) {
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;
     if (ch.q && ch.q.clues && viewer.role !== 'tv') delete ch.q.clues;
-    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img, cover: undefined, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
+    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img,
+      // question bonus : la chanson est déjà trouvée, on peut montrer son titre et sa pochette (jamais la fiche QCM)
+      cover: ch.bonusQcm ? ch.item.cover : undefined, answer: ch.bonusQcm ? ch.item.answer : undefined, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
       // A contrario : la phrase pour tout le monde, les indices seulement pour la télé (elle les affiche à 10 s et 20 s)
       q: ch.item.q, nh: ch.item.hints ? ch.item.hints.length : undefined, hints: viewer.role === 'tv' ? ch.item.hints : undefined };
     if (ch.duo && me) ch.duo = { [me.teamId]: ch.duo[me.teamId] }; else if (ch.duo) ch.duo = {};

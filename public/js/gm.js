@@ -207,7 +207,7 @@ function expectHTML(ch) {
       ${h.map((x, i) => `<div class="sub" data-ghint="${i}">Indice ${i + 1} (${(i + 1) * 10} s) : <b>${esc(x)}</b> <span></span></div>`).join('')}
       ${S.phase === 'challenge' ? `<div class="sub">Vaut en ce moment : <b id="ctrPts"></b></div>` : ''}`;
   } else if (k === 'media') {
-    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>${ch.item && ch.item.info ? `<div class="fun">💡 ${esc(ch.item.info)}</div>` : ''}${ch.item && ch.item.joke ? `<div class="q">😜 ${esc(ch.item.joke)}</div>` : ''}${ch.item && ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
+    body = `<div class="ans">${esc(ch.item && ch.item.answer || '?')}${ch.item && ch.item.bonus ? `<small>Bonus (+1) : ${esc(ch.item.bonus)}</small>` : ''}</div>${ch.item && ch.item.info ? `<div class="fun">💡 ${esc(ch.item.info)}</div>` : ''}${ch.item && ch.item.joke ? `<div class="q">😜 ${esc(ch.item.joke)}</div>` : ''}${ch.item && ch.item.qcm ? `<div class="sub">🎁 Question bonus après la bonne réponse : ${esc(ch.item.qcm.q || '')} → <b>${esc(ch.item.qcm.o[ch.item.qcm.a || 0])}</b></div>` : ''}${ch.item && ch.item.id ? `<div class="sub">📁 ${esc(ch.item.id)}</div>` : ''}`;
   } else if (k === 'series' && ch.type === 'video') {
     body = `<div class="q">🎬 ${esc(ch.item && ch.item.label || 'Vidéo')}</div>${(ch.qs || []).map((q, i) => `<div class="sub">Question ${i ? 'bonus' : ''}${ch.i === i && ch.stage === 'q' ? ' (en cours)' : ''}</div>${qBlock(q)}`).join('')}`;
   } else if (k === 'series') {
@@ -291,7 +291,7 @@ function stageActions(ch) {
     if (ch.stage === 'answer') {
       const t = team(ch.buzzer);
       out.push(`<div class="buzzbox" style="background:${t.color}"><b>🔔 ${esc(t.name)}</b>a buzzé : on écoute sa réponse</div>
-        <div class="btns">${B('✓ Bonne réponse', 'judge', { ok: true }, 'ok big')}${ch.item && ch.item.bonus ? B('✓ + bonus (+1)', 'judge', { ok: true, bonus: true }, 'ok') : ''}${B('✗ Raté', 'judge', { ok: false }, 'ko')}${B('↩️ Annuler le buzz', 'unbuzz')}</div>`);
+        <div class="btns">${B(ch.item && ch.item.qcm ? '✓ Bonne réponse → question bonus 🎁' : '✓ Bonne réponse', 'judge', { ok: true }, 'ok big')}${ch.item && ch.item.bonus && !ch.item.qcm ? B('✓ + bonus (+1)', 'judge', { ok: true, bonus: true }, 'ok') : ''}${B('✗ Raté', 'judge', { ok: false }, 'ko')}${B('↩️ Annuler le buzz', 'unbuzz')}</div>`);
     }
     out.push(`<div class="btns">${B(ch.media === 'image' ? '🔁 Reflouter l\'image' : ch.media === 'text' ? '🔁 Recommencer (indices recachés)' : '🔁 Relancer l\'extrait', 'replay')}</div>`);
   }

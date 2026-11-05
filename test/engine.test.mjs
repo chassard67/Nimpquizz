@@ -156,6 +156,14 @@ function playChallenge() {
     host({ action: 'judge', ok: false });
     send(pidOf(ids[2]), { t: 'buzz' });
     host({ action: 'judge', ok: true });
+    // fiche avec QCM : question bonus pour l'équipe qui a trouvé
+    if (s.ch.kind === 'dcc' && s.ch.bonusQcm) {
+      seen.add(ch.type + '+bonus');
+      const w = s.ch.participants[0];
+      check(send(pidOf(w), { t: 'mode', mode: 'carre' }) === null, 'question bonus : choix du mode');
+      now = Math.max(now, s.ch.startsAt);
+      check(send(pidOf(w), { t: 'answer', value: s.ch.q.a }) === null && s.phase === 'reveal', 'question bonus : réponse');
+    }
   }
   if (s.phase === 'challenge') wait(200000); // le chrono tranche
 }
