@@ -1,0 +1,34 @@
+{
+ "noires": [],
+ "blanches": [
+  "Le tiroir à bazar de la cuisine",
+  "Le pote qui « ne boit pas ce soir »",
+  "Danser seul sur Les Démons de minuit",
+  "La gueule de bois du dimanche",
+  "Le collègue qui fait « répondre à tous »",
+  "Un tableau Excel à 42 onglets",
+  "Le repas de Noël qui dure 7 heures",
+  "Le premier cheveu blanc",
+  "Le régime qui commence lundi",
+  "Un remix techno de Patrick Sébastien",
+  "La Danse des canards",
+  "Un épisode de Plus belle la vie",
+  "Un lama en colère",
+  "Le dernier mot dans un couple",
+  "45 minutes pour choisir un film",
+  "Celui qui pique toute la couette",
+  "Un apéro qui finit en karaoké",
+  {
+   "t": "Un string léopard",
+   "nsfw": true
+  },
+  {
+   "t": "Le Kamasutra version yoga",
+   "nsfw": true
+  },
+  {
+   "t": "Une nuit torride au camping des Flots Bleus",
+   "nsfw": true
+  }
+ ]
+}

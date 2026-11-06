@@ -1,6 +1,74 @@
 // FICHIER GÉNÉRÉ par scripts/build-questions.mjs à partir de questions/*.json : ne pas modifier à la main.
 export const EXTRA = {
  "themes": {},
+ "bmc": {
+  "noires": [],
+  "blanches": [
+   {
+    "t": "Le tiroir à bazar de la cuisine"
+   },
+   {
+    "t": "Le pote qui « ne boit pas ce soir »"
+   },
+   {
+    "t": "Danser seul sur Les Démons de minuit"
+   },
+   {
+    "t": "La gueule de bois du dimanche"
+   },
+   {
+    "t": "Le collègue qui fait « répondre à tous »"
+   },
+   {
+    "t": "Un tableau Excel à 42 onglets"
+   },
+   {
+    "t": "Le repas de Noël qui dure 7 heures"
+   },
+   {
+    "t": "Le premier cheveu blanc"
+   },
+   {
+    "t": "Le régime qui commence lundi"
+   },
+   {
+    "t": "Un remix techno de Patrick Sébastien"
+   },
+   {
+    "t": "La Danse des canards"
+   },
+   {
+    "t": "Un épisode de Plus belle la vie"
+   },
+   {
+    "t": "Un lama en colère"
+   },
+   {
+    "t": "Le dernier mot dans un couple"
+   },
+   {
+    "t": "45 minutes pour choisir un film"
+   },
+   {
+    "t": "Celui qui pique toute la couette"
+   },
+   {
+    "t": "Un apéro qui finit en karaoké"
+   },
+   {
+    "t": "Un string léopard",
+    "nsfw": true
+   },
+   {
+    "t": "Le Kamasutra version yoga",
+    "nsfw": true
+   },
+   {
+    "t": "Une nuit torride au camping des Flots Bleus",
+    "nsfw": true
+   }
+  ]
+ },
  "burger": [
   {
    "name": "Le fromage sous toutes ses formes",
