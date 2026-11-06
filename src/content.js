@@ -62,9 +62,9 @@ export const QCM = {
   emojis: [
     { q: "🦁👑", o: ["Le Roi Lion", "Madagascar", "Le Livre de la jungle", "Tarzan"], a: 0 },
     { q: "🚢🧊💔", o: ["Pirates des Caraïbes", "Titanic", "La Reine des neiges", "Poséidon"], a: 1 },
-    { q: "👽📞🏠", o: ["Men in Black", "Rencontres du troisième type", "E.T. l'extra-terrestre", "Independence Day"], a: 2 },
-    { q: "🧙‍♂️💍🌋", o: ["Harry Potter", "Le Seigneur des anneaux", "Game of Thrones", "Le Hobbit… non attendez"], a: 1 },
-    { q: "🦈🏖️😱", o: ["Les Dents de la mer", "Sharknado", "Le Monde de Nemo", "Baywatch"], a: 0 },
+    { q: "👽📞🏠", o: ["Men in Black", "Rencontres du troisième type", "E.T. l'extra-terrestre", "Independence Day"], a: 2, k: ["E.T.", "ET"] },
+    { q: "🧙‍♂️💍🌋", o: ["Harry Potter", "Le Seigneur des anneaux", "Game of Thrones", "Le Hobbit… non attendez"], a: 1, k: ["LOTR"] },
+    { q: "🦈🏖️😱", o: ["Les Dents de la mer", "Sharknado", "Le Monde de Nemo", "Baywatch"], a: 0, k: ["Jaws"] },
     { q: "🐀👨‍🍳🇫🇷", o: ["Ratatouille", "Cauchemar en cuisine", "Les Visiteurs", "Top Chef"], a: 0 },
     { q: "⚡👓🧙", o: ["Doctor Strange", "Harry Potter", "Merlin", "Les Animaux fantastiques"], a: 1 },
     { q: "🦖🏝️🧬", o: ["King Kong", "Jurassic Park", "L'Âge de glace", "Godzilla"], a: 1 },
@@ -72,14 +72,14 @@ export const QCM = {
     { q: "🤡🎈🌧️", o: ["Joker", "Ça", "Saw", "Le Cirque du Soleil"], a: 1 },
     { q: "💊🐇🕶️", o: ["Matrix", "Alice au pays des merveilles", "Men in Black", "Le Loup de Wall Street"], a: 0 },
     { q: "❄️👸⛄", o: ["Raiponce", "La Reine des neiges", "Blanche-Neige", "Les Bronzés font du ski"], a: 1 },
-    { q: "🍫🏭🎫", o: ["Le Chocolat", "Charlie et la Chocolaterie", "Willy et les Gourmands", "Ratatouille"], a: 1 },
+    { q: "🍫🏭🎫", o: ["Le Chocolat", "Charlie et la Chocolaterie", "Willy et les Gourmands", "Ratatouille"], a: 1, k: ["Charlie"] },
     { q: "🐼🥋", o: ["Kung Fu Panda", "Karaté Kid", "Mulan", "Ip Man"], a: 0 },
-    { q: "👦🏠🎄✈️", o: ["Le Père Noël est une ordure", "Maman, j'ai raté l'avion", "Love Actually", "Y a-t-il un pilote dans l'avion ?"], a: 1 },
+    { q: "👦🏠🎄✈️", o: ["Le Père Noël est une ordure", "Maman, j'ai raté l'avion", "Love Actually", "Y a-t-il un pilote dans l'avion ?"], a: 1, k: ["Home Alone"] },
     { q: "🐰📍 (expression)", o: ["Poser un lapin", "Courir deux lièvres", "Sortir du chapeau", "Avoir une carotte"], a: 0 },
     { q: "🍎🍎😵 (expression)", o: ["Tomber dans les pommes", "Croquer la pomme", "Être haut comme trois pommes", "Ramener sa fraise"], a: 0 },
     { q: "🦶🍽️ (expression)", o: ["Casser les pieds", "Mettre les pieds dans le plat", "Faire du pied", "Avoir les pieds sur terre"], a: 1 },
     { q: "🪳😢 (expression)", o: ["Avoir le cafard", "Avoir des fourmis dans les jambes", "Être une petite bête", "Pleurer comme un insecte"], a: 0 },
-    { q: "🧈💶🧈 (expression)", o: ["Faire son beurre", "Le beurre et l'argent du beurre", "Compter pour du beurre", "Beurrer la tartine"], a: 1 }
+    { q: "🧈💶🧈 (expression)", o: ["Faire son beurre", "Le beurre et l'argent du beurre", "Compter pour du beurre", "Beurrer la tartine"], a: 1, k: ["Vouloir le beurre et l'argent du beurre"] }
   ],
 
   // 3 affirmations, a = index du MENSONGE

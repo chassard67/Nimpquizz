@@ -32,7 +32,8 @@ LES FICHIERS
   culture-<thème>.json  un thème de Culture G (manga, chanson-francaise…)
                       { "label": "Manga", "q": [ QCM… ] }
   noix.json           À la noix                 [ QCM… ]
-  emojis.json         Emojis ("q" = les emojis) [ QCM… ]
+  emojis.json         Emojis ("q" = les emojis) [ QCM… ] : réponse tapée en cash d'abord,
+                      pensez à "k" pour les autres titres acceptés (ex. ["SOS Fantômes"])
   mensonge.json       Grand mensonge : 3 affirmations, "a" = LE MENSONGE
                       [ { "o": [3 phrases], "a", "f"? } ]
   plusoumoins.json    Plus ou moins             [ { "q", "a": nombre, "u": unité, "f"? } ]

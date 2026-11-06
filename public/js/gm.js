@@ -260,6 +260,7 @@ function teamStatus(ch, id) {
   if (k === 'buzz10') { const ms = ch.taps[id]; return ms === undefined ? ['n\'a pas buzzé', ''] : ms < 0 ? ['faux départ', 'bad'] : [`${(ms / 1000).toFixed(2).replace('.', ',')} s`, Math.abs(ms - 10000) <= 1000 ? 'good' : '']; }
   if (k === 'dcc' && ch.stage === 'mode') return [ch.modes[id] ? `a choisi ${ch.modes[id]}` : 'choisit…', ''];
   if (ch.participants && !ch.participants.includes(id)) return ['ne joue pas', ''];
+  if (a === undefined && ch.emo) return [ch.modes[id] === 'carre' ? 'a pris le carré, réfléchit…' : 'réfléchit (cash ou carré ?)', ''];
   if (a === undefined) return [ch.kind === 'open' && ch.stage === 'vote' ? (ch.votes[id] ? `a voté pour ${team(ch.votes[id]).name}` : 'vote…') : '… pas encore répondu', ''];
   if (k === 'open') return [`« ${a.v} »${ch.stage === 'vote' ? (ch.votes[id] ? ` · a voté pour ${team(ch.votes[id]).name}` : ' · vote…') : ''}`, ''];
   if (k === 'bac') return [a.v.map(w => w || '—').join(' · '), ''];

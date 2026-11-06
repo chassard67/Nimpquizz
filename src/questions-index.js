@@ -20,7 +20,10 @@ export const EXTRA = {
     "Beetlejuice",
     "La Famille Addams"
    ],
-   "a": 1
+   "a": 1,
+   "k": [
+    "SOS Fantômes"
+   ]
   },
   {
    "q": "👠🎃🕛🐭",
@@ -50,7 +53,10 @@ export const EXTRA = {
     "Stargate",
     "Star Wars"
    ],
-   "a": 3
+   "a": 3,
+   "k": [
+    "La Guerre des étoiles"
+   ]
   },
   {
    "q": "🐟🟧⚪🪸🔍",
@@ -60,7 +66,10 @@ export const EXTRA = {
     "La Petite Sirène",
     "Luca"
    ],
-   "a": 1
+   "a": 1,
+   "k": [
+    "Nemo"
+   ]
   },
   {
    "q": "👨‍🚀🌾🚀🕳️⏳",
@@ -110,7 +119,10 @@ export const EXTRA = {
     "La Petite Sirène",
     "Raiponce"
    ],
-   "a": 0
+   "a": 0,
+   "k": [
+    "La Princesse et le Crapaud"
+   ]
   },
   {
    "q": "🧑‍🦲🏎️🕶️💥🏃‍♂️",
@@ -120,7 +132,11 @@ export const EXTRA = {
     "Fast and Furious",
     "Baby Driver"
    ],
-   "a": 2
+   "a": 2,
+   "k": [
+    "Fast & Furious",
+    "Fast"
+   ]
   },
   {
    "q": "🕷️🕸️🏙️🔴🔵",
@@ -130,7 +146,10 @@ export const EXTRA = {
     "Spider-Man",
     "Iron Man"
    ],
-   "a": 2
+   "a": 2,
+   "k": [
+    "Spiderman"
+   ]
   },
   {
    "q": "🦇🏎️🔦🏙️",
@@ -150,7 +169,11 @@ export const EXTRA = {
     "Monstres et Cie",
     "Megamind"
    ],
-   "a": 0
+   "a": 0,
+   "k": [
+    "Minions",
+    "Moi, moche et méchant"
+   ]
   },
   {
    "q": "🩵👽🌳🏹🔵",
@@ -170,7 +193,10 @@ export const EXTRA = {
     "Kingsman",
     "Inception"
    ],
-   "a": 0
+   "a": 0,
+   "k": [
+    "MIB"
+   ]
   },
   {
    "q": "👨‍👩‍👧‍👦🔴⚡🦸‍♂️🦸‍♀️",
@@ -180,7 +206,10 @@ export const EXTRA = {
     "Là-haut",
     "Avengers"
    ],
-   "a": 1
+   "a": 1,
+   "k": [
+    "The Incredibles"
+   ]
   },
   {
    "q": "🦣🦥🐅🧊",
@@ -190,7 +219,10 @@ export const EXTRA = {
     "Le Livre de la jungle",
     "Zootopie"
    ],
-   "a": 1
+   "a": 1,
+   "k": [
+    "Ice Age"
+   ]
   },
   {
    "q": "🛩️🕶️🇺🇸🔥",
@@ -210,7 +242,11 @@ export const EXTRA = {
     "Peter Pan",
     "L'Île au trésor"
    ],
-   "a": 0
+   "a": 0,
+   "k": [
+    "Pirates of the Caribbean",
+    "Jack Sparrow"
+   ]
   },
   {
    "q": "💤💭🌀🧠🏢",
@@ -230,7 +266,10 @@ export const EXTRA = {
     "Comme des bêtes",
     "Tous en scène"
    ],
-   "a": 0
+   "a": 0,
+   "k": [
+    "Zootopia"
+   ]
   },
   {
    "q": "👨‍🎤👑🎹🎸🇬🇧",

@@ -50,6 +50,21 @@ function playChallenge() {
       let a = Math.floor(rng() * ch.q.o.length); while (banned.includes(a)) a = (a + 1) % ch.q.o.length;
       if (s.phase === 'challenge') send(pidOf(id), { t: 'answer', value: a });
     }
+  } else if (ch.kind === 'dcc' && ch.emo) {
+    // Emojis : pas de propositions au départ ; cash direct ou carré
+    const v0 = G.view(s, { pid: pidOf(ids[0]), role: 'phone' }), vt = G.view(s, { role: 'tv' });
+    check(ch.stage === 'q' && !v0.ch.q.o && !vt.ch.q.o && v0.ch.q.q, 'emojis : les emojis sans les propositions');
+    check(send(pidOf(ids[0]), { t: 'mode', mode: 'duo' }) !== null, 'emojis : pas de duo');
+    check(send(pidOf(ids[0]), { t: 'answer', value: 0 }) !== null, 'emojis : pas de choix sans carré');
+    check(send(pidOf(ids[0]), { t: 'mode', mode: 'carre' }) === null && G.view(s, { pid: pidOf(ids[0]), role: 'phone' }).ch.q.o.length === 4, 'emojis : le carré montre les 4 propositions');
+    check(!G.view(s, { pid: pidOf(ids[1]), role: 'phone' }).ch.q.o, 'emojis : seulement pour l\'équipe qui a pris le carré');
+    const sc = id => s.teams.find(t => t.id === id).score, b = Object.fromEntries(ids.map(id => [id, sc(id)]));
+    send(pidOf(ids[0]), { t: 'answer', value: s.ch.q.a });
+    send(pidOf(ids[1]), { t: 'answer', value: s.ch.q.o[s.ch.q.a].toLowerCase() });
+    send(pidOf(ids[2]), { t: 'answer', value: 'Les Bronzés font du ski en Laponie' });
+    const pts = id => (id === ch.teamId ? 1 : 0);
+    check(s.phase === 'reveal' && s.ch.modes[ids[1]] === 'cash' && s.ch.ok[ids[1]] && !s.ch.ok[ids[2]], 'emojis : cash tapé directement');
+    check(sc(ids[0]) - b[ids[0]] >= 2 + pts(ids[0]) && sc(ids[1]) - b[ids[1]] >= 4 + pts(ids[1]) && sc(ids[2]) === b[ids[2]], 'emojis : carré 2 pts, cash 4 pts');
   } else if (ch.kind === 'dcc') {
     const modes = ['duo', 'carre', 'cash'];
     ids.forEach((id, i) => check(send(pidOf(id), { t: 'mode', mode: modes[i % 3] }) === null, 'choix duo/carré/cash'));
@@ -201,6 +216,8 @@ function playTurn(forceType) {
 // ── chaque type de case au moins une fois
 const types = [...new Set(G.BOARD)].filter(x => x !== 'depart');
 for (const ty of types) { if (s.phase !== 'roll') break; playTurn(ty); }
+for (let k = 0; k < 4 && !seen.has('emojis') && s.phase === 'roll'; k++) playTurn('emojis');
+check(seen.has('emojis'), 'case emojis jouée');
 
 // ── jokers hors tour
 const [A, B, C] = s.teams;

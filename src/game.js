@@ -25,7 +25,7 @@ export const TYPES = {
   unenote:       { label: 'Une seule note', group: 'bt', kind: 'media', media: 'audio', rule: 'Une note. Une seule. Buzzez si vous reconnaissez : 3 pts.' },
   instruments:   { label: 'Couche par couche', group: 'bt', kind: 'media', media: 'layers', rule: 'Batterie, puis basse, puis le reste… Buzzez tôt : 4 pts, puis 3, 2, 1.' },
   noix:          { label: 'À la noix', group: 'q', kind: 'qcm', rule: 'Question absurde, mais vraie réponse. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
-  emojis:        { label: 'Emojis', group: 'q', kind: 'qcm', rule: 'Devinez le titre ou l\'expression. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
+  emojis:        { label: 'Emojis', group: 'q', kind: 'dcc', emo: true, rule: 'Tapez le titre en CASH (4 pts), ou prenez le carré pour voir 4 propositions (2 pts). +1 pour l\'équipe qui joue.' },
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
   plusoumoins:   { label: 'Plus ou moins', group: 'q', kind: 'number', rule: 'Donnez un nombre. L\'équipe la plus proche prend 2 pts, +1 si pile poil.' },
   expression:    { label: 'Double Sens', group: 'q', kind: 'open', rule: 'Une phrase qui marche dans deux situations opposées. Chaque équipe écrit la sienne, puis on vote pour la meilleure des autres : 2 pts.' },
@@ -60,7 +60,7 @@ export const T = {
   media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000, b10cd: 3000,
   audio: 30000,              // blind test musical : 30 s d'écoute maximum
   image: 20000,              // pochette floutée : 20 s maximum
-  mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
+  mode: 15000, emo: 35000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
   cd: 2200,                  // décompte « bip bip bip » (2 s) avant une question qui s'enchaîne
   bmcWrite: 60000, bmcJudge: 120000
 };
@@ -922,6 +922,11 @@ function startCellInner(s, type, ctx, rng, gains = {}) {
     const pool = POOLS[type];
     const i = pickIndex(s, type, pool.length, rng);
     s.ch = { ...base, q: shuffleQ(pool[i], rng), participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.qcm };
+  } else if (meta.emo) {
+    // Emojis : pas de propositions au départ. Chaque équipe tape la réponse (cash) ou prend le carré.
+    const pool = POOLS[type];
+    const i = pickIndex(s, type, pool.length, rng);
+    s.ch = { ...base, emo: true, q: shuffleQ(pool[i], rng), stage: 'q', modes: {}, duo: {}, participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.emo };
   } else if (meta.kind === 'dcc') {
     s.ch = { ...base, q: culturePick(s, rng), stage: 'mode', modes: {}, duo: {}, participants: all, answers: {}, fifty: {}, deadline: now + T.grace + T.mode };
   } else if (meta.kind === 'series') {
@@ -981,6 +986,9 @@ function answer(s, tm, value, ctx, rng) {
 
   if (ch.kind === 'dcc') {
     if (ch.stage !== 'q') return 'Choisissez d\'abord duo, carré ou cash.';
+    // Emojis : une réponse tapée sans avoir pris le carré, c'est du cash
+    if (ch.emo && !ch.modes[tm.id] && typeof value === 'string' && !/^\d$/.test(value)) ch.modes[tm.id] = 'cash';
+    if (ch.emo && !ch.modes[tm.id]) return 'Tapez la réponse ou prenez le carré.';
     if (ch.modes[tm.id] === 'cash') {
       const v = clampText(value, 60);
       if (!v) return 'Tapez une réponse.';
@@ -1102,6 +1110,15 @@ function bmcToJudge(s, ctx, rng = Math.random) {
 // ─── Duo, carré ou cash ──────────────────────────────────────
 function chooseMode(s, tm, mode, ctx, rng) {
   const ch = s.ch;
+  if (s.phase === 'challenge' && ch && ch.emo && ch.stage === 'q') {
+    // Emojis : on peut passer du cash au carré tant qu'on n'a pas répondu
+    if (mode !== 'carre') return 'Tapez la réponse, ou prenez le carré.';
+    if (!isParticipant(ch, tm.id)) return 'Ce n\'est pas votre question.';
+    if (ctx.now < ch.startsAt) return 'Attendez que les emojis s\'affichent !';
+    if (ch.modes[tm.id] || ch.answers[tm.id] !== undefined) return 'Déjà choisi.';
+    ch.modes[tm.id] = 'carre';
+    return null;
+  }
   if (s.phase !== 'challenge' || !ch || ch.kind !== 'dcc' || ch.stage !== 'mode') return 'Trop tard pour choisir.';
   if (!DCC_PTS[mode]) return 'Duo, carré ou cash, rien d\'autre.';
   if (!isParticipant(ch, tm.id)) return 'Ce n\'est pas votre question.';
@@ -1373,7 +1390,7 @@ function resolve(s, ctx, rng) {
       const w = team(s, ch.winner), good = ok.length > 0;
       summary = `${w.name} a trouvé « ${ch.item.answer} » (+${ch.basePts}) ${good ? `et réussit la question bonus${ch.modes[w.id] === 'cash' ? ' en CASH 💰' : ''} !` : 'mais rate la question bonus.'}`;
     } else
-    summary = cashers.length ? `CASH ! ${cashers.map(id => team(s, id).name).join(', ')} ${cashers.length > 1 ? 'ont' : 'a'} tout misé et gagné. 💰` : ok.length ? `Bonne réponse pour ${ok.map(id => team(s, id).name).join(', ')}.` : 'Personne n\'a trouvé. Ni en duo, ni en carré, ni en rien.';
+    summary = cashers.length ? `CASH ! ${cashers.map(id => team(s, id).name).join(', ')} ${cashers.length > 1 ? 'ont' : 'a'} tout misé et gagné. 💰` : ok.length ? `Bonne réponse pour ${ok.map(id => team(s, id).name).join(', ')}.` : ch.emo ? 'Personne n\'a trouvé. Les emojis, c\'est pas votre langue maternelle.' : 'Personne n\'a trouvé. Ni en duo, ni en carré, ni en rien.';
   } else if (ch.kind === 'affiche') {
     const n = ch.q.clues.length;
     const ok = Object.entries(ch.answers).filter(([, a]) => a.v === ch.q.a);
@@ -1582,6 +1599,8 @@ export function view(s, viewer = {}, extra = {}) {
       // A contrario : la phrase pour tout le monde, les indices seulement pour la télé (elle les affiche à 10 s et 20 s)
       q: ch.item.q, nh: ch.item.hints ? ch.item.hints.length : undefined, hints: viewer.role === 'tv' ? ch.item.hints : undefined };
     if (ch.duo && me) ch.duo = { [me.teamId]: ch.duo[me.teamId] }; else if (ch.duo) ch.duo = {};
+    // Emojis : les 4 propositions ne partent que vers le téléphone d'une équipe qui a pris le carré
+    if (ch.emo && ch.q && s.phase === 'challenge' && !(me && s.ch.modes[me.teamId] === 'carre')) delete ch.q.o;
     const hideOthers = ch.kind !== 'bac' || ch.stage === 'write';
     if (ch.answers && !(ch.kind === 'open' && ch.stage === 'vote') && hideOthers) {
       for (const id of Object.keys(ch.answers)) if (!me || me.teamId !== id) ch.answers[id] = { hidden: true };

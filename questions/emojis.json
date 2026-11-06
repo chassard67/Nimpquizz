@@ -17,7 +17,10 @@
    "Beetlejuice",
    "La Famille Addams"
   ],
-  "a": 1
+  "a": 1,
+  "k": [
+   "SOS Fantômes"
+  ]
  },
  {
   "q": "👠🎃🕛🐭",
@@ -47,7 +50,10 @@
    "Stargate",
    "Star Wars"
   ],
-  "a": 3
+  "a": 3,
+  "k": [
+   "La Guerre des étoiles"
+  ]
  },
  {
   "q": "🐟🟧⚪🪸🔍",
@@ -57,7 +63,10 @@
    "La Petite Sirène",
    "Luca"
   ],
-  "a": 1
+  "a": 1,
+  "k": [
+   "Nemo"
+  ]
  },
  {
   "q": "👨‍🚀🌾🚀🕳️⏳",
@@ -107,7 +116,10 @@
    "La Petite Sirène",
    "Raiponce"
   ],
-  "a": 0
+  "a": 0,
+  "k": [
+   "La Princesse et le Crapaud"
+  ]
  },
  {
   "q": "🧑‍🦲🏎️🕶️💥🏃‍♂️",
@@ -117,7 +129,11 @@
    "Fast and Furious",
    "Baby Driver"
   ],
-  "a": 2
+  "a": 2,
+  "k": [
+   "Fast & Furious",
+   "Fast"
+  ]
  },
  {
   "q": "🕷️🕸️🏙️🔴🔵",
@@ -127,7 +143,10 @@
    "Spider-Man",
    "Iron Man"
   ],
-  "a": 2
+  "a": 2,
+  "k": [
+   "Spiderman"
+  ]
  },
  {
   "q": "🦇🏎️🔦🏙️",
@@ -147,7 +166,11 @@
    "Monstres et Cie",
    "Megamind"
   ],
-  "a": 0
+  "a": 0,
+  "k": [
+   "Minions",
+   "Moi, moche et méchant"
+  ]
  },
  {
   "q": "🩵👽🌳🏹🔵",
@@ -167,7 +190,10 @@
    "Kingsman",
    "Inception"
   ],
-  "a": 0
+  "a": 0,
+  "k": [
+   "MIB"
+  ]
  },
  {
   "q": "👨‍👩‍👧‍👦🔴⚡🦸‍♂️🦸‍♀️",
@@ -177,7 +203,10 @@
    "Là-haut",
    "Avengers"
   ],
-  "a": 1
+  "a": 1,
+  "k": [
+   "The Incredibles"
+  ]
  },
  {
   "q": "🦣🦥🐅🧊",
@@ -187,7 +216,10 @@
    "Le Livre de la jungle",
    "Zootopie"
   ],
-  "a": 1
+  "a": 1,
+  "k": [
+   "Ice Age"
+  ]
  },
  {
   "q": "🛩️🕶️🇺🇸🔥",
@@ -207,7 +239,11 @@
    "Peter Pan",
    "L'Île au trésor"
   ],
-  "a": 0
+  "a": 0,
+  "k": [
+   "Pirates of the Caribbean",
+   "Jack Sparrow"
+  ]
  },
  {
   "q": "💤💭🌀🧠🏢",
@@ -227,7 +263,10 @@
    "Comme des bêtes",
    "Tous en scène"
   ],
-  "a": 0
+  "a": 0,
+  "k": [
+   "Zootopia"
+  ]
  },
  {
   "q": "👨‍🎤👑🎹🎸🇬🇧",
