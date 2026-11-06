@@ -1593,7 +1593,9 @@ export function view(s, viewer = {}, extra = {}) {
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;
     if (ch.q && ch.q.clues && viewer.role !== 'tv') delete ch.q.clues;
-    if (ch.item) ch.item = { src: ch.item.src, img: ch.item.img,
+    // le nom du fichier contient la réponse (« Artiste - Titre.mp3 ») : seuls la télé et le MJ reçoivent l'adresse
+    const fileOk = viewer.role === 'tv' || gm;
+    if (ch.item) ch.item = { src: fileOk ? ch.item.src : undefined, img: fileOk ? ch.item.img : undefined,
       // question bonus : la chanson est déjà trouvée, on peut montrer son titre et sa pochette (jamais la fiche QCM)
       cover: ch.bonusQcm ? ch.item.cover : undefined, answer: ch.bonusQcm ? ch.item.answer : undefined, start: ch.item.start, stop: ch.item.stop, layers: ch.item.layers, label: ch.item.label,
       // A contrario : la phrase pour tout le monde, les indices seulement pour la télé (elle les affiche à 10 s et 20 s)

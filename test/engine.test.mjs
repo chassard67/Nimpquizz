@@ -39,6 +39,7 @@ function playChallenge() {
   // la vue téléphone ne doit jamais contenir la réponse
   const v = G.view(s, { pid: 'p2' });
   if (v.ch && v.ch.q) check(v.ch.q.a === undefined, `réponse cachée (${ch.type})`);
+  if (v.ch && v.ch.item) check(!v.ch.item.src && !v.ch.item.img, `nom du fichier (= la réponse) caché aux téléphones (${ch.type})`);
   const ids = s.teams.map(t => t.id);
 
   if (ch.kind === 'qcm') {
