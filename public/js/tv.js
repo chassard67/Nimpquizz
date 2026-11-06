@@ -577,7 +577,7 @@ function syncLayers(ch) {
   const n = S.phase === 'reveal' ? layerAudio.length : Math.min(layerAudio.length, 1 + Math.floor((gameNow(S) - ch.startsAt) / S.meta.timers.layer));
   layerAudio.forEach((a, i) => {
     a.volume = i < n ? 1 : 0;
-    if (playing && a.paused) { a.currentTime = layerAudio[0].currentTime || 0; a.play().catch(() => {}); }
+    if (playing && a.paused) { a.currentTime = layerAudio[0].currentTime || 0; a.play().catch(soundBlocked); }
     if (!playing && !a.paused) a.pause();
   });
   document.querySelectorAll('[data-layer]').forEach(el => el.classList.toggle('on', Number(el.dataset.layer) < n));
@@ -589,8 +589,8 @@ function syncVideo(ch) {
   if (vidHandled === tag) return;
   vidHandled = tag;
   const start = ch.item.start || 0, stop = ch.item.stop;
-  if (v.dataset.resume) { v.currentTime = stop != null ? stop : start; v.play().catch(() => {}); return; }
-  v.currentTime = start; v.play().catch(() => {});
+  if (v.dataset.resume) { v.currentTime = stop != null ? stop : start; v.play().catch(soundBlocked); return; }
+  v.currentTime = start; v.play().catch(soundBlocked);
   v.ontimeupdate = () => { if (stop != null && v.currentTime >= stop) { v.pause(); v.ontimeupdate = null; if (S.host) host('mediaDone'); } };
   v.onended = () => { if (S.host) host('mediaDone'); };
 }
@@ -624,13 +624,27 @@ function syncAudio() {
   const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || (S.phase === 'reveal' && !!ch.outro);
   if (S.phase === 'reveal' && ch.outro && audio.ended) { audio.currentTime = 0; }
   if (ch.stage === 'answer' && S.phase === 'challenge' && !audio.paused) { audio.pause(); sfx.buzz(); }
-  if (shouldPlay && audio.paused) audio.play().catch(() => {});
+  if (shouldPlay && audio.paused) audio.play().catch(soundBlocked);
   if (!shouldPlay && !audio.paused) audio.pause();
 }
 
 // ── 🔞 Le rabbin qui danse (mode NSFW) ───────────────────────
 // 1er appui : il danse sur le plateau avec la musique ; 2e appui : la musique s'arrête, il s'assoit et attend.
 const rabbiAudio = new Audio('/media/rabbi.mp3'); rabbiAudio.loop = true; rabbiAudio.volume = .75; rabbiAudio.preload = 'none';
+window.nqAudio = { rabbi: rabbiAudio };
+// Les navigateurs refusent de jouer du son tant que personne n'a cliqué sur la page de la télé
+// (le maître du jeu pilote depuis son téléphone) : on le signale en grand, un clic n'importe où débloque tout.
+function soundBlocked(e) {
+  if (e && e.name !== 'NotAllowedError') return;
+  $('#soundGate').classList.remove('hidden');
+}
+function soundGateUpdate() {
+  const active = navigator.userActivation ? navigator.userActivation.hasBeenActive : soundGateUpdate.clicked;
+  if (active) $('#soundGate').classList.add('hidden');
+  else if (S && S.phase !== 'end') $('#soundGate').classList.remove('hidden');
+}
+addEventListener('pointerdown', () => { soundGateUpdate.clicked = true; audioUnlock(); $('#soundGate').classList.add('hidden'); if (S) syncAudio(); syncRabbi(); }, true);
+setInterval(soundGateUpdate, 1000);
 const RABBI_DANCE = `<svg viewBox="0 0 200 300" class="rb">
   <g class="rb-legs"><g class="rb-legL"><rect x="78" y="200" width="18" height="70" rx="6" fill="#1b1b1b"/><ellipse cx="82" cy="274" rx="18" ry="8" fill="#000"/></g>
     <g class="rb-legR"><rect x="104" y="200" width="18" height="70" rx="6" fill="#1b1b1b"/><ellipse cx="118" cy="274" rx="18" ry="8" fill="#000"/></g></g>
@@ -679,7 +693,7 @@ function syncRabbi() {
     if (rabbiAudio.paused) {
       const d = rabbiAudio.duration || 100;
       try { rabbiAudio.currentTime = ((serverNow() - r.at) / 1000) % d; } catch {}
-      rabbiAudio.play().catch(() => {});
+      rabbiAudio.play().catch(soundBlocked);
     }
   } else if (!rabbiAudio.paused) rabbiAudio.pause();
 }

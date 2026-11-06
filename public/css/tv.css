@@ -331,3 +331,7 @@ body.rabbion #center { padding-bottom: 150px; }
 @keyframes rbLegR { from { transform: rotate(-10deg); } to { transform: rotate(28deg); } }
 @keyframes rbHead { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
 @keyframes rbIdle { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+#soundGate { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); z-index: 60; background: var(--yellow); color: var(--bg); border-radius: 22px; padding: 16px 28px; display: flex; align-items: center; gap: 16px; box-shadow: 8px 8px 0 var(--bt); animation: pulse 1.6s infinite; cursor: pointer; max-width: 1300px; }
+#soundGate b { font-size: 48px; }
+#soundGate span { font-family: var(--display); font-size: 30px; }
+#soundGate small { font-size: 18px; font-weight: 800; }
