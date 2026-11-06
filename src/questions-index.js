@@ -1516,6 +1516,26 @@ export const EXTRA = {
   {
    "a": "le montage d'un meuble IKEA",
    "b": "une thérapie de couple"
+  },
+  {
+   "a": "chez le plombier",
+   "b": "une soirée coquine"
+  },
+  {
+   "a": "un match de rugby",
+   "b": "une nuit de noces"
+  },
+  {
+   "a": "un pique-nique en forêt",
+   "b": "un rendez-vous coquin"
+  },
+  {
+   "a": "chez le kiné",
+   "b": "un hôtel à l'heure"
+  },
+  {
+   "a": "un cours d'équitation",
+   "b": "une première nuit ensemble"
   }
  ],
  "emojis": [
@@ -2159,6 +2179,46 @@ export const EXTRA = {
      "15"
     ],
     "a": 0
+   },
+   {
+    "q": "Bleu et jaune mélangés, ça donne quelle couleur ?",
+    "o": [
+     "Vert",
+     "Violet",
+     "Orange",
+     "Marron"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de côtés a un triangle ?",
+    "o": [
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel animal fait « meuh » ?",
+    "o": [
+     "La vache",
+     "Le mouton",
+     "Le cochon",
+     "La chèvre"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de jours compte une semaine ?",
+    "o": [
+     "7",
+     "5",
+     "6",
+     "8"
+    ],
+    "a": 0
    }
   ],
   [
@@ -2191,6 +2251,46 @@ export const EXTRA = {
      "Botticelli"
     ],
     "a": 0
+   },
+   {
+    "q": "Quel est le plus grand animal du monde ?",
+    "o": [
+     "La baleine bleue",
+     "L'éléphant",
+     "Le requin-baleine",
+     "La girafe"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la capitale de l'Italie ?",
+    "o": [
+     "Rome",
+     "Milan",
+     "Naples",
+     "Venise"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a écrit « Les Misérables » ?",
+    "o": [
+     "Victor Hugo",
+     "Émile Zola",
+     "Balzac",
+     "Alexandre Dumas"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la formule chimique de l'eau ?",
+    "o": [
+     "H2O",
+     "CO2",
+     "O2",
+     "HO"
+    ],
+    "a": 0
    }
   ],
   [
@@ -2221,6 +2321,46 @@ export const EXTRA = {
      "L'espagnol",
      "Le brésilien",
      "L'anglais"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Dans quel pays se trouve le Machu Picchu ?",
+    "o": [
+     "Le Pérou",
+     "La Bolivie",
+     "Le Mexique",
+     "Le Chili"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a réalisé « Titanic » ?",
+    "o": [
+     "James Cameron",
+     "Steven Spielberg",
+     "Martin Scorsese",
+     "Ridley Scott"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la capitale de la Norvège ?",
+    "o": [
+     "Oslo",
+     "Stockholm",
+     "Copenhague",
+     "Helsinki"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de touches compte un piano standard ?",
+    "o": [
+     "88",
+     "76",
+     "92",
+     "100"
     ],
     "a": 0
    }
@@ -2265,6 +2405,46 @@ export const EXTRA = {
      "Haendel"
     ],
     "a": 0
+   },
+   {
+    "q": "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?",
+    "o": [
+     "1969",
+     "1967",
+     "1971",
+     "1965"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la capitale de la Nouvelle-Zélande ?",
+    "o": [
+     "Wellington",
+     "Auckland",
+     "Christchurch",
+     "Queenstown"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de pays compte l'Union européenne ?",
+    "o": [
+     "27",
+     "25",
+     "28",
+     "30"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a écrit « Le Comte de Monte-Cristo » ?",
+    "o": [
+     "Alexandre Dumas",
+     "Victor Hugo",
+     "Jules Verne",
+     "Balzac"
+    ],
+    "a": 0
    }
   ],
   [
@@ -2285,6 +2465,76 @@ export const EXTRA = {
      "Le foie",
      "La rate",
      "Les reins"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la capitale du Kazakhstan ?",
+    "o": [
+     "Astana",
+     "Almaty",
+     "Tachkent",
+     "Bichkek"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel est l'élément chimique le plus abondant dans l'univers ?",
+    "o": [
+     "L'hydrogène",
+     "L'hélium",
+     "L'oxygène",
+     "Le carbone"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a été le premier président de la Ve République ?",
+    "o": [
+     "Charles de Gaulle",
+     "Georges Pompidou",
+     "René Coty",
+     "Vincent Auriol"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de temps met la lumière du Soleil pour atteindre la Terre ?",
+    "o": [
+     "Environ 8 minutes",
+     "8 secondes",
+     "1 heure",
+     "1 jour"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel est l'os le plus long du corps humain ?",
+    "o": [
+     "Le fémur",
+     "Le tibia",
+     "L'humérus",
+     "Le péroné"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de cases compte un échiquier ?",
+    "o": [
+     "64",
+     "49",
+     "81",
+     "100"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel pays a pour monnaie le yen ?",
+    "o": [
+     "Le Japon",
+     "La Chine",
+     "La Corée du Sud",
+     "La Thaïlande"
     ],
     "a": 0
    }
