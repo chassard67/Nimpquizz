@@ -1508,6 +1508,16 @@ export const EXTRA = {
    "taré": true
   }
  ],
+ "doublesens": [
+  {
+   "a": "une leçon de conduite",
+   "b": "une première fois"
+  },
+  {
+   "a": "le montage d'un meuble IKEA",
+   "b": "une thérapie de couple"
+  }
+ ],
  "emojis": [
   {
    "q": "🎈🏠🎈👴🏻👦🏽",
@@ -2107,6 +2117,178 @@ export const EXTRA = {
    "a": 0,
    "f": "La tour a commencé à pencher pendant sa construction en raison de fondations trop faibles sur un sol trop meuble et argileux."
   }
+ ],
+ "millions": [
+  [
+   {
+    "q": "Combien de pattes a une araignée ?",
+    "o": [
+     "8",
+     "6",
+     "10",
+     "12"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Dans quel pays se trouve Big Ben ?",
+    "o": [
+     "Le Royaume-Uni",
+     "Les États-Unis",
+     "L'Irlande",
+     "Le Canada"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel est le mois le plus court de l'année ?",
+    "o": [
+     "Février",
+     "Avril",
+     "Juin",
+     "Novembre"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Combien de joueurs compte une équipe de foot sur le terrain ?",
+    "o": [
+     "11",
+     "9",
+     "13",
+     "15"
+    ],
+    "a": 0
+   }
+  ],
+  [
+   {
+    "q": "Quelle est la capitale de l'Espagne ?",
+    "o": [
+     "Madrid",
+     "Barcelone",
+     "Séville",
+     "Valence"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel est le plus grand océan du monde ?",
+    "o": [
+     "Le Pacifique",
+     "L'Atlantique",
+     "L'océan Indien",
+     "L'Arctique"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a peint la Joconde ?",
+    "o": [
+     "Léonard de Vinci",
+     "Michel-Ange",
+     "Raphaël",
+     "Botticelli"
+    ],
+    "a": 0
+   }
+  ],
+  [
+   {
+    "q": "Quelle est la plus grosse planète du système solaire ?",
+    "o": [
+     "Jupiter",
+     "Saturne",
+     "Neptune",
+     "Uranus"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel écrivain a créé Sherlock Holmes ?",
+    "o": [
+     "Arthur Conan Doyle",
+     "Agatha Christie",
+     "Edgar Allan Poe",
+     "Charles Dickens"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quelle est la langue officielle du Brésil ?",
+    "o": [
+     "Le portugais",
+     "L'espagnol",
+     "Le brésilien",
+     "L'anglais"
+    ],
+    "a": 0
+   }
+  ],
+  [
+   {
+    "q": "Quel est le plus long fleuve d'Europe ?",
+    "o": [
+     "La Volga",
+     "Le Danube",
+     "Le Rhin",
+     "Le Dniepr"
+    ],
+    "a": 0
+   },
+   {
+    "q": "En quelle année le mur de Berlin est-il tombé ?",
+    "o": [
+     "1989",
+     "1991",
+     "1987",
+     "1985"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel est le symbole chimique de l'or ?",
+    "o": [
+     "Au",
+     "Ag",
+     "Or",
+     "Go"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Qui a composé « Les Quatre Saisons » ?",
+    "o": [
+     "Vivaldi",
+     "Mozart",
+     "Bach",
+     "Haendel"
+    ],
+    "a": 0
+   }
+  ],
+  [
+   {
+    "q": "En quelle année a eu lieu la bataille de Marignan ?",
+    "o": [
+     "1515",
+     "1492",
+     "1610",
+     "1214"
+    ],
+    "a": 0
+   },
+   {
+    "q": "Quel organe produit l'insuline ?",
+    "o": [
+     "Le pancréas",
+     "Le foie",
+     "La rate",
+     "Les reins"
+    ],
+    "a": 0
+   }
+  ]
  ],
  "noix": [
   {
