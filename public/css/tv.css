@@ -309,7 +309,10 @@ body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow)
 /* Bouton « la suite de la chanson » */
 .outro-btn { align-self: center; margin-top: 18px; background: var(--yellow); color: var(--bg); font-size: 30px; padding: 16px 30px; border-radius: 18px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2); }
 /* 🔞 Le rabbin */
-#rabbi { position: absolute; left: 180px; bottom: 40px; width: 260px; height: 390px; z-index: 35; pointer-events: none; }
+/* petit, en bas du centre du plateau : entre la légende et la rangée de cases du bas */
+#rabbi { position: absolute; left: 190px; bottom: 162px; width: 90px; height: 135px; z-index: 35; pointer-events: none; }
+/* quand le rabbin est là, le contenu du centre remonte pour lui laisser sa piste de danse */
+body.rabbion #center { padding-bottom: 150px; }
 #rabbi .rb { width: 100%; height: 100%; overflow: visible; }
 #rabbi.dance { animation: rbWalk 9s ease-in-out infinite alternate; }
 #rabbi.dance .rb-body { animation: rbBounce .38s ease-in-out infinite alternate; transform-origin: 100px 214px; }
@@ -320,7 +323,7 @@ body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow)
 #rabbi.dance .rb-head { animation: rbHead .76s ease-in-out infinite alternate; transform-origin: 100px 100px; }
 #rabbi.sit .rb-idle { animation: rbIdle 2.4s ease-in-out infinite alternate; transform-origin: 100px 190px; }
 #rabbi.sit .rb-zz { animation: fade 1.6s infinite; }
-@keyframes rbWalk { from { transform: translateX(0); } to { transform: translateX(820px); } }
+@keyframes rbWalk { from { transform: translateX(0); } to { transform: translateX(960px); } }
 @keyframes rbBounce { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-16px) rotate(4deg); } }
 @keyframes rbArmL { from { transform: rotate(40deg); } to { transform: rotate(-70deg); } }
 @keyframes rbArmR { from { transform: rotate(70deg); } to { transform: rotate(-40deg); } }
@@ -328,4 +331,3 @@ body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow)
 @keyframes rbLegR { from { transform: rotate(-10deg); } to { transform: rotate(28deg); } }
 @keyframes rbHead { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
 @keyframes rbIdle { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
-#rabbiBtn { position: absolute; left: 24px; bottom: 16px; z-index: 36; background: var(--bt); color: var(--bg); font-size: 20px; padding: 10px 16px; border-radius: 14px; box-shadow: inset 0 -4px 0 rgba(0,0,0,.2); }

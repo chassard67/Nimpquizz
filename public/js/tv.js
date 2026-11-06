@@ -668,12 +668,11 @@ let rabbiShown = '';
 function syncRabbi() {
   const r = S && S.nsfw ? S.rabbi : null;
   const mode = r ? r.mode : '';
-  const el = $('#rabbi'), btn = $('#rabbiBtn');
-  btn.classList.toggle('hidden', !(S && S.nsfw && S.host && S.phase !== 'lobby'));
-  btn.textContent = mode === 'dance' ? '🪑 Rabbi, assis !' : '🕺 Rabbi';
+  const el = $('#rabbi');   // le bouton est sur le téléphone du maître du jeu uniquement
   if (mode !== rabbiShown) {
     rabbiShown = mode;
     el.className = mode ? mode : 'hidden';
+    document.body.classList.toggle('rabbion', !!mode);
     el.innerHTML = mode === 'dance' ? RABBI_DANCE : mode === 'sit' ? RABBI_SIT : '';
   }
   if (mode === 'dance' && !S.paused) {
@@ -684,7 +683,7 @@ function syncRabbi() {
     }
   } else if (!rabbiAudio.paused) rabbiAudio.pause();
 }
-$('#rabbiBtn').addEventListener('click', () => { audioUnlock(); host('rabbi'); });
+
 
 // ── FIN ──────────────────────────────────────────────────────
 function renderEnd() {
