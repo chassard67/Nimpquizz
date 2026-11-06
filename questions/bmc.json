@@ -20,6 +20,22 @@
   {
    "t": "Ma première fois ? Disons qu'il y avait ----.",
    "nsfw": true
+  },
+  "Le meilleur moyen de rater un premier rendez-vous : ----.",
+  "Ma grand-mère a un nouveau hobby : ----.",
+  "Bienvenue au camping ! Ici, on pratique ----.",
+  "Le prochain président de la République promet ----.",
+  "C'est la crise : je n'ai plus les moyens de ----.",
+  "Mon voisin de palier cache ----.",
+  "Ce Noël, le Père Noël m'a apporté ----.",
+  "Le fait divers du jour : ----.",
+  {
+   "t": "---- ? C'est mieux à trois.",
+   "nsfw": true
+  },
+  {
+   "t": "Au lit, mon arme secrète, c'est ----.",
+   "nsfw": true
   }
  ],
  "blanches": [
@@ -143,6 +159,38 @@
   },
   {
    "t": "Le jacuzzi de l'hôtel Formule 1",
+   "nsfw": true
+  },
+  "Le jeu à boire qui dégénère",
+  "La tireuse à bière en panne",
+  "Le premier qui vomit dans le jardin",
+  "Un discours de Miss France",
+  "Le Bigdil",
+  "Un tube de l'été en espagnol",
+  "La Star Ac' 2002",
+  "Les chaussettes au pied du lit",
+  "Un dîner aux chandelles chez Buffalo Grill",
+  "La belle-famille en vacances avec nous",
+  "Un « je t'aime » envoyé à la mauvaise personne",
+  "Le cadeau moche de tante Jacqueline",
+  "Les vacances chez papy sans Wi-Fi",
+  "Les enfants qui découvrent le mot « caca »",
+  "Le voisin qui perce un mur le dimanche",
+  "Les courses oubliées dans le coffre",
+  "Un parapluie retourné par le vent",
+  "Le code de carte bleue oublié à la caisse",
+  "Une vache en trottinette électrique",
+  "Un hérisson en manque de câlins",
+  "Le premier jour des soldes",
+  "Une grève SNCF un jour de départ",
+  "Le fromage qui pue dans le frigo",
+  "Un apéro saucisson-pinard",
+  {
+   "t": "Un costume de Père Noël sexy",
+   "nsfw": true
+  },
+  {
+   "t": "De la lingerie comestible",
    "nsfw": true
   }
  ]

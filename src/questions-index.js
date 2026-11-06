@@ -49,6 +49,38 @@ export const EXTRA = {
    {
     "t": "Ma première fois ? Disons qu'il y avait ----.",
     "nsfw": true
+   },
+   {
+    "t": "Le meilleur moyen de rater un premier rendez-vous : ----."
+   },
+   {
+    "t": "Ma grand-mère a un nouveau hobby : ----."
+   },
+   {
+    "t": "Bienvenue au camping ! Ici, on pratique ----."
+   },
+   {
+    "t": "Le prochain président de la République promet ----."
+   },
+   {
+    "t": "C'est la crise : je n'ai plus les moyens de ----."
+   },
+   {
+    "t": "Mon voisin de palier cache ----."
+   },
+   {
+    "t": "Ce Noël, le Père Noël m'a apporté ----."
+   },
+   {
+    "t": "Le fait divers du jour : ----."
+   },
+   {
+    "t": "---- ? C'est mieux à trois.",
+    "nsfw": true
+   },
+   {
+    "t": "Au lit, mon arme secrète, c'est ----.",
+    "nsfw": true
    }
   ],
   "blanches": [
@@ -328,6 +360,86 @@ export const EXTRA = {
    },
    {
     "t": "Le jacuzzi de l'hôtel Formule 1",
+    "nsfw": true
+   },
+   {
+    "t": "Le jeu à boire qui dégénère"
+   },
+   {
+    "t": "La tireuse à bière en panne"
+   },
+   {
+    "t": "Le premier qui vomit dans le jardin"
+   },
+   {
+    "t": "Un discours de Miss France"
+   },
+   {
+    "t": "Le Bigdil"
+   },
+   {
+    "t": "Un tube de l'été en espagnol"
+   },
+   {
+    "t": "La Star Ac' 2002"
+   },
+   {
+    "t": "Les chaussettes au pied du lit"
+   },
+   {
+    "t": "Un dîner aux chandelles chez Buffalo Grill"
+   },
+   {
+    "t": "La belle-famille en vacances avec nous"
+   },
+   {
+    "t": "Un « je t'aime » envoyé à la mauvaise personne"
+   },
+   {
+    "t": "Le cadeau moche de tante Jacqueline"
+   },
+   {
+    "t": "Les vacances chez papy sans Wi-Fi"
+   },
+   {
+    "t": "Les enfants qui découvrent le mot « caca »"
+   },
+   {
+    "t": "Le voisin qui perce un mur le dimanche"
+   },
+   {
+    "t": "Les courses oubliées dans le coffre"
+   },
+   {
+    "t": "Un parapluie retourné par le vent"
+   },
+   {
+    "t": "Le code de carte bleue oublié à la caisse"
+   },
+   {
+    "t": "Une vache en trottinette électrique"
+   },
+   {
+    "t": "Un hérisson en manque de câlins"
+   },
+   {
+    "t": "Le premier jour des soldes"
+   },
+   {
+    "t": "Une grève SNCF un jour de départ"
+   },
+   {
+    "t": "Le fromage qui pue dans le frigo"
+   },
+   {
+    "t": "Un apéro saucisson-pinard"
+   },
+   {
+    "t": "Un costume de Père Noël sexy",
+    "nsfw": true
+   },
+   {
+    "t": "De la lingerie comestible",
     "nsfw": true
    }
   ]
