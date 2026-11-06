@@ -1,6 +1,1070 @@
 // FICHIER GÉNÉRÉ par scripts/build-questions.mjs à partir de questions/*.json : ne pas modifier à la main.
 export const EXTRA = {
  "themes": {},
+ "burger": [
+  {
+   "name": "Le fromage sous toutes ses formes",
+   "qs": [
+    {
+     "q": "Quel fromage a été désigné le plus odorant du monde par une étude scientifique britannique en 2004 ?",
+     "o": [
+      "Le Roquefort",
+      "Le Vieux-Boulogne",
+      "Le Comté",
+      "L'Époisses"
+     ],
+     "a": 1
+    },
+    {
+     "q": "Comment s'appelle cette spécialité sarde qui contient des larves d'insectes vivantes ?",
+     "o": [
+      "Le Casu Marzu",
+      "Le Gorgonzola Piccante",
+      "Le Taleggio",
+      "Le Pecorino Sardo"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle est la particularité de la mimolette vieille pendant son affinage ?",
+     "o": [
+      "Elle est lavée au marc de Bourgogne",
+      "Des acariens, les cirons, grignotent sa croûte",
+      "Elle est enfouie dans de la cendre de bois",
+      "Elle est séchée au soleil"
+     ],
+     "a": 1
+    }
+   ]
+  },
+  {
+   "name": "Les répliques cultes du cinéma de gangsters",
+   "qs": [
+    {
+     "q": "Dans « Le Parrain », qui joue Don Corleone, l'homme aux offres qu'on ne peut pas refuser ?",
+     "o": [
+      "Marlon Brando",
+      "Al Pacino",
+      "Robert De Niro",
+      "Joe Pesci"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle phrase mythique Al Pacino lance-t-il, fusil-mitrailleur en main, dans « Scarface » ?",
+     "o": [
+      "Say hello to my little friend!",
+      "Welcome to Miami!",
+      "Hasta la vista, baby!",
+      "You talkin' to me?"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans « Les Tontons flingueurs », que dit Paul Volfoni en goûtant l'alcool de la cuisine ?",
+     "o": [
+      "C'est de la boisson d'homme",
+      "Faut reconnaître, c'est du brutal",
+      "Ça rappelle la campagne",
+      "C'est un produit du terroir"
+     ],
+     "a": 1
+    }
+   ]
+  },
+  {
+   "name": "La comptabilité analytique de l'élevage d'alpagas en Bolivie (1974-1981)",
+   "qs": [
+    {
+     "q": "Quelle est la capitale constitutionnelle de la Bolivie ?",
+     "o": [
+      "Sucre",
+      "La Paz",
+      "Santa Cruz",
+      "Cochabamba"
+     ],
+     "a": 0,
+     "f": "Sucre. La Paz n'est « que » le siège du gouvernement."
+    },
+    {
+     "q": "L'alpaga appartient à la famille des…",
+     "o": [
+      "Camélidés",
+      "Bovidés",
+      "Équidés",
+      "Cervidés"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans le plan comptable français, quelle classe regroupe les comptes de charges ?",
+     "o": [
+      "La classe 6",
+      "La classe 7",
+      "La classe 4",
+      "La classe 2"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les grands succès du rock des années 80",
+   "qs": [
+    {
+     "q": "Quel groupe de rock a sorti l'album « Back in Black » en 1980 ?",
+     "o": [
+      "AC/DC",
+      "Iron Maiden",
+      "Guns N' Roses",
+      "Aerosmith"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel tube d'Europe sorti en 1986 commence par un riff de synthé mythique ?",
+     "o": [
+      "Jump",
+      "The Final Countdown",
+      "Eye of the Tiger",
+      "Sweet Child O' Mine"
+     ],
+     "a": 1
+    },
+    {
+     "q": "Quel chanteur moustachu a enflammé le stade de Wembley lors du Live Aid en 1985 ?",
+     "o": [
+      "Freddie Mercury",
+      "Mick Jagger",
+      "Bruce Springsteen",
+      "David Bowie"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les recettes de cuisine à base de chocolat",
+   "qs": [
+    {
+     "q": "De quelle ville vient la Sachertorte, le célèbre gâteau au chocolat et à l'abricot ?",
+     "o": [
+      "Vienne",
+      "Berlin",
+      "Zurich",
+      "Bruxelles"
+     ],
+     "a": 0
+    },
+    {
+     "q": "D'où vient la recette du brownie ?",
+     "o": [
+      "Des États-Unis",
+      "De France",
+      "Du Mexique",
+      "D'Angleterre"
+     ],
+     "a": 0
+    },
+    {
+     "q": "À quelle température travaille-t-on le chocolat noir tempéré pour qu'il soit bien brillant ?",
+     "o": [
+      "Environ 31 °C",
+      "Exactement 60 °C",
+      "Autour de 15 °C",
+      "À 100 °C, à gros bouillons"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Le protocole diplomatique des mariages du Saint-Empire germanique au XVe siècle",
+   "qs": [
+    {
+     "q": "Quelle dynastie avait pour devise officieuse « Que d'autres fassent la guerre ; toi, heureuse Autriche, marie-toi » ?",
+     "o": [
+      "Les Habsbourg",
+      "Les Wittelsbach",
+      "Les Hohenzollern",
+      "Les Valois"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Qui Maximilien de Habsbourg épouse-t-il en 1477 ?",
+     "o": [
+      "Marie de Bourgogne",
+      "Anne de Bretagne",
+      "Catherine de Médicis",
+      "Isabelle de Castille"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle reine a lancé la mode de la robe de mariée blanche en 1840 ?",
+     "o": [
+      "La reine Victoria",
+      "Marie-Antoinette",
+      "Élisabeth II",
+      "Sissi"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les dessins animés cultes du samedi matin",
+   "qs": [
+    {
+     "q": "Quel chat passe son temps à essayer d'attraper la souris Jerry ?",
+     "o": [
+      "Sylvestre",
+      "Tom",
+      "Garfield",
+      "Félix"
+     ],
+     "a": 1
+    },
+    {
+     "q": "Dans « Inspecteur Gadget », comment s'appelle le chien de Sophie ?",
+     "o": [
+      "Finot",
+      "Scooby-Doo",
+      "Pif",
+      "Rantanplan"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle phrase prononce le prince Adam pour se transformer en Musclor ?",
+     "o": [
+      "Par le pouvoir du Crâne ancestral !",
+      "Abracadabra !",
+      "Transforme-moi !",
+      "Par la puissance des étoiles !"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les monuments historiques d'Europe",
+   "qs": [
+    {
+     "q": "Dans quelle ville se trouve le Colisée ?",
+     "o": [
+      "Athènes",
+      "Madrid",
+      "Rome",
+      "Florence"
+     ],
+     "a": 2
+    },
+    {
+     "q": "Au bord de quel fleuve se dresse la tour de Londres ?",
+     "o": [
+      "La Tamise",
+      "La Seine",
+      "Le Rhin",
+      "Le Danube"
+     ],
+     "a": 0
+    },
+    {
+     "q": "En quel siècle a commencé la construction de Notre-Dame de Paris ?",
+     "o": [
+      "Au XIIe siècle",
+      "Au XIVe siècle",
+      "Au Xe siècle",
+      "Au XVIe siècle"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les règlements de sécurité ferroviaire du transport de marchandises en Creuse (1919-1939)",
+   "qs": [
+    {
+     "q": "Quelle est la préfecture de la Creuse ?",
+     "o": [
+      "Guéret",
+      "Aubusson",
+      "Limoges",
+      "Montluçon"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle ville de la Creuse est mondialement connue pour sa tapisserie ?",
+     "o": [
+      "Aubusson",
+      "Bourganeuf",
+      "La Souterraine",
+      "Évaux-les-Bains"
+     ],
+     "a": 0
+    },
+    {
+     "q": "En quelle année la SNCF a-t-elle été créée ?",
+     "o": [
+      "1938",
+      "1919",
+      "1945",
+      "1958"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les répliques mythiques du cinéma français",
+   "qs": [
+    {
+     "q": "Dans « Hôtel du Nord », quelle réplique culte Arletty lance-t-elle à Louis Jouvet ?",
+     "o": [
+      "Atmosphère ! Atmosphère ! Est-ce que j'ai une gueule d'atmosphère ?",
+      "T'as de beaux yeux, tu sais.",
+      "C'est du brutal !",
+      "Vous avez dit bizarre ? Comme c'est bizarre…"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans « Le Père Noël est une ordure », Pierre croit d'abord que le gilet tricoté par Thérèse est…",
+     "o": [
+      "Une serpillière",
+      "Une écharpe",
+      "Un tapis de bain",
+      "Un pull pour chien"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans « La Grande Vadrouille », quel est le métier d'Augustin, joué par Bourvil ?",
+     "o": [
+      "Peintre en bâtiment",
+      "Chef d'orchestre",
+      "Boulanger",
+      "Facteur"
+     ],
+     "a": 0,
+     "f": "Peintre en bâtiment. Le chef d'orchestre, c'est Louis de Funès."
+    }
+   ]
+  },
+  {
+   "name": "Les chansons célèbres qui parlent de pluie",
+   "qs": [
+    {
+     "q": "Qui chante « Purple Rain », sorti en 1984 ?",
+     "o": [
+      "Michael Jackson",
+      "Prince",
+      "Stevie Wonder",
+      "George Michael"
+     ],
+     "a": 1
+    },
+    {
+     "q": "Qui chante et danse « Singin' in the Rain » sous la pluie dans le film de 1952 ?",
+     "o": [
+      "Gene Kelly",
+      "Fred Astaire",
+      "Frank Sinatra",
+      "Dean Martin"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Qui chante « Toute la pluie tombe sur moi », l'adaptation française de « Raindrops Keep Fallin' on My Head » ?",
+     "o": [
+      "Sacha Distel",
+      "Claude François",
+      "Charles Aznavour",
+      "Joe Dassin"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "L'impact du bouton de manchette à double articulation en Bavière en 1860",
+   "qs": [
+    {
+     "q": "Quel roi de Bavière a fait construire le château de Neuschwanstein ?",
+     "o": [
+      "Louis II",
+      "Maximilien II",
+      "Louis Ier",
+      "Othon"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans quelle ville a lieu l'Oktoberfest ?",
+     "o": [
+      "Munich",
+      "Berlin",
+      "Vienne",
+      "Nuremberg"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Où attache-t-on des boutons de manchette ?",
+     "o": [
+      "Aux poignets de la chemise",
+      "Au col",
+      "Aux chaussettes",
+      "Au chapeau"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les super-héros de l'univers Marvel",
+   "qs": [
+    {
+     "q": "Dans les films Marvel, de quel métal est fait le bouclier de Captain America ?",
+     "o": [
+      "Le vibranium",
+      "L'adamantium",
+      "Le titane",
+      "La kryptonite"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle est l'identité secrète de Spider-Man ?",
+     "o": [
+      "Bruce Wayne",
+      "Peter Parker",
+      "Tony Stark",
+      "Clark Kent"
+     ],
+     "a": 1
+    },
+    {
+     "q": "Quel dieu nordique manie le marteau Mjolnir ?",
+     "o": [
+      "Loki",
+      "Odin",
+      "Thor",
+      "Heimdall"
+     ],
+     "a": 2
+    }
+   ]
+  },
+  {
+   "name": "Les spécialités culinaires du Sud-Ouest",
+   "qs": [
+    {
+     "q": "Quel plat à base de haricots blancs et de confit est la star de Castelnaudary ?",
+     "o": [
+      "Le cassoulet",
+      "La garbure",
+      "Le baeckeoffe",
+      "La bouillabaisse"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel fromage de brebis AOP vient du Pays basque et du Béarn ?",
+     "o": [
+      "L'Ossau-Iraty",
+      "Le Roquefort",
+      "Le Cantal",
+      "Le Saint-Nectaire"
+     ],
+     "a": 0
+    },
+    {
+     "q": "De quelle ville vient le canelé, petit gâteau à la vanille et au rhum ?",
+     "o": [
+      "Bordeaux",
+      "Toulouse",
+      "Agen",
+      "Bayonne"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "La poésie pastorale néerlandaise écrite par des charpentiers marins (XVIIe)",
+   "qs": [
+    {
+     "q": "Quel tsar a travaillé incognito comme charpentier de marine à Zaandam en 1697 ?",
+     "o": [
+      "Pierre le Grand",
+      "Ivan le Terrible",
+      "Nicolas II",
+      "Catherine II"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel peintre néerlandais a peint « La Ronde de nuit » ?",
+     "o": [
+      "Rembrandt",
+      "Vermeer",
+      "Van Gogh",
+      "Rubens"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Comment appelle-t-on la femelle du mouton ?",
+     "o": [
+      "La brebis",
+      "La chèvre",
+      "La génisse",
+      "La laie"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les animaux de la savane africaine",
+   "qs": [
+    {
+     "q": "Quel est l'animal terrestre le plus rapide du monde ?",
+     "o": [
+      "Le guépard",
+      "Le lion",
+      "L'antilope",
+      "Le léopard"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Combien de temps dure la gestation d'une éléphante d'Afrique ?",
+     "o": [
+      "22 mois",
+      "9 mois",
+      "12 mois",
+      "18 mois"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel animal de la savane a une langue bleu-noir de près de 50 cm ?",
+     "o": [
+      "La girafe",
+      "Le zèbre",
+      "Le lion",
+      "L'hippopotame"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les séries télévisées emblématiques des années 2000",
+   "qs": [
+    {
+     "q": "Dans quelle série des rescapés d'un crash d'avion survivent-ils sur une île mystérieuse ?",
+     "o": [
+      "Lost",
+      "Heroes",
+      "Prison Break",
+      "24 heures chrono"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel prof de chimie se met à fabriquer de la méthamphétamine dans « Breaking Bad » ?",
+     "o": [
+      "Walter White",
+      "Jesse Pinkman",
+      "Hank Schrader",
+      "Saul Goodman"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Dans quelle rue vivent les héroïnes de « Desperate Housewives » ?",
+     "o": [
+      "Wisteria Lane",
+      "Beverly Hills",
+      "Melrose Place",
+      "Manhattan"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "La législation des haies de coudriers dans le canton du Valais (1920-1935)",
+   "qs": [
+    {
+     "q": "Quel fruit donne le coudrier ?",
+     "o": [
+      "La noisette",
+      "La noix",
+      "La châtaigne",
+      "L'amande"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel vin blanc, fait avec le cépage chasselas, est l'emblème du Valais ?",
+     "o": [
+      "Le Fendant",
+      "Le Riesling",
+      "Le Chablis",
+      "Le Muscadet"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel sommet célèbre domine Zermatt, en Valais ?",
+     "o": [
+      "Le Cervin",
+      "Le mont Blanc",
+      "L'Eiger",
+      "La Jungfrau"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les sports olympiques d'été",
+   "qs": [
+    {
+     "q": "Quelle est la distance officielle du marathon ?",
+     "o": [
+      "42,195 km",
+      "40 km pile",
+      "50 km",
+      "38,5 km"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Combien de joueurs par équipe dans l'eau au water-polo, gardien compris ?",
+     "o": [
+      "7",
+      "6",
+      "11",
+      "5"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel nageur américain détient le record de médailles d'or olympiques ?",
+     "o": [
+      "Michael Phelps",
+      "Ian Thorpe",
+      "Mark Spitz",
+      "Ryan Lochte"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les plus beaux châteaux de la Loire",
+   "qs": [
+    {
+     "q": "Quel château est célèbre pour son escalier à double révolution, attribué à Léonard de Vinci ?",
+     "o": [
+      "Chambord",
+      "Chenonceau",
+      "Azay-le-Rideau",
+      "Amboise"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel château surnomme-t-on « le château des Dames » ?",
+     "o": [
+      "Chenonceau",
+      "Blois",
+      "Cheverny",
+      "Villandry"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel château a inspiré à Hergé le château de Moulinsart ?",
+     "o": [
+      "Cheverny",
+      "Chambord",
+      "Chinon",
+      "Saumur"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les querelles de choucrouteurs du Haut-Rhin sous le Second Empire",
+   "qs": [
+    {
+     "q": "Quelle est la préfecture du Haut-Rhin ?",
+     "o": [
+      "Colmar",
+      "Mulhouse",
+      "Strasbourg",
+      "Sélestat"
+     ],
+     "a": 0
+    },
+    {
+     "q": "La choucroute, c'est du chou…",
+     "o": [
+      "Fermenté",
+      "Cuit au vin blanc",
+      "Séché au soleil",
+      "Fumé"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel village alsacien se proclame « capitale de la choucroute » ?",
+     "o": [
+      "Krautergersheim",
+      "Riquewihr",
+      "Obernai",
+      "Munster"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les jeux vidéo cultes des années 90",
+   "qs": [
+    {
+     "q": "Quel hérisson bleu est devenu la mascotte de SEGA en 1991 ?",
+     "o": [
+      "Sonic",
+      "Mario",
+      "Crash Bandicoot",
+      "Rayman"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel jeu sorti en 1996 met en scène l'aventurière Lara Croft ?",
+     "o": [
+      "Tomb Raider",
+      "Uncharted",
+      "Resident Evil",
+      "Silent Hill"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel jeu de tir à la première personne sorti en 1993 a révolutionné le genre ?",
+     "o": [
+      "Doom",
+      "Duke Nukem 3D",
+      "Quake",
+      "Half-Life"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les cocktails classiques à base de rhum",
+   "qs": [
+    {
+     "q": "Quel cocktail cubain mélange rhum blanc, menthe, citron vert, sucre et eau gazeuse ?",
+     "o": [
+      "Le mojito",
+      "La piña colada",
+      "Le daïquiri",
+      "Le ti-punch"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel fruit donne son goût à la piña colada ?",
+     "o": [
+      "L'ananas",
+      "La mangue",
+      "La banane",
+      "Le fruit de la passion"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle spécialité antillaise se prépare avec du rhum agricole, du sirop de canne et un zeste de citron vert ?",
+     "o": [
+      "Le ti-punch",
+      "Le mai tai",
+      "Le cuba libre",
+      "Le dark and stormy"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "La classification des mousses aquatiques de Finlande dans la presse suédoise en 1904",
+   "qs": [
+    {
+     "q": "Quelle est la capitale de la Finlande ?",
+     "o": [
+      "Helsinki",
+      "Stockholm",
+      "Oslo",
+      "Tallinn"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel surnom donne-t-on à la Finlande ?",
+     "o": [
+      "Le pays des mille lacs",
+      "Le pays du soleil levant",
+      "Le plat pays",
+      "Le pays des fjords"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Comment se reproduisent les mousses ?",
+     "o": [
+      "Grâce à des spores",
+      "Grâce à des graines",
+      "Grâce à des fleurs",
+      "Grâce à des bulbes"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les objets du quotidien inventés par accident",
+   "qs": [
+    {
+     "q": "Selon la légende, quel amuse-gueule un chef agacé par un client exigeant a-t-il inventé en 1853 ?",
+     "o": [
+      "La chips",
+      "Le pop-corn",
+      "Le cracker",
+      "La tortilla"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle petite fourniture de bureau repositionnable est née d'une colle ratée, pas assez forte ?",
+     "o": [
+      "Le Post-it",
+      "Le ruban adhésif",
+      "Le correcteur blanc",
+      "Le trombone"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel appareil a été imaginé quand un ingénieur a vu sa barre chocolatée fondre près d'un radar ?",
+     "o": [
+      "Le four à micro-ondes",
+      "Le grille-pain",
+      "La friteuse sans huile",
+      "Le robot mixeur"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Les plus grands tubes du disco",
+   "qs": [
+    {
+     "q": "Quel groupe déguisé en policier, cow-boy, indien et motard chante « Y.M.C.A. » en 1978 ?",
+     "o": [
+      "Village People",
+      "Boney M.",
+      "Bee Gees",
+      "ABBA"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Qui chante « I Will Survive » ?",
+     "o": [
+      "Gloria Gaynor",
+      "Donna Summer",
+      "Diana Ross",
+      "Chaka Khan"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel groupe suédois a gagné l'Eurovision en 1974 avec « Waterloo » ?",
+     "o": [
+      "ABBA",
+      "Boney M.",
+      "Roxette",
+      "Europe"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "La fabrication de la colle à reliure en cartilage de poisson en mer du Nord (XIXe)",
+   "qs": [
+    {
+     "q": "Comment s'appelle la colle tirée de la vessie natatoire de poissons comme l'esturgeon ?",
+     "o": [
+      "L'ichtyocolle",
+      "La glu",
+      "Le mastic",
+      "La colle Cléopâtre"
+     ],
+     "a": 0
+    },
+    {
+     "q": "De quel poisson tire-t-on le vrai caviar ?",
+     "o": [
+      "L'esturgeon",
+      "Le saumon",
+      "Le hareng",
+      "Le cabillaud"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Le hareng saur est un hareng…",
+     "o": [
+      "Salé et fumé",
+      "Cru",
+      "Frit",
+      "Confit"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  },
+  {
+   "name": "Les capitales du monde entier",
+   "qs": [
+    {
+     "q": "Quelle est la capitale de l'Australie ?",
+     "o": [
+      "Canberra",
+      "Sydney",
+      "Melbourne",
+      "Brisbane"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle est la capitale du Canada ?",
+     "o": [
+      "Ottawa",
+      "Toronto",
+      "Montréal",
+      "Vancouver"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle est la capitale de la Turquie ?",
+     "o": [
+      "Ankara",
+      "Istanbul",
+      "Izmir",
+      "Antalya"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "Le rap français",
+   "qs": [
+    {
+     "q": "Quel groupe marseillais a sorti l'album « L'École du micro d'argent » en 1997 ?",
+     "o": [
+      "IAM",
+      "Fonky Family",
+      "NTM",
+      "Psy 4 de la Rime"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel rappeur se fait appeler le « Duc de Boulogne » ?",
+     "o": [
+      "Booba",
+      "Kaaris",
+      "Rohff",
+      "La Fouine"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quel duo de frères de Corbeil-Essonnes, Ademo et N.O.S, a marqué les années 2010 ?",
+     "o": [
+      "PNL",
+      "Bigflo & Oli",
+      "Casseurs Flowters",
+      "Sniper"
+     ],
+     "a": 0
+    }
+   ]
+  },
+  {
+   "name": "La poterie utilitaire en terre cuite du Limousin rural avant l'électricité",
+   "qs": [
+    {
+     "q": "Quelle argile blanche, découverte près de Limoges en 1768, sert à fabriquer la porcelaine ?",
+     "o": [
+      "Le kaolin",
+      "La marne",
+      "Le schiste",
+      "La glaise rouge"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Quelle race de vache à la robe couleur froment vient du Limousin ?",
+     "o": [
+      "La limousine",
+      "La charolaise",
+      "La salers",
+      "La normande"
+     ],
+     "a": 0
+    },
+    {
+     "q": "Comment appelle-t-on le tour qui permet au potier de façonner un vase ?",
+     "o": [
+      "Le tour de potier",
+      "La quenouille",
+      "Le métier à tisser",
+      "La meule"
+     ],
+     "a": 0
+    }
+   ],
+   "taré": true
+  }
+ ],
  "emojis": [
   {
    "q": "🎈🏠🎈👴🏻👦🏽",
