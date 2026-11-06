@@ -491,7 +491,7 @@ RENDER.dcc = (ch, rev) => {
     const ans = rev && a ? (a.cash ? `« ${esc(a.v)} »` : esc(q.o[a.v])) : '';
     const ok = rev && ch.ok ? (ch.ok[id] ? 'ok' : 'ko') : '';
     return `<div class="dw ${ok} ${rev && m === 'cash' && S.host ? 'toggle' : ''}" data-cash="${rev && m === 'cash' ? id : ''}">${dot(t.color)}<span>${esc(t.name)}</span><b class="m-${m}">${MODE[m] || '…'}</b>${ans ? `<i>${ans}</i>` : ''}</div>`; }).join('')}</div>`;
-  if (!rev && ch.emo) return [`<div class="question emoji">${esc(q.q)}</div>${modes}<div class="rule">Tapez le titre en <b>cash (4 pts)</b>, ou prenez le <b>carré (2 pts)</b> pour voir 4 propositions. +1 pour l'équipe qui joue.</div>`, answeredSide(ch).join('')];
+  if (!rev && ch.emo) return [`${ch.type === 'replique' ? '<div class="rule" style="text-align:center">🎬 De quel film vient cette réplique ?</div>' : ''}<div class="question ${ch.type === 'replique' ? 'quote' : 'emoji'}">${esc(q.q)}</div>${modes}<div class="rule">Tapez le titre en <b>cash (4 pts)</b>, ou prenez le <b>carré (2 pts)</b> pour voir 4 propositions. +1 pour l'équipe qui joue.</div>`, answeredSide(ch).join('')];
   if (!rev) return [`${med}<div class="question">${esc(q.q)}</div>${modes}<div class="rule">Les propositions sont sur vos téléphones (sauf pour les fous du cash).</div>`, answeredSide(ch).join('')];
   // fiche d'un dossier média : le titre de la chanson et la blague éventuelle
   const song = ch.item && ch.item.answer ? `<div class="mid" style="color:var(--yellow);text-align:center">🎵 ${esc(ch.item.answer)}</div>` : '';

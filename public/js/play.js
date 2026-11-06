@@ -200,7 +200,7 @@ function renderChallenge() {
         () => main.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { buzz(40); send({ t: 'mode', mode: b.dataset.mode }); }));
     }
     if (answered) return wait('Réponse envoyée ! Croisez les doigts 🤞', '✅');
-    if (ch.emo && !mode) return html(`<h2>🤔 Film ou expression ?</h2><div class="qtext emoji">${esc(ch.q.q)}</div>
+    if (ch.emo && !mode) return html(`<h2>${ch.type === 'replique' ? '🎬 De quel film ?' : '🤔 Film ou expression ?'}</h2><div class="qtext ${ch.type === 'replique' ? 'quote' : 'emoji'}">${esc(ch.q.q)}</div>
       <input id="cash" autocomplete="off" autocapitalize="sentences" placeholder="Tapez le titre" data-auto="cash"><button class="btn" id="val">💰 Cash · 4 pts ${timer}</button>
       <button class="btn alt" data-mode="carre"><b>Prendre le carré</b> · 4 propositions · 2 pts</button>`,
       () => { $('#val').onclick = () => submitAuto(); main.querySelector('[data-mode]').onclick = () => { buzz(40); send({ t: 'mode', mode: 'carre' }); }; });

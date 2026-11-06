@@ -335,3 +335,4 @@ body.rabbion #center { padding-bottom: 150px; }
 #soundGate b { font-size: 48px; }
 #soundGate span { font-family: var(--display); font-size: 30px; }
 #soundGate small { font-size: 18px; font-weight: 800; }
+.question.quote { font-size: 64px; text-align: center; font-style: italic; line-height: 1.25; }

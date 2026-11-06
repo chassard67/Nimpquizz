@@ -35,7 +35,7 @@ export const TYPES = {
   bt_musique:    { label: 'BT Musique', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus).' },
   bt_jeux:       { label: 'BT Jeux vidéo', group: 'bt', kind: 'media', media: 'audio', rule: 'Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1 avec le bonus).' },
   bt_ecrans:     { label: 'BT Séries & films', group: 'bt', kind: 'media', media: 'audio', rule: 'Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts.' },
-  replique:      { label: 'Réplique culte', group: 'bt', kind: 'media', media: 'audio', rule: 'Une réplique, trouvez le film. 2 pts.' },
+  replique:      { label: 'Réplique culte', group: 'v', kind: 'dcc', emo: true, rule: 'De quel film vient cette réplique ? Tapez le titre en CASH (4 pts), ou prenez le carré (2 pts). +1 pour l\'équipe qui joue.' },
   pochette:      { label: 'Pochette floutée', group: 'v', kind: 'media', media: 'image', rule: 'La pochette se défloute petit à petit : buzzez dès que vous reconnaissez l\'artiste. 2 pts.' },
   buzz10:        { label: 'Buzzer 10 s', group: 'bz', kind: 'buzz10', rule: 'Au GO, comptez 10 secondes dans votre tête et appuyez. Le plus proche prend 2 pts.' },
   duel:          { label: 'Duel', group: 's', kind: 'duel', rule: 'Choisissez un adversaire. Le premier qui trouve gagne 3 pts.' },
@@ -87,7 +87,7 @@ const META = {
 
 // Banques de questions à choix multiples par type de case
 const POOLS = {
-  noix: QCM.noix, emojis: QCM.emojis, mensonge: QCM.mensonge
+  noix: QCM.noix, emojis: QCM.emojis, mensonge: QCM.mensonge, replique: QCM.replique
 };
 // Épreuves où l'on écrit puis l'on vote
 const OPEN_POOLS = {
@@ -989,6 +989,7 @@ function answer(s, tm, value, ctx, rng) {
     // Emojis : une réponse tapée sans avoir pris le carré, c'est du cash
     if (ch.emo && !ch.modes[tm.id] && typeof value === 'string' && !/^\d$/.test(value)) ch.modes[tm.id] = 'cash';
     if (ch.emo && !ch.modes[tm.id]) return 'Tapez la réponse ou prenez le carré.';
+    if (ch.emo && ch.modes[tm.id] === 'carre' && typeof value === 'string' && !/^\d$/.test(value)) return 'Votre équipe a déjà pris le carré : choisissez une des 4 propositions.';
     if (ch.modes[tm.id] === 'cash') {
       const v = clampText(value, 60);
       if (!v) return 'Tapez une réponse.';

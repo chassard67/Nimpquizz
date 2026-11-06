@@ -38,6 +38,7 @@ const READERS = {
   culture: d => list(d, (x, i) => qcm(x, i)),
   noix: d => list(d, (x, i) => qcm(x, i)),
   emojis: d => list(d, (x, i) => qcm(x, i)),
+  repliques: d => list(d, (x, i) => qcm(x, i)),
   mensonge: d => list(d, (x, i) => qcm(x, i, { needQ: false, n: [3, 3] })),
   plusoumoins: d => list(d, (x, i) => {
     if (!str(x.q) || typeof x.a !== 'number') return warn(`#${i + 1} : il faut « q » et « a » (un nombre)`), null;

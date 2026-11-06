@@ -34,6 +34,8 @@ LES FICHIERS
   noix.json           À la noix                 [ QCM… ]
   emojis.json         Emojis ("q" = les emojis) [ QCM… ] : réponse tapée en cash d'abord,
                       pensez à "k" pour les autres titres acceptés (ex. ["SOS Fantômes"])
+  repliques.json      Réplique culte : "q" = la réplique, "o" = 4 films, "k" = autres titres acceptés
+                      (cash d'abord, carré sur demande, comme les emojis)
   mensonge.json       Grand mensonge : 3 affirmations, "a" = LE MENSONGE
                       [ { "o": [3 phrases], "a", "f"? } ]
   plusoumoins.json    Plus ou moins             [ { "q", "a": nombre, "u": unité, "f"? } ]

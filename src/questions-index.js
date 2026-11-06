@@ -3036,5 +3036,267 @@ export const EXTRA = {
    "a": 0,
    "f": "Un coup de hache mal placé a épargné son tronc cérébral et sa jugulaire, lui permettant de survivre nourri à la pipette par son propriétaire."
   }
+ ],
+ "repliques": [
+  {
+   "q": "« Je suis ton père. »",
+   "o": [
+    "Star Wars : L'Empire contre-attaque",
+    "Le Seigneur des anneaux",
+    "Dune",
+    "Star Trek"
+   ],
+   "a": 0,
+   "f": "Dark Vador à Luke, en 1980. Et non, il ne dit pas « Luke, je suis ton père ».",
+   "k": [
+    "Star Wars",
+    "L'Empire contre-attaque"
+   ]
+  },
+  {
+   "q": "« Houston, nous avons un problème. »",
+   "o": [
+    "Apollo 13",
+    "Gravity",
+    "Armageddon",
+    "Interstellar"
+   ],
+   "a": 0
+  },
+  {
+   "q": "« Mon précieux… »",
+   "o": [
+    "Le Seigneur des anneaux",
+    "Le Hobbit",
+    "Harry Potter",
+    "Le Monde de Narnia"
+   ],
+   "a": 0,
+   "f": "Gollum, évidemment. (Il le dit aussi dans Le Hobbit, mais c'est le Seigneur des anneaux qui l'a rendu culte.)",
+   "k": [
+    "Seigneur des anneaux",
+    "LOTR"
+   ]
+  },
+  {
+   "q": "« Hasta la vista, baby. »",
+   "o": [
+    "Terminator 2",
+    "RoboCop",
+    "Predator",
+    "Total Recall"
+   ],
+   "a": 0,
+   "k": [
+    "Terminator",
+    "Terminator 2 : Le Jugement dernier"
+   ]
+  },
+  {
+   "q": "« La vie, c'est comme une boîte de chocolats : on ne sait jamais sur quoi on va tomber. »",
+   "o": [
+    "Forrest Gump",
+    "Charlie et la Chocolaterie",
+    "Le Chocolat",
+    "Big Fish"
+   ],
+   "a": 0
+  },
+  {
+   "q": "« Okaaaay ! »",
+   "o": [
+    "Les Visiteurs",
+    "Kaamelott",
+    "Les Couloirs du temps",
+    "Astérix et Obélix contre César"
+   ],
+   "a": 0,
+   "f": "Jacquouille la Fripouille, Les Visiteurs (1993)."
+  },
+  {
+   "q": "« Il s'appelle Juste Leblanc. »",
+   "o": [
+    "Le Dîner de cons",
+    "La Chèvre",
+    "Les Compères",
+    "L'Emmerdeur"
+   ],
+   "a": 0,
+   "k": [
+    "Diner de cons"
+   ]
+  },
+  {
+   "q": "« Oublie que t'as aucune chance, vas-y, fonce ! On sait jamais ! »",
+   "o": [
+    "Les Bronzés",
+    "Camping",
+    "Viens chez moi, j'habite chez une copine",
+    "Le Père Noël est une ordure"
+   ],
+   "a": 0,
+   "f": "Jean-Claude Dusse, Les Bronzés (1978)."
+  },
+  {
+   "q": "« Les cons, ça ose tout. C'est même à ça qu'on les reconnaît. »",
+   "o": [
+    "Les Tontons flingueurs",
+    "Le Cave se rebiffe",
+    "Un singe en hiver",
+    "Les Barbouzes"
+   ],
+   "a": 0,
+   "f": "Dialogues de Michel Audiard.",
+   "k": [
+    "Tontons flingueurs"
+   ]
+  },
+  {
+   "q": "« J'aime me beurrer la biscotte. »",
+   "o": [
+    "OSS 117 : Le Caire, nid d'espions",
+    "Le Grand Blond avec une chaussure noire",
+    "La Cité de la peur",
+    "Le Magnifique"
+   ],
+   "a": 0,
+   "k": [
+    "OSS 117",
+    "OSS"
+   ]
+  },
+  {
+   "q": "« Quand on vient dans le Nord, on pleure deux fois : quand on arrive et quand on repart. »",
+   "o": [
+    "Bienvenue chez les Ch'tis",
+    "Rien à déclarer",
+    "La vie est un long fleuve tranquille",
+    "Les Tuche"
+   ],
+   "a": 0,
+   "k": [
+    "Les Ch'tis",
+    "Bienvenue chez les Chtis"
+   ]
+  },
+  {
+   "q": "« C'est cela, oui… »",
+   "o": [
+    "Le Père Noël est une ordure",
+    "Les Bronzés",
+    "Papy fait de la résistance",
+    "Le Splendid en folie"
+   ],
+   "a": 0,
+   "k": [
+    "Le Pere Noel est une ordure"
+   ]
+  },
+  {
+   "q": "« Ah ben maintenant, elle va marcher beaucoup moins bien, forcément ! »",
+   "o": [
+    "Le Corniaud",
+    "La Grande Vadrouille",
+    "Le Gendarme de Saint-Tropez",
+    "Fantômas"
+   ],
+   "a": 0,
+   "f": "Bourvil, devant sa 2 CV pulvérisée par Louis de Funès."
+  },
+  {
+   "q": "« Je suis le roi du monde ! »",
+   "o": [
+    "Titanic",
+    "Pirates des Caraïbes",
+    "Le Grand Bleu",
+    "Master and Commander"
+   ],
+   "a": 0
+  },
+  {
+   "q": "« Nom de Zeus ! »",
+   "o": [
+    "Retour vers le futur",
+    "Gremlins",
+    "SOS Fantômes",
+    "Chérie, j'ai rétréci les gosses"
+   ],
+   "a": 0,
+   "f": "Doc Brown, en VF. (En VO : « Great Scott! »)"
+  },
+  {
+   "q": "« C'est à moi que tu parles ? »",
+   "o": [
+    "Taxi Driver",
+    "Raging Bull",
+    "Les Affranchis",
+    "Rocky"
+   ],
+   "a": 0,
+   "f": "Robert De Niro devant son miroir, 1976."
+  },
+  {
+   "q": "« C'est une bonne situation, ça, scribe ? »",
+   "o": [
+    "Astérix & Obélix : Mission Cléopâtre",
+    "Astérix aux Jeux olympiques",
+    "Kaamelott",
+    "La Cité de la peur"
+   ],
+   "a": 0,
+   "f": "Et Otis répond : « Vous savez, moi je ne crois pas qu'il y ait de bonne ou de mauvaise situation… »",
+   "k": [
+    "Mission Cleopatre",
+    "Asterix Mission Cleopatre",
+    "Asterix"
+   ]
+  },
+  {
+   "q": "« Jusqu'ici tout va bien… »",
+   "o": [
+    "La Haine",
+    "Banlieusards",
+    "Les Misérables",
+    "Athena"
+   ],
+   "a": 0
+  },
+  {
+   "q": "« Cassé ! »",
+   "o": [
+    "Brice de Nice",
+    "Camping",
+    "Les Kaïra",
+    "OSS 117 : Rio ne répond plus"
+   ],
+   "a": 0,
+   "k": [
+    "Brice"
+   ]
+  },
+  {
+   "q": "« Salomon, vous êtes juif ?! »",
+   "o": [
+    "Les Aventures de Rabbi Jacob",
+    "La Grande Vadrouille",
+    "Le Corniaud",
+    "La Folie des grandeurs"
+   ],
+   "a": 0,
+   "f": "Louis de Funès découvre que son chauffeur est juif. Et c'est l'heure de danser. 🕺",
+   "k": [
+    "Rabbi Jacob"
+   ]
+  },
+  {
+   "q": "« J'aime l'odeur du napalm au petit matin. »",
+   "o": [
+    "Apocalypse Now",
+    "Platoon",
+    "Full Metal Jacket",
+    "Voyage au bout de l'enfer"
+   ],
+   "a": 0
+  }
  ]
 };

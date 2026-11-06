@@ -92,7 +92,9 @@ function bot(c) {
     once(c, 'a' + k, () => setTimeout(() => c.send({ t: 'answer', value: a }), 200 + Math.random() * 1500));
   }
   if (ch.kind === 'dcc' && ch.stage === 'mode' && !ch.modes[my]) once(c, 'm' + k, () => c.send({ t: 'mode', mode: ['duo', 'carre', 'cash'][Math.floor(Math.random() * 3)] }));
-  if (ch.kind === 'dcc' && ch.stage === 'q' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.modes[my] === 'cash' ? 'Paris' : ch.modes[my] === 'duo' ? ch.duo[my][0] : Math.floor(Math.random() * 4) }));
+  // Emojis / Réplique : cash direct ou carré
+  if (ch.kind === 'dcc' && ch.emo && ch.stage === 'q' && !answered && !ch.modes[my]) { once(c, 'e' + k, () => Math.random() < 0.5 ? c.send({ t: 'mode', mode: 'carre' }) : c.send({ t: 'answer', value: 'Titanic' })); }
+  else if (ch.kind === 'dcc' && ch.stage === 'q' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.modes[my] === 'cash' ? 'Paris' : ch.modes[my] === 'duo' ? ch.duo[my][0] : Math.floor(Math.random() * 4) }));
   if (ch.kind === 'series' && ch.stage === 'theme' && ch.teamId === my) once(c, 'th' + k, () => c.send({ t: 'theme', i: Math.floor(Math.random() * 3) }));
   if (ch.kind === 'series' && ch.stage === 'q' && !answered) once(c, 'a' + k + ch.i, () => c.send({ t: 'answer', value: ch.q.isNumber ? 100 : Math.floor(Math.random() * ch.q.o.length) }));
   if (ch.kind === 'millions' && ch.teamId === my && ch.stage === 'q' && !answered) once(c, 'a' + k + ch.level, () => c.send({ t: 'answer', value: Math.floor(Math.random() * 4) }));
@@ -159,7 +161,7 @@ console.log('Vannes reçues :', taunted.length ? taunted.join(' | ') : 'aucune')
 console.log('Fil (extrait) :\n   ' + s.feed.filter(f => f.k !== 'info').slice(-8).map(f => f.text).join('\n   '));
 console.log('États reçus par téléphone :', phones.map(p => `${p.name}=${p.states}`).join(' '));
 // courses normales : deux téléphones d'une même équipe, ou une réponse qui arrive après la clôture
-const expected = /Pas maintenant|pas le moment|Trop tard|Déjà|déjà|Pas de question en cours|Rien à buzzer|Pas de vote|Pas de cible|Pas encore de question|Pas de thème|Vous ne participez pas|Attendez|éliminée/i;
+const expected = /Pas maintenant|pas le moment|Trop tard|Déjà|déjà|Pas de question en cours|Rien à buzzer|Pas de vote|Pas de cible|Pas encore de question|Pas de thème|Vous ne participez pas|Attendez|éliminée|déjà pris le carré/i;
 const unexpected = errors.filter(e => !expected.test(e) && !e.startsWith('TV-espion'));
 console.log('Écran espion refusé comme animateur :', spyRefused ? 'oui ✅' : 'NON ❌');
 console.log('Fuites de réponses :', leaks.length ? [...new Set(leaks)].join(' | ') : 'aucune ✅');

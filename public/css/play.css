@@ -100,3 +100,4 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 14px; colo
 .hc { position: relative; text-align: left; padding: 14px 16px 14px 18px; font-size: 18px; font-family: var(--body); min-height: 56px; box-shadow: 0 4px 0 rgba(0,0,0,.35); }
 .hc.sel { outline: 4px solid var(--yellow); transform: translateX(6px); }
 .hc .ord { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: var(--display); font-size: 22px; color: var(--bt); }
+.qtext.quote { font-size: 24px; text-align: center; font-style: italic; color: var(--ink); }
