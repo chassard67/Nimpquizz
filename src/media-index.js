@@ -26,6 +26,13 @@ export const MEDIA_INDEX = {
    }
   },
   {
+   "id": "musique/50 Cent - In Da Club",
+   "answer": "50 Cent - In Da Club",
+   "folder": "musique",
+   "src": "/media/musique/50%20Cent%20-%20In%20Da%20Club.mp3",
+   "cover": "/media/musique/50%20Cent%20-%20In%20Da%20Club.jpg"
+  },
+  {
    "id": "musique/a-ha - Take on Me",
    "answer": "a-ha - Take on Me",
    "folder": "musique",
@@ -52,6 +59,13 @@ export const MEDIA_INDEX = {
    "folder": "musique",
    "src": "/media/musique/Alain%20Souchon%20-%20Foule%20sentimentale.mp3",
    "cover": "/media/musique/Alain%20Souchon%20-%20Foule%20sentimentale.jpg"
+  },
+  {
+   "id": "musique/Alanis Morissette - Ironic",
+   "answer": "Alanis Morissette - Ironic",
+   "folder": "musique",
+   "src": "/media/musique/Alanis%20Morissette%20-%20Ironic.mp3",
+   "cover": "/media/musique/Alanis%20Morissette%20-%20Ironic.jpg"
   },
   {
    "id": "musique/Amel Bent - Ma philosophie",
@@ -104,6 +118,13 @@ export const MEDIA_INDEX = {
    }
   },
   {
+   "id": "musique/Beyoncé - Crazy In Love",
+   "answer": "Beyoncé - Crazy In Love",
+   "folder": "musique",
+   "src": "/media/musique/Beyonc%C3%A9%20-%20Crazy%20In%20Love.mp3",
+   "cover": "/media/musique/Beyonc%C3%A9%20-%20Crazy%20In%20Love.jpg"
+  },
+  {
    "id": "musique/Black Eyed Peas - I Gotta Feeling",
    "answer": "Black Eyed Peas - I Gotta Feeling",
    "folder": "musique",
@@ -132,6 +153,13 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Bob%20Sinclar%20-%20Love%20Generation.jpg"
   },
   {
+   "id": "musique/Bon Jovi - It's My Life",
+   "answer": "Bon Jovi - It's My Life",
+   "folder": "musique",
+   "src": "/media/musique/Bon%20Jovi%20-%20It's%20My%20Life.mp3",
+   "cover": "/media/musique/Bon%20Jovi%20-%20It's%20My%20Life.jpg"
+  },
+  {
    "id": "musique/Britney Spears - ...Baby One More Time",
    "answer": "Britney Spears - ...Baby One More Time",
    "folder": "musique",
@@ -144,6 +172,13 @@ export const MEDIA_INDEX = {
    "folder": "musique",
    "src": "/media/musique/Britney%20Spears%20-%20Toxic.mp3",
    "cover": "/media/musique/Britney%20Spears%20-%20Toxic.jpg"
+  },
+  {
+   "id": "musique/Bruno Pelletier - Le temps des cathédrales",
+   "answer": "Bruno Pelletier - Le temps des cathédrales",
+   "folder": "musique",
+   "src": "/media/musique/Bruno%20Pelletier%20-%20Le%20temps%20des%20cath%C3%A9drales.mp3",
+   "cover": "/media/musique/Bruno%20Pelletier%20-%20Le%20temps%20des%20cath%C3%A9drales.jpg"
   },
   {
    "id": "musique/Céline Dion - J'irai où tu iras (with Jean-Jacques Goldman)",
@@ -167,6 +202,13 @@ export const MEDIA_INDEX = {
    "folder": "musique",
    "src": "/media/musique/Chic%20-%20Le%20Freak.mp3",
    "cover": "/media/musique/Chic%20-%20Le%20Freak.jpg"
+  },
+  {
+   "id": "musique/Christina Aguilera - Genie In a Bottle",
+   "answer": "Christina Aguilera - Genie In a Bottle",
+   "folder": "musique",
+   "src": "/media/musique/Christina%20Aguilera%20-%20Genie%20In%20a%20Bottle.mp3",
+   "cover": "/media/musique/Christina%20Aguilera%20-%20Genie%20In%20a%20Bottle.jpg"
   },
   {
    "id": "musique/Claude François - Alexandrie Alexandra",
@@ -204,6 +246,13 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Daft%20Punk%20-%20One%20More%20Time.jpg"
   },
   {
+   "id": "musique/Darude - Sandstorm",
+   "answer": "Darude - Sandstorm",
+   "folder": "musique",
+   "src": "/media/musique/Darude%20-%20Sandstorm.mp3",
+   "cover": "/media/musique/Darude%20-%20Sandstorm.jpg"
+  },
+  {
    "id": "musique/Début de soirée - Nuit de folie (Version originale 1988)",
    "answer": "Début de soirée - Nuit de folie (Version originale 1988)",
    "folder": "musique",
@@ -235,6 +284,27 @@ export const MEDIA_INDEX = {
    }
   },
   {
+   "id": "musique/Dire Straits - Money For Nothing",
+   "answer": "Dire Straits - Money For Nothing",
+   "folder": "musique",
+   "src": "/media/musique/Dire%20Straits%20-%20Money%20For%20Nothing.mp3",
+   "cover": "/media/musique/Dire%20Straits%20-%20Money%20For%20Nothing.jpg"
+  },
+  {
+   "id": "musique/Djo - End of Beginning",
+   "answer": "Djo - End of Beginning",
+   "folder": "musique",
+   "src": "/media/musique/Djo%20-%20End%20of%20Beginning.mp3",
+   "cover": "/media/musique/Djo%20-%20End%20of%20Beginning.jpg"
+  },
+  {
+   "id": "musique/Dr. Dre - Still D.R.E.",
+   "answer": "Dr. Dre - Still D.R.E.",
+   "folder": "musique",
+   "src": "/media/musique/Dr.%20Dre%20-%20Still%20D.R.E..mp3",
+   "cover": "/media/musique/Dr.%20Dre%20-%20Still%20D.R.E..jpg"
+  },
+  {
    "id": "musique/Eiffel 65 - Blue (Da Ba Dee) (Video Edit)",
    "answer": "Eiffel 65 - Blue (Da Ba Dee) (Video Edit)",
    "folder": "musique",
@@ -242,11 +312,109 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Eiffel%2065%20-%20Blue%20(Da%20Ba%20Dee)%20(Video%20Edit).jpg"
   },
   {
+   "id": "musique/Ella Langley - Choosin' Texas",
+   "answer": "Ella Langley - Choosin' Texas",
+   "folder": "musique",
+   "src": "/media/musique/Ella%20Langley%20-%20Choosin'%20Texas.mp3",
+   "cover": "/media/musique/Ella%20Langley%20-%20Choosin'%20Texas.jpg"
+  },
+  {
+   "id": "musique/Eminem - Lose Yourself",
+   "answer": "Eminem - Lose Yourself",
+   "folder": "musique",
+   "src": "/media/musique/Eminem%20-%20Lose%20Yourself.mp3",
+   "cover": "/media/musique/Eminem%20-%20Lose%20Yourself.jpg"
+  },
+  {
+   "id": "musique/Europe - The Final Countdown",
+   "answer": "Europe - The Final Countdown",
+   "folder": "musique",
+   "src": "/media/musique/Europe%20-%20The%20Final%20Countdown.mp3",
+   "cover": "/media/musique/Europe%20-%20The%20Final%20Countdown.jpg"
+  },
+  {
+   "id": "musique/Eurythmics - Sweet Dreams",
+   "answer": "Eurythmics - Sweet Dreams",
+   "folder": "musique",
+   "src": "/media/musique/Eurythmics%20-%20Sweet%20Dreams.mp3",
+   "cover": "/media/musique/Eurythmics%20-%20Sweet%20Dreams.jpg"
+  },
+  {
+   "id": "musique/Florent Pagny - Ma liberté de penser",
+   "answer": "Florent Pagny - Ma liberté de penser",
+   "folder": "musique",
+   "src": "/media/musique/Florent%20Pagny%20-%20Ma%20libert%C3%A9%20de%20penser.mp3",
+   "cover": "/media/musique/Florent%20Pagny%20-%20Ma%20libert%C3%A9%20de%20penser.jpg"
+  },
+  {
+   "id": "musique/Francis Cabrel - Petite Marie",
+   "answer": "Francis Cabrel - Petite Marie",
+   "folder": "musique",
+   "src": "/media/musique/Francis%20Cabrel%20-%20Petite%20Marie.mp3",
+   "cover": "/media/musique/Francis%20Cabrel%20-%20Petite%20Marie.jpg"
+  },
+  {
+   "id": "musique/Gilbert Montagné - Les sunlights des tropiques",
+   "answer": "Gilbert Montagné - Les sunlights des tropiques",
+   "folder": "musique",
+   "src": "/media/musique/Gilbert%20Montagn%C3%A9%20-%20Les%20sunlights%20des%20tropiques.mp3",
+   "cover": "/media/musique/Gilbert%20Montagn%C3%A9%20-%20Les%20sunlights%20des%20tropiques.jpg"
+  },
+  {
+   "id": "musique/GIMS - Sapés comme jamais",
+   "answer": "GIMS - Sapés comme jamais",
+   "folder": "musique",
+   "src": "/media/musique/GIMS%20-%20Sap%C3%A9s%20comme%20jamais.mp3",
+   "cover": "/media/musique/GIMS%20-%20Sap%C3%A9s%20comme%20jamais.jpg"
+  },
+  {
+   "id": "musique/Gotye - Somebody That I Used To Know",
+   "answer": "Gotye - Somebody That I Used To Know",
+   "folder": "musique",
+   "src": "/media/musique/Gotye%20-%20Somebody%20That%20I%20Used%20To%20Know.mp3",
+   "cover": "/media/musique/Gotye%20-%20Somebody%20That%20I%20Used%20To%20Know.jpg"
+  },
+  {
+   "id": "musique/Haddaway - What Is Love",
+   "answer": "Haddaway - What Is Love",
+   "folder": "musique",
+   "src": "/media/musique/Haddaway%20-%20What%20Is%20Love.mp3",
+   "cover": "/media/musique/Haddaway%20-%20What%20Is%20Love.jpg"
+  },
+  {
+   "id": "musique/IAM - Je danse le Mia",
+   "answer": "IAM - Je danse le Mia",
+   "folder": "musique",
+   "src": "/media/musique/IAM%20-%20Je%20danse%20le%20Mia.mp3",
+   "cover": "/media/musique/IAM%20-%20Je%20danse%20le%20Mia.jpg"
+  },
+  {
+   "id": "musique/Images - Les démons de minuit",
+   "answer": "Images - Les démons de minuit",
+   "folder": "musique",
+   "src": "/media/musique/Images%20-%20Les%20d%C3%A9mons%20de%20minuit.mp3",
+   "cover": "/media/musique/Images%20-%20Les%20d%C3%A9mons%20de%20minuit.jpg"
+  },
+  {
+   "id": "musique/Imagine Dragons - Believer",
+   "answer": "Imagine Dragons - Believer",
+   "folder": "musique",
+   "src": "/media/musique/Imagine%20Dragons%20-%20Believer.mp3",
+   "cover": "/media/musique/Imagine%20Dragons%20-%20Believer.jpg"
+  },
+  {
    "id": "musique/Indila - Dernière danse",
    "answer": "Indila - Dernière danse",
    "folder": "musique",
    "src": "/media/musique/Indila%20-%20Derni%C3%A8re%20danse.mp3",
    "cover": "/media/musique/Indila%20-%20Derni%C3%A8re%20danse.jpg"
+  },
+  {
+   "id": "musique/Indochine - 3e sexe",
+   "answer": "Indochine - 3e sexe",
+   "folder": "musique",
+   "src": "/media/musique/Indochine%20-%203e%20sexe.mp3",
+   "cover": "/media/musique/Indochine%20-%203e%20sexe.jpg"
   },
   {
    "id": "musique/Johnny Hallyday - Allumer le feu",
@@ -270,6 +438,13 @@ export const MEDIA_INDEX = {
      "Pascal Obispo"
     ]
    }
+  },
+  {
+   "id": "musique/KATSEYE - Animal",
+   "answer": "KATSEYE - Animal",
+   "folder": "musique",
+   "src": "/media/musique/KATSEYE%20-%20Animal.mp3",
+   "cover": "/media/musique/KATSEYE%20-%20Animal.jpg"
   },
   {
    "id": "musique/Kendji Girac - Color Gitano",
@@ -303,6 +478,20 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Kenny%20Loggins%20-%20Footloose.jpg"
   },
   {
+   "id": "musique/Kofs - Bande organisée",
+   "answer": "Kofs - Bande organisée",
+   "folder": "musique",
+   "src": "/media/musique/Kofs%20-%20Bande%20organis%C3%A9e.mp3",
+   "cover": "/media/musique/Kofs%20-%20Bande%20organis%C3%A9e.jpg"
+  },
+  {
+   "id": "musique/Lady Gaga - Poker Face",
+   "answer": "Lady Gaga - Poker Face",
+   "folder": "musique",
+   "src": "/media/musique/Lady%20Gaga%20-%20Poker%20Face.mp3",
+   "cover": "/media/musique/Lady%20Gaga%20-%20Poker%20Face.jpg"
+  },
+  {
    "id": "musique/Larusso - Tu m'oublieras",
    "answer": "Tu m'oublieras — Larusso",
    "folder": "musique",
@@ -310,6 +499,13 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Larusso%20-%20Tu%20m'oublieras.jpg",
    "bonus": "1998",
    "joke": "L'a-t-on oubliée ? Vous venez de la reconnaître… donc non !"
+  },
+  {
+   "id": "musique/Le Crime - Bodycount",
+   "answer": "Le Crime - Bodycount",
+   "folder": "musique",
+   "src": "/media/musique/Le%20Crime%20-%20Bodycount.mp3",
+   "cover": "/media/musique/Le%20Crime%20-%20Bodycount.jpg"
   },
   {
    "id": "musique/LMFAO - Party Rock Anthem",
@@ -365,6 +561,13 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Michel%20Sardou%20-%20Les%20lacs%20du%20Connemara.jpg"
   },
   {
+   "id": "musique/Michel Teló - Ai Se Eu Te Pego",
+   "answer": "Michel Teló - Ai Se Eu Te Pego",
+   "folder": "musique",
+   "src": "/media/musique/Michel%20Tel%C3%B3%20-%20Ai%20Se%20Eu%20Te%20Pego.mp3",
+   "cover": "/media/musique/Michel%20Tel%C3%B3%20-%20Ai%20Se%20Eu%20Te%20Pego.jpg"
+  },
+  {
    "id": "musique/MIKA - Relax, Take It Easy",
    "answer": "MIKA - Relax, Take It Easy",
    "folder": "musique",
@@ -379,10 +582,108 @@ export const MEDIA_INDEX = {
    "cover": "/media/musique/Miley%20Cyrus%20-%20Flowers.jpg"
   },
   {
+   "id": "musique/Mosimann - Soon (feat. Gaëtan Roussel) (Radio edit)",
+   "answer": "Mosimann - Soon (feat. Gaëtan Roussel) (Radio edit)",
+   "folder": "musique",
+   "src": "/media/musique/Mosimann%20-%20Soon%20(feat.%20Ga%C3%ABtan%20Roussel)%20(Radio%20edit).mp3",
+   "cover": "/media/musique/Mosimann%20-%20Soon%20(feat.%20Ga%C3%ABtan%20Roussel)%20(Radio%20edit).jpg"
+  },
+  {
+   "id": "musique/Mylène Farmer - Libertine",
+   "answer": "Mylène Farmer - Libertine",
+   "folder": "musique",
+   "src": "/media/musique/Myl%C3%A8ne%20Farmer%20-%20Libertine.mp3",
+   "cover": "/media/musique/Myl%C3%A8ne%20Farmer%20-%20Libertine.jpg"
+  },
+  {
+   "id": "musique/Natalie Imbruglia - Torn",
+   "answer": "Natalie Imbruglia - Torn",
+   "folder": "musique",
+   "src": "/media/musique/Natalie%20Imbruglia%20-%20Torn.mp3",
+   "cover": "/media/musique/Natalie%20Imbruglia%20-%20Torn.jpg"
+  },
+  {
+   "id": "musique/Oasis - Wonderwall",
+   "answer": "Oasis - Wonderwall",
+   "folder": "musique",
+   "src": "/media/musique/Oasis%20-%20Wonderwall.mp3",
+   "cover": "/media/musique/Oasis%20-%20Wonderwall.jpg"
+  },
+  {
+   "id": "musique/Phil Collins - In the Air Tonight",
+   "answer": "Phil Collins - In the Air Tonight",
+   "folder": "musique",
+   "src": "/media/musique/Phil%20Collins%20-%20In%20the%20Air%20Tonight.mp3",
+   "cover": "/media/musique/Phil%20Collins%20-%20In%20the%20Air%20Tonight.jpg"
+  },
+  {
+   "id": "musique/Psy - Gangnam Style",
+   "answer": "Psy - Gangnam Style",
+   "folder": "musique",
+   "src": "/media/musique/Psy%20-%20Gangnam%20Style.mp3",
+   "cover": "/media/musique/Psy%20-%20Gangnam%20Style.jpg"
+  },
+  {
+   "id": "musique/R.E.M. - Losing My Religion",
+   "answer": "R.E.M. - Losing My Religion",
+   "folder": "musique",
+   "src": "/media/musique/R.E.M.%20-%20Losing%20My%20Religion.mp3",
+   "cover": "/media/musique/R.E.M.%20-%20Losing%20My%20Religion.jpg"
+  },
+  {
+   "id": "musique/Radiohead - Creep",
+   "answer": "Radiohead - Creep",
+   "folder": "musique",
+   "src": "/media/musique/Radiohead%20-%20Creep.mp3",
+   "cover": "/media/musique/Radiohead%20-%20Creep.jpg"
+  },
+  {
+   "id": "musique/Rage Against the Machine - Killing In The Name",
+   "answer": "Rage Against the Machine - Killing In The Name",
+   "folder": "musique",
+   "src": "/media/musique/Rage%20Against%20the%20Machine%20-%20Killing%20In%20The%20Name.mp3",
+   "cover": "/media/musique/Rage%20Against%20the%20Machine%20-%20Killing%20In%20The%20Name.jpg"
+  },
+  {
+   "id": "musique/Renaud - Mistral gagnant",
+   "answer": "Renaud - Mistral gagnant",
+   "folder": "musique",
+   "src": "/media/musique/Renaud%20-%20Mistral%20gagnant.mp3",
+   "cover": "/media/musique/Renaud%20-%20Mistral%20gagnant.jpg"
+  },
+  {
    "id": "musique/Ricchi e Poveri - Sarà perché ti amo",
    "answer": "Ricchi e Poveri - Sarà perché ti amo",
    "folder": "musique",
    "src": "/media/musique/Ricchi%20e%20Poveri%20-%20Sar%C3%A0%20perch%C3%A9%20ti%20amo.mp3"
+  },
+  {
+   "id": "musique/Robert Miles - Children",
+   "answer": "Robert Miles - Children",
+   "folder": "musique",
+   "src": "/media/musique/Robert%20Miles%20-%20Children.mp3",
+   "cover": "/media/musique/Robert%20Miles%20-%20Children.jpg"
+  },
+  {
+   "id": "musique/Ronisia - Cuenta (feat. Meryl & Shay)",
+   "answer": "Ronisia - Cuenta (feat. Meryl & Shay)",
+   "folder": "musique",
+   "src": "/media/musique/Ronisia%20-%20Cuenta%20(feat.%20Meryl%20%26%20Shay).mp3",
+   "cover": "/media/musique/Ronisia%20-%20Cuenta%20(feat.%20Meryl%20%26%20Shay).jpg"
+  },
+  {
+   "id": "musique/ROSÉ - APT.",
+   "answer": "ROSÉ - APT.",
+   "folder": "musique",
+   "src": "/media/musique/ROS%C3%89%20-%20APT..mp3",
+   "cover": "/media/musique/ROS%C3%89%20-%20APT..jpg"
+  },
+  {
+   "id": "musique/SCH - Professionnels",
+   "answer": "SCH - Professionnels",
+   "folder": "musique",
+   "src": "/media/musique/SCH%20-%20Professionnels.mp3",
+   "cover": "/media/musique/SCH%20-%20Professionnels.jpg"
   },
   {
    "id": "musique/Sia - Chandelier",
@@ -408,6 +709,13 @@ export const MEDIA_INDEX = {
    }
   },
   {
+   "id": "musique/Soprano - Le coach",
+   "answer": "Soprano - Le coach",
+   "folder": "musique",
+   "src": "/media/musique/Soprano%20-%20Le%20coach.mp3",
+   "cover": "/media/musique/Soprano%20-%20Le%20coach.jpg"
+  },
+  {
    "id": "musique/Stromae - Papaoutai",
    "answer": "Papaoutai — Stromae",
    "folder": "musique",
@@ -422,6 +730,34 @@ export const MEDIA_INDEX = {
    "folder": "musique",
    "src": "/media/musique/Taylor%20Swift%20-%20Shake%20It%20Off.mp3",
    "cover": "/media/musique/Taylor%20Swift%20-%20Shake%20It%20Off.jpg"
+  },
+  {
+   "id": "musique/Telephone - Cendrillon",
+   "answer": "Telephone - Cendrillon",
+   "folder": "musique",
+   "src": "/media/musique/Telephone%20-%20Cendrillon.mp3",
+   "cover": "/media/musique/Telephone%20-%20Cendrillon.jpg"
+  },
+  {
+   "id": "musique/The Prodigy - Smack My Bitch Up",
+   "answer": "The Prodigy - Smack My Bitch Up",
+   "folder": "musique",
+   "src": "/media/musique/The%20Prodigy%20-%20Smack%20My%20Bitch%20Up.mp3",
+   "cover": "/media/musique/The%20Prodigy%20-%20Smack%20My%20Bitch%20Up.jpg"
+  },
+  {
+   "id": "musique/Thierry Hazard - Le Jerk",
+   "answer": "Thierry Hazard - Le Jerk",
+   "folder": "musique",
+   "src": "/media/musique/Thierry%20Hazard%20-%20Le%20Jerk.mp3",
+   "cover": "/media/musique/Thierry%20Hazard%20-%20Le%20Jerk.jpg"
+  },
+  {
+   "id": "musique/Vianney - D'or et d'étain",
+   "answer": "Vianney - D'or et d'étain",
+   "folder": "musique",
+   "src": "/media/musique/Vianney%20-%20D'or%20et%20d'%C3%A9tain.mp3",
+   "cover": "/media/musique/Vianney%20-%20D'or%20et%20d'%C3%A9tain.jpg"
   }
  ],
  "bt_ecrans": [],

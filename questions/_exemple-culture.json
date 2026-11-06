@@ -1,0 +1,16 @@
+[
+  {
+    "q": "Quelle est la capitale de l'Australie ?",
+    "o": [
+      "Canberra",
+      "Sydney",
+      "Melbourne",
+      "Kangourou-City"
+    ],
+    "a": 0,
+    "f": "Sydney et Melbourne se disputaient le titre : on a construit une troisième ville.",
+    "k": [
+      "Canberra city"
+    ]
+  }
+]

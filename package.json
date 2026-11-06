@@ -7,10 +7,10 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node scripts/build-media.mjs && node test/engine.test.mjs && node test/gm.test.mjs && node test/contrario.test.mjs && node test/media.test.mjs && node test/soiree.test.mjs",
+    "test": "node scripts/build-media.mjs && node scripts/build-questions.mjs && node test/engine.test.mjs && node test/gm.test.mjs && node test/contrario.test.mjs && node test/media.test.mjs && node test/soiree.test.mjs && node test/questions.test.mjs",
     "sim": "node test/e2e.mjs",
-    "questions": "node scripts/build-media.mjs && node scripts/export-questions.mjs",
-    "media": "node scripts/build-media.mjs"
+    "questions": "node scripts/build-media.mjs && node scripts/build-questions.mjs && node scripts/export-questions.mjs",
+    "media": "node scripts/build-media.mjs && node scripts/build-questions.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

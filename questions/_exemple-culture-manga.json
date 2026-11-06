@@ -1,0 +1,15 @@
+{
+  "label": "Manga",
+  "q": [
+    {
+      "q": "Dans One Piece, quel est le rêve de Luffy ?",
+      "o": [
+        "Devenir le roi des pirates",
+        "Trouver l'All Blue",
+        "Devenir le meilleur bretteur",
+        "Manger toute la viande du monde"
+      ],
+      "a": 0
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  [
+    {
+      "q": "Niveau 1 (1 pt) : de quelle couleur est le cheval blanc d'Henri IV ?",
+      "o": [
+        "Blanc",
+        "Noir",
+        "Gris",
+        "Alezan"
+      ],
+      "a": 0
+    }
+  ],
+  [
+    {
+      "q": "Niveau 2 (2 pts, palier) : combien de joueurs dans une équipe de foot ?",
+      "o": [
+        "11",
+        "10",
+        "12",
+        "9"
+      ],
+      "a": 0
+    }
+  ],
+  [
+    {
+      "q": "Niveau 3 (3 pts) : quel est le plus long fleuve de France ?",
+      "o": [
+        "La Loire",
+        "La Seine",
+        "Le Rhône",
+        "La Garonne"
+      ],
+      "a": 0
+    }
+  ],
+  [
+    {
+      "q": "Niveau 4 (5 pts) : en quelle année a eu lieu la prise de la Bastille ?",
+      "o": [
+        "1789",
+        "1792",
+        "1776",
+        "1815"
+      ],
+      "a": 0
+    }
+  ],
+  [
+    {
+      "q": "Niveau 5 (8 pts) : quel est le symbole chimique du tungstène ?",
+      "o": [
+        "W",
+        "Tu",
+        "Tg",
+        "Ts"
+      ],
+      "a": 0
+    }
+  ]
+]

@@ -589,3 +589,23 @@ export const BMC = {
     { t: "Mettre son pull à l'envers toute la journée" }
   ]
 };
+
+// ─── QUESTIONS AJOUTÉES SUR GITHUB : fichiers questions/*.json (voir questions/LISEZ-MOI.txt)
+//  Elles s'ajoutent à celles écrites ci-dessus (les cartes et questions existantes restent en jeu).
+import { EXTRA } from './questions-index.js';
+{
+  // une question déjà présente (même texte) n'est pas ajoutée une 2e fois
+  const key = x => typeof x === 'string' ? x : JSON.stringify(x.q ?? x.t ?? x.name ?? x.src ?? (x.b !== undefined ? x.a + '|' + x.b : x.o));
+  const add = (arr, more) => { if (!Array.isArray(more)) return; const seen = new Set(arr.map(key)); for (const x of more) { const k = key(x); if (!seen.has(k)) { seen.add(k); arr.push(x); } } };
+  add(QCM.culture, EXTRA.culture); add(QCM.noix, EXTRA.noix); add(QCM.emojis, EXTRA.emojis); add(QCM.mensonge, EXTRA.mensonge);
+  add(NUMBERS, EXTRA.plusoumoins); add(CONTRARIO, EXTRA.contrario); add(BURGER, EXTRA.burger);
+  add(DOUBLESENS, EXTRA.doublesens); add(TITRES, EXTRA.titres);
+  if (Array.isArray(EXTRA.millions)) EXTRA.millions.forEach((lvl, k) => MILLIONS[k] && add(MILLIONS[k], lvl));
+  if (EXTRA.bac) { add(BAC.cats, EXTRA.bac.cats); if (EXTRA.bac.letters) BAC.letters = EXTRA.bac.letters; }
+  // cartes ajoutées à la fin : les cartes déjà en main gardent leur numéro
+  if (EXTRA.bmc) { add(BMC.noires, EXTRA.bmc.noires); add(BMC.blanches, EXTRA.bmc.blanches); }
+  add(MEDIA.video, EXTRA.videos); add(MEDIA.unenote, EXTRA.unenote);
+  for (const [k, t] of Object.entries(EXTRA.themes || {})) {
+    if (CULTURE_THEMES[k]) add(CULTURE_THEMES[k].q, t.q); else CULTURE_THEMES[k] = { label: t.label, q: t.q };
+  }
+}

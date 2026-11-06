@@ -1,0 +1,58 @@
+=====================================================================
+  QUESTIONS ET CARTES DU GRAND N'IMPORTE QUIZ (hors blind tests)
+=====================================================================
+
+UN FICHIER .json PAR JEU, dans ce dossier « questions/ » (sur GitHub :
+ouvrir le dossier → Add file → Create new file ou Upload files → Commit).
+Cloudflare redéploie tout seul : les questions s'AJOUTENT à celles déjà
+dans le jeu. Jamais deux fois la même question dans une partie.
+
+Pour démarrer : copiez un fichier _exemple-xxx.json et renommez-le sans
+le « _exemple- » (ex. _exemple-noix.json → noix.json). Les fichiers qui
+commencent par _ sont ignorés.
+
+Ce dossier n'est PAS en ligne : les joueurs ne peuvent pas lire les réponses.
+Un fichier mal écrit est ignoré (le jeu se déploie quand même) ; le journal
+de déploiement Cloudflare dit quelle ligne pose problème (« ⚠️ »).
+
+RÈGLES COMMUNES AUX QCM
+  "q" : la question
+  "o" : les propositions (2 à 4 ; 4 conseillées pour le duo et le 50/50)
+  "a" : la position de la bonne réponse, EN COMPTANT À PARTIR DE 0
+        (0 = la 1re). Le jeu mélange : mettez la bonne en 1er et "a": 0.
+  "f" : (facultatif) anecdote affichée à la révélation
+  "k" : (facultatif) autres réponses acceptées en « cash »
+  JSON : guillemets droits "…", virgule entre les éléments, pas de
+  virgule après le dernier. Vérifier sur https://jsonlint.com au besoin.
+
+LES FICHIERS
+  culture.json        Culture G (duo/carré/cash) ; sert aussi au Duel
+                      et aux questions de consolation
+                      [ { "q", "o", "a", "f"?, "k"? } ]
+  culture-<thème>.json  un thème de Culture G (manga, chanson-francaise…)
+                      { "label": "Manga", "q": [ QCM… ] }
+  noix.json           À la noix                 [ QCM… ]
+  emojis.json         Emojis ("q" = les emojis) [ QCM… ]
+  mensonge.json       Grand mensonge : 3 affirmations, "a" = LE MENSONGE
+                      [ { "o": [3 phrases], "a", "f"? } ]
+  plusoumoins.json    Plus ou moins             [ { "q", "a": nombre, "u": unité, "f"? } ]
+  contrario.json      A contrario (oral, 2 indices à 10 s et 20 s)
+                      [ { "q": phrase à l'envers, "answer": l'original, "hints": [2 indices] } ]
+  burger.json         Burger Quiz : un menu = 3 questions ; "taré": true = menu délirant
+                      [ { "name", "taré"?, "qs": [3 QCM] } ]
+  millions.json       Millionnaire : 5 listes, du niveau 1 (1 pt) au niveau 5 (8 pts)
+                      [ [QCM…], [QCM…], [QCM…], [QCM…], [QCM…] ]
+  doublesens.json     Double Sens               [ { "a": situation 1, "b": situation 2, "ex"? } ]
+  titres.json         Titre débile              [ "Star Wars", "Le Parrain", … ]
+  bac.json            Le Bac                    { "cats": [catégories…], "letters"?: "ABCD…" }
+  bmc.json            Blanc Manger Coco ; ---- = un trou ; "nsfw": true = mode NSFW seulement
+                      { "noires": [ { "t", "nsfw"? } ], "blanches": [ { "t", "nsfw"? } ] }
+  videos.json         Vidéo culte (vidéo dans public/media/videos/) ; s'arrête à "stop"
+                      [ { "src", "start", "stop", "label", "qs": [ QCM ou { "q", "n": nombre, "u" } ] } ]
+                      (la 2e question est un bonus à 1 pt)
+  unenote.json        Une seule note (son dans public/media/unenote/)
+                      [ { "src", "answer" } ]
+
+PAS DE FICHIER pour : Buzzer 10 s, Vol de points, Échange de place, Duel.
+Les blind tests et la Pochette floutée : dossiers de public/media/
+(voir public/media/LISEZ-MOI.txt).

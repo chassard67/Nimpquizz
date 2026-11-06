@@ -74,6 +74,10 @@ Tout est dans [`src/content.js`](src/content.js). Le jeu mélange l'ordre des pr
 
 « Une seule note », « Couche par couche » et « Vidéo culte » se remplissent encore dans `src/content.js`. Pour « Couche par couche », les pistes séparées s'obtiennent avec un outil gratuit comme Demucs. Le son et la vidéo sortent de l'ordi relié à la télé.
 
+## Ajouter des questions et des cartes (sans toucher au code)
+
+Un fichier JSON par jeu dans le dossier `questions/` (culture.json, millions.json, bmc.json…) : mode d'emploi et formats dans `questions/LISEZ-MOI.txt`, exemples dans `questions/_exemple-….json`. Les questions s'ajoutent à celles de `src/content.js` à chaque déploiement (script `scripts/build-questions.mjs`). Le dossier n'est pas publié : les réponses ne sont pas téléchargeables.
+
 ## Développement
 
 ```bash

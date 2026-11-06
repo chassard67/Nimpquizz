@@ -1,0 +1,25 @@
+[
+  {
+    "src": "/media/videos/midi.mp4",
+    "start": 12,
+    "stop": 19.5,
+    "label": "Midi c'est midi",
+    "qs": [
+      {
+        "q": "Pourquoi madame est-elle furieuse ?",
+        "o": [
+          "Le repas n'est pas à l'heure",
+          "Il a oublié son anniversaire",
+          "Il a vendu la voiture",
+          "Il ronfle"
+        ],
+        "a": 0
+      },
+      {
+        "q": "BONUS : combien de secondes dans une journée ?",
+        "n": 86400,
+        "u": "secondes"
+      }
+    ]
+  }
+]

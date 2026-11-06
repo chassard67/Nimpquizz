@@ -1,0 +1,20 @@
+{
+  "noires": [
+    {
+      "t": "----, c'est bien. ----, c'est mieux."
+    },
+    {
+      "t": "Oui mon enfant, Dieu pardonne tout, même ----.",
+      "nsfw": true
+    }
+  ],
+  "blanches": [
+    {
+      "t": "Les punks à chien"
+    },
+    {
+      "t": "Une carte bien limite",
+      "nsfw": true
+    }
+  ]
+}

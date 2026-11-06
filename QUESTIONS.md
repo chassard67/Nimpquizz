@@ -812,52 +812,100 @@ Catégories (5 tirées au hasard) : Un prénom · Une ville · Un chanteur ou un
 Les blind tests se remplissent avec les fichiers déposés dans `public/media/<dossier>/` : voir `public/media/LISEZ-MOI.txt`. Tant qu'une case n'a aucun fichier, elle donne une question de Culture G.
 
 
-### BT Musique — 43 questions (dossier `musique/`)
+### BT Musique — 91 questions (dossier `musique/`)
 _Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus)._
 
 1. Partir un jour — 2Be3 _(bonus : 1996)_ · QCM : Filip Nikolic / Philippe Nikolik / Frank Delay / Adel Kachermi
-2. a-ha - Take on Me · oral
-3. ABBA - Mamma Mia · oral
-4. ACDC - Highway to Hell · oral
-5. Alain Souchon - Foule sentimentale · oral
-6. Amel Bent - Ma philosophie · oral
-7. Barbie Girl — Aqua _(bonus : Aqua est un groupe danois)_ · QCM : 1997 / 1995 / 1999 / 1959, le même jour que la poupée
-8. Djadja — Aya Nakamura · QCM : Non / Oui / Seulement Djadja / Même pas elle
-9. Black Eyed Peas - I Gotta Feeling · oral
-10. Black M - Sur ma route · oral
-11. Bob Marley & The Wailers - Could You Be Loved · oral
-12. Bob Sinclar - Love Generation · oral
-13. Britney Spears - ...Baby One More Time · oral
-14. Britney Spears - Toxic · oral
-15. J'irai où tu iras — Céline Dion & Jean-Jacques Goldman _(bonus : 1995)_ · oral
-16. Céline Dion - Pour que tu m'aimes encore · oral
-17. Chic - Le Freak · oral
-18. Claude François - Alexandrie Alexandra · oral
-19. Coldplay - Viva La Vida · oral
-20. Coolio - Gangsta's Paradise · oral
-21. Dadju - Reine · oral
-22. Daft Punk - One More Time · oral
-23. Début de soirée - Nuit de folie (Version originale 1988) · oral
-24. Smoke on the Water — Deep Purple _(bonus : 1972)_ · QCM : L'incendie du casino de Montreux pendant un concert de Frank Zappa / La fumée d'un bateau à vapeur sur le lac Léman / Un barbecue raté au bord du lac de Genève / Le premier essai de machine à fumée du groupe
-25. Eiffel 65 - Blue (Da Ba Dee) (Video Edit) · oral
-26. Indila - Dernière danse · oral
-27. Allumer le feu — Johnny Hallyday _(bonus : 1998)_ · QCM : Pascal Obispo / Zazie / Jean-Jacques Goldman / Le pompier de service du Stade de France
-28. Color Gitano — Kendji Girac _(bonus : 2014)_ · QCM : Une / Deux / Trois / Aucune, c'était une balle de ping-pong
-29. Kenny Loggins - Footloose · oral
-30. Tu m'oublieras — Larusso _(bonus : 1998)_ · oral
-31. LMFAO - Party Rock Anthem · oral
-32. Louise Attaque - J't'emmène au vent · oral
-33. Manau - La tribu de Dana · oral
-34. All I Want for Christmas Is You — Mariah Carey _(bonus : 1994)_ · oral
-35. Jerusalema — Master KG feat. Nomcebo Zikode _(bonus : 2019)_ · oral
-36. Michael Jackson - Beat It · oral
-37. Michel Sardou - Les lacs du Connemara · oral
-38. MIKA - Relax, Take It Easy · oral
-39. Miley Cyrus - Flowers · oral
-40. Ricchi e Poveri - Sarà perché ti amo · oral
-41. Chandelier — Sia _(bonus : 2014)_ · QCM : Loïc Nottet / Loïc Notté / Laurent Maistret / Jean-Marie Bigard en tutu
-42. Papaoutai — Stromae _(bonus : 2013)_ · oral
-43. Taylor Swift - Shake It Off · oral
+2. 50 Cent - In Da Club · oral
+3. a-ha - Take on Me · oral
+4. ABBA - Mamma Mia · oral
+5. ACDC - Highway to Hell · oral
+6. Alain Souchon - Foule sentimentale · oral
+7. Alanis Morissette - Ironic · oral
+8. Amel Bent - Ma philosophie · oral
+9. Barbie Girl — Aqua _(bonus : Aqua est un groupe danois)_ · QCM : 1997 / 1995 / 1999 / 1959, le même jour que la poupée
+10. Djadja — Aya Nakamura · QCM : Non / Oui / Seulement Djadja / Même pas elle
+11. Beyoncé - Crazy In Love · oral
+12. Black Eyed Peas - I Gotta Feeling · oral
+13. Black M - Sur ma route · oral
+14. Bob Marley & The Wailers - Could You Be Loved · oral
+15. Bob Sinclar - Love Generation · oral
+16. Bon Jovi - It's My Life · oral
+17. Britney Spears - ...Baby One More Time · oral
+18. Britney Spears - Toxic · oral
+19. Bruno Pelletier - Le temps des cathédrales · oral
+20. J'irai où tu iras — Céline Dion & Jean-Jacques Goldman _(bonus : 1995)_ · oral
+21. Céline Dion - Pour que tu m'aimes encore · oral
+22. Chic - Le Freak · oral
+23. Christina Aguilera - Genie In a Bottle · oral
+24. Claude François - Alexandrie Alexandra · oral
+25. Coldplay - Viva La Vida · oral
+26. Coolio - Gangsta's Paradise · oral
+27. Dadju - Reine · oral
+28. Daft Punk - One More Time · oral
+29. Darude - Sandstorm · oral
+30. Début de soirée - Nuit de folie (Version originale 1988) · oral
+31. Smoke on the Water — Deep Purple _(bonus : 1972)_ · QCM : L'incendie du casino de Montreux pendant un concert de Frank Zappa / La fumée d'un bateau à vapeur sur le lac Léman / Un barbecue raté au bord du lac de Genève / Le premier essai de machine à fumée du groupe
+32. Dire Straits - Money For Nothing · oral
+33. Djo - End of Beginning · oral
+34. Dr. Dre - Still D.R.E. · oral
+35. Eiffel 65 - Blue (Da Ba Dee) (Video Edit) · oral
+36. Ella Langley - Choosin' Texas · oral
+37. Eminem - Lose Yourself · oral
+38. Europe - The Final Countdown · oral
+39. Eurythmics - Sweet Dreams · oral
+40. Florent Pagny - Ma liberté de penser · oral
+41. Francis Cabrel - Petite Marie · oral
+42. Gilbert Montagné - Les sunlights des tropiques · oral
+43. GIMS - Sapés comme jamais · oral
+44. Gotye - Somebody That I Used To Know · oral
+45. Haddaway - What Is Love · oral
+46. IAM - Je danse le Mia · oral
+47. Images - Les démons de minuit · oral
+48. Imagine Dragons - Believer · oral
+49. Indila - Dernière danse · oral
+50. Indochine - 3e sexe · oral
+51. Allumer le feu — Johnny Hallyday _(bonus : 1998)_ · QCM : Pascal Obispo / Zazie / Jean-Jacques Goldman / Le pompier de service du Stade de France
+52. KATSEYE - Animal · oral
+53. Color Gitano — Kendji Girac _(bonus : 2014)_ · QCM : Une / Deux / Trois / Aucune, c'était une balle de ping-pong
+54. Kenny Loggins - Footloose · oral
+55. Kofs - Bande organisée · oral
+56. Lady Gaga - Poker Face · oral
+57. Tu m'oublieras — Larusso _(bonus : 1998)_ · oral
+58. Le Crime - Bodycount · oral
+59. LMFAO - Party Rock Anthem · oral
+60. Louise Attaque - J't'emmène au vent · oral
+61. Manau - La tribu de Dana · oral
+62. All I Want for Christmas Is You — Mariah Carey _(bonus : 1994)_ · oral
+63. Jerusalema — Master KG feat. Nomcebo Zikode _(bonus : 2019)_ · oral
+64. Michael Jackson - Beat It · oral
+65. Michel Sardou - Les lacs du Connemara · oral
+66. Michel Teló - Ai Se Eu Te Pego · oral
+67. MIKA - Relax, Take It Easy · oral
+68. Miley Cyrus - Flowers · oral
+69. Mosimann - Soon (feat. Gaëtan Roussel) (Radio edit) · oral
+70. Mylène Farmer - Libertine · oral
+71. Natalie Imbruglia - Torn · oral
+72. Oasis - Wonderwall · oral
+73. Phil Collins - In the Air Tonight · oral
+74. Psy - Gangnam Style · oral
+75. R.E.M. - Losing My Religion · oral
+76. Radiohead - Creep · oral
+77. Rage Against the Machine - Killing In The Name · oral
+78. Renaud - Mistral gagnant · oral
+79. Ricchi e Poveri - Sarà perché ti amo · oral
+80. Robert Miles - Children · oral
+81. Ronisia - Cuenta (feat. Meryl & Shay) · oral
+82. ROSÉ - APT. · oral
+83. SCH - Professionnels · oral
+84. Chandelier — Sia _(bonus : 2014)_ · QCM : Loïc Nottet / Loïc Notté / Laurent Maistret / Jean-Marie Bigard en tutu
+85. Soprano - Le coach · oral
+86. Papaoutai — Stromae _(bonus : 2013)_ · oral
+87. Taylor Swift - Shake It Off · oral
+88. Telephone - Cendrillon · oral
+89. The Prodigy - Smack My Bitch Up · oral
+90. Thierry Hazard - Le Jerk · oral
+91. Vianney - D'or et d'étain · oral
 
 ### BT Séries & films — 0 question (dossier `cinema/`)
 _Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts._
