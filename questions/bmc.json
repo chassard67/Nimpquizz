@@ -1,5 +1,27 @@
 {
- "noires": [],
+ "noires": [
+  "Ce soir au menu : ---- avec sa sauce.",
+  "Mon coach de vie m'a conseillé ----.",
+  "Dans mon testament, je lègue ---- à ma belle-mère.",
+  "La nouvelle épreuve de Koh-Lanta : ----.",
+  "Le secret d'un couple qui dure, c'est ----.",
+  "Ce qui m'empêche de dormir la nuit : ----.",
+  "Au mariage du cousin, tout le monde parlait de ----.",
+  "Mon horoscope de la semaine : attention à ----.",
+  "Le prochain film de Dany Boon : « Bienvenue chez ---- ».",
+  "Pour mes 40 ans, je veux ----.",
+  "La nouvelle mascotte des JO : ----.",
+  "Ce que mon chef ne doit jamais apprendre : ----.",
+  "Sur mon profil Tinder, j'ai mis ----.",
+  {
+   "t": "---- : c'est ce qui a réveillé tout l'hôtel.",
+   "nsfw": true
+  },
+  {
+   "t": "Ma première fois ? Disons qu'il y avait ----.",
+   "nsfw": true
+  }
+ ],
  "blanches": [
   "Le tiroir à bazar de la cuisine",
   "Le pote qui « ne boit pas ce soir »",
@@ -75,6 +97,52 @@
   },
   {
    "t": "Une soirée « tenue légère exigée »",
+   "nsfw": true
+  },
+  "Le karaoké sur « Je te donne »",
+  "Le pote qui s'endort sur le canapé à 23 h",
+  "Le ticket de vestiaire perdu",
+  "Le générique de Fort Boyard",
+  "Un épisode de Derrick",
+  "La voix de Stéphane Bern",
+  "Le pyjama licorne",
+  "Le surnom « mon chouchou »",
+  "Lire les messages de l'autre en cachette",
+  "Le « oui » après 3 ans d'hésitation",
+  "Le gratin de mamie",
+  "Le chien qui mange le gâteau d'anniversaire",
+  "Les devoirs de maths de CM2",
+  "Le caddie qui tire à gauche",
+  "La file d'attente à la Poste",
+  "Le Wi-Fi qui saute en pleine série",
+  "Le stagiaire qui en sait plus que le chef",
+  "Le team building en kayak",
+  "Le Post-it « NE PAS TOUCHER » sur le yaourt",
+  "Un escargot sous stéroïdes",
+  "Une poule qui fait du roller",
+  "Un mime en grève",
+  "Un fantôme qui a peur du noir",
+  "Un camping-car garé sur trois places",
+  "Un barbecue sous la pluie",
+  "Le bal du 14 Juillet",
+  "Un ventre qui gargouille en réunion",
+  "Éternuer en pleine déclaration d'amour",
+  "Un lumbago en ramassant une chaussette",
+  "Les genoux qui craquent dans l'escalier",
+  {
+   "t": "Un body en latex",
+   "nsfw": true
+  },
+  {
+   "t": "La nuit de noces ratée",
+   "nsfw": true
+  },
+  {
+   "t": "Un appel coquin à 2 h du matin",
+   "nsfw": true
+  },
+  {
+   "t": "Le jacuzzi de l'hôtel Formule 1",
    "nsfw": true
   }
  ]

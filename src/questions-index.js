@@ -2,7 +2,55 @@
 export const EXTRA = {
  "themes": {},
  "bmc": {
-  "noires": [],
+  "noires": [
+   {
+    "t": "Ce soir au menu : ---- avec sa sauce."
+   },
+   {
+    "t": "Mon coach de vie m'a conseillé ----."
+   },
+   {
+    "t": "Dans mon testament, je lègue ---- à ma belle-mère."
+   },
+   {
+    "t": "La nouvelle épreuve de Koh-Lanta : ----."
+   },
+   {
+    "t": "Le secret d'un couple qui dure, c'est ----."
+   },
+   {
+    "t": "Ce qui m'empêche de dormir la nuit : ----."
+   },
+   {
+    "t": "Au mariage du cousin, tout le monde parlait de ----."
+   },
+   {
+    "t": "Mon horoscope de la semaine : attention à ----."
+   },
+   {
+    "t": "Le prochain film de Dany Boon : « Bienvenue chez ---- »."
+   },
+   {
+    "t": "Pour mes 40 ans, je veux ----."
+   },
+   {
+    "t": "La nouvelle mascotte des JO : ----."
+   },
+   {
+    "t": "Ce que mon chef ne doit jamais apprendre : ----."
+   },
+   {
+    "t": "Sur mon profil Tinder, j'ai mis ----."
+   },
+   {
+    "t": "---- : c'est ce qui a réveillé tout l'hôtel.",
+    "nsfw": true
+   },
+   {
+    "t": "Ma première fois ? Disons qu'il y avait ----.",
+    "nsfw": true
+   }
+  ],
   "blanches": [
    {
     "t": "Le tiroir à bazar de la cuisine"
@@ -174,6 +222,112 @@ export const EXTRA = {
    },
    {
     "t": "Une soirée « tenue légère exigée »",
+    "nsfw": true
+   },
+   {
+    "t": "Le karaoké sur « Je te donne »"
+   },
+   {
+    "t": "Le pote qui s'endort sur le canapé à 23 h"
+   },
+   {
+    "t": "Le ticket de vestiaire perdu"
+   },
+   {
+    "t": "Le générique de Fort Boyard"
+   },
+   {
+    "t": "Un épisode de Derrick"
+   },
+   {
+    "t": "La voix de Stéphane Bern"
+   },
+   {
+    "t": "Le pyjama licorne"
+   },
+   {
+    "t": "Le surnom « mon chouchou »"
+   },
+   {
+    "t": "Lire les messages de l'autre en cachette"
+   },
+   {
+    "t": "Le « oui » après 3 ans d'hésitation"
+   },
+   {
+    "t": "Le gratin de mamie"
+   },
+   {
+    "t": "Le chien qui mange le gâteau d'anniversaire"
+   },
+   {
+    "t": "Les devoirs de maths de CM2"
+   },
+   {
+    "t": "Le caddie qui tire à gauche"
+   },
+   {
+    "t": "La file d'attente à la Poste"
+   },
+   {
+    "t": "Le Wi-Fi qui saute en pleine série"
+   },
+   {
+    "t": "Le stagiaire qui en sait plus que le chef"
+   },
+   {
+    "t": "Le team building en kayak"
+   },
+   {
+    "t": "Le Post-it « NE PAS TOUCHER » sur le yaourt"
+   },
+   {
+    "t": "Un escargot sous stéroïdes"
+   },
+   {
+    "t": "Une poule qui fait du roller"
+   },
+   {
+    "t": "Un mime en grève"
+   },
+   {
+    "t": "Un fantôme qui a peur du noir"
+   },
+   {
+    "t": "Un camping-car garé sur trois places"
+   },
+   {
+    "t": "Un barbecue sous la pluie"
+   },
+   {
+    "t": "Le bal du 14 Juillet"
+   },
+   {
+    "t": "Un ventre qui gargouille en réunion"
+   },
+   {
+    "t": "Éternuer en pleine déclaration d'amour"
+   },
+   {
+    "t": "Un lumbago en ramassant une chaussette"
+   },
+   {
+    "t": "Les genoux qui craquent dans l'escalier"
+   },
+   {
+    "t": "Un body en latex",
+    "nsfw": true
+   },
+   {
+    "t": "La nuit de noces ratée",
+    "nsfw": true
+   },
+   {
+    "t": "Un appel coquin à 2 h du matin",
+    "nsfw": true
+   },
+   {
+    "t": "Le jacuzzi de l'hôtel Formule 1",
     "nsfw": true
    }
   ]
