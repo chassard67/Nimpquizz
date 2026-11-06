@@ -73,6 +73,7 @@ document.addEventListener('click', e => {
   const p = JSON.parse(b.dataset.p || '{}');
   if (b.dataset.c && !confirm(b.dataset.c)) return;
   if (b.dataset.a === 'logout') { localStorage.removeItem('nq_gm_pin'); location.reload(); return; }
+  if (p._hint) { try { localStorage.setItem(`nq_gm_pause_${S.code}`, String(p._hint)); } catch {} delete p._hint; if (b.dataset.a === 'pauseLater') { render(true); return; } }
   if (b.dataset.pr) {
     const v = prompt(b.dataset.pr, b.dataset.pd || '');
     if (v === null || v.trim() === '') return;
@@ -135,6 +136,8 @@ function tabNow() {
   if (S.phase === 'lobby') return lobbyHTML();
   if (S.phase === 'end') return endHTML();
   const out = [];
+  out.push(pauseHint());
+  if (S.nsfw) out.push(`<div class="btns">${B(S.rabbi && S.rabbi.mode === 'dance' ? '🪑 Rabbi, assis ! (coupe la musique)' : '🕺 Rabbi ! (il danse sur le plateau)', 'rabbi', {}, 'sm')}</div>`);
   if (S.paused) out.push(`<div class="p warn"><div class="title">⏸ Jeu en pause</div><div class="sub">Chronos arrêtés, téléphones bloqués, son coupé.</div>${B('▶️ Reprendre', 'resume', {}, 'y big')}</div>`);
   if (S.phase === 'roll') out.push(rollHTML());
   else if (S.phase === 'rolled') out.push(rolledHTML());
@@ -328,7 +331,24 @@ function controls(ch) {
 function challengeHTML() {
   const ch = S.ch;
   const head = `<div class="p"><div class="title">${esc(ch.fallback ? 'Culture G (consolation)' : ch.label)}</div><div class="sub">${esc(ch.rule || '')}</div></div>`;
+  // épreuve en attente : vous avez déjà tout sous les yeux, vous lancez quand la salle est prête
+  if (ch.held) return `<div class="p warn"><div class="title">⏳ En attente de votre signal</div>
+      <div class="sub">La télé affiche le nom de l'épreuve et la règle. Les questions, le son et les chronos démarrent quand vous lancez.</div>
+      ${B('▶ Lancer l\'épreuve', 'launch', {}, 'y big')}</div>` + head + expectHTML(ch)
+    + `<div class="p"><div class="btns">${S.canRestart ? B('🔀 Autre question', 'newQuestion', {}, '', { confirm: 'Tirer une autre question pour cette case ?' }) : ''}${B('⏭ Passer l\'épreuve', 'skip', {}, '', { confirm: 'Passer l\'épreuve ? Personne ne marque.' })}</div></div>`;
+  if (ch.kind === 'buzz10' && ch.stage === 'ready' && !ch.goAt) return `<div class="p"><div class="title">⏱️ Buzzer 10 s</div><div class="sub">Quand tout le monde a le doigt prêt : 3, 2, 1 avec les bips, puis GO.</div>${B('🔔 Lancer le décompte 3, 2, 1', 'go', {}, 'y big')}</div>` + teamsBlock(ch);
   return head + stageActions(ch) + expectHTML(ch) + teamsBlock(ch) + controls(ch);
+}
+// Toutes les heures de jeu (hors pauses), on propose une pause
+function pauseHint() {
+  if (!S.startedAt || S.paused || S.phase === 'lobby' || S.phase === 'end') return '';
+  const played = gameNow(S) - S.startedAt - (S.pausedMs || 0);
+  const h = Math.floor(played / 3600000);
+  const key = `nq_gm_pause_${S.code}`;
+  let done = 0; try { done = Number(localStorage.getItem(key)) || 0; } catch {}
+  if (h < 1 || h <= done) return '';
+  return `<div class="p warn"><div class="title">☕ ${h} h de jeu : une petite pause ?</div><div class="sub">Pipi, verres, cigarette… Les chronos s'arrêtent et la télé affiche PAUSE.</div>
+    <div class="btns">${B('⏸ Faire une pause', 'pause', { _hint: h }, 'y')}${B('Plus tard', 'pauseLater', { _hint: h })}</div></div>`;
 }
 
 function revealHTML() {
@@ -345,6 +365,7 @@ function revealHTML() {
     ${ch.kind ? expectHTML(ch) : ''}
     <div class="p"><h3>🧮 Points (corriger si besoin)</h3>${gains}</div>
     <div class="p"><div class="btns">
+      ${ch.item && ch.item.src ? B(ch.outro ? '⏸ Couper la chanson' : '🎵 La suite de la chanson', 'outro', {}, ch.outro ? '' : 'y') : ''}
       ${ch.kind === 'media' && ch.item && ch.media !== 'text' ? B('🔁 Rejouer l\'extrait', 'replay') : ''}
       ${S.canRestart ? B('🔄 Rejouer l\'épreuve', 'restart', {}, '', { confirm: 'Rejouer cette épreuve depuis le début ? Les points gagnés ici seront retirés.' }) : ''}
       ${S.canRestart ? B('🔀 Autre question', 'newQuestion', {}, '', { confirm: 'Rejouer la case avec une autre question ? Les points gagnés ici seront retirés.' }) : ''}
@@ -424,3 +445,4 @@ setInterval(tickTimers, 250);
 
 // une liste déroulante refermée : on rattrape l'affichage différé
 document.addEventListener('focusout', e => { if (e.target.tagName === 'SELECT') setTimeout(() => render(true), 0); });
+setInterval(() => render(false), 30000); // la proposition de pause apparaît même sans activité

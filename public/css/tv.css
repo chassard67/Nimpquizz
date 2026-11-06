@@ -298,3 +298,34 @@ body.host:not(.gmon) .bmc-entry.toggle:hover { outline: 5px dashed var(--yellow)
 .pochette.mini { width: 300px; height: 300px; align-self: center; }
 .media-vis.mini { height: 110px; width: 520px; align-self: center; }
 .joke { font-family: var(--display); font-size: 40px; color: var(--bg); background: var(--yellow); padding: 14px 26px; border-radius: 18px; transform: rotate(-2deg); box-shadow: 6px 6px 0 var(--bt); text-align: center; max-width: 1100px; align-self: center; }
+
+/* Vannes des équipes, au centre du plateau sous la légende (et en bas des épreuves) */
+.taunts { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 1000px; }
+.taunts .taunt { background: var(--bg); border-radius: 16px; padding: 10px 18px; font-size: 24px; text-align: left; animation: pop .35s cubic-bezier(.2, 1.6, .4, 1); box-shadow: 4px 4px 0 var(--yellow); }
+.taunts .taunt .from { display: block; font-family: var(--display); font-size: 17px; }
+.taunts.strip { margin-top: auto; flex-direction: row; max-width: none; }
+.taunts.strip .taunt { flex: 1; font-size: 20px; }
+#center { gap: 24px; }
+/* Bouton « la suite de la chanson » */
+.outro-btn { align-self: center; margin-top: 18px; background: var(--yellow); color: var(--bg); font-size: 30px; padding: 16px 30px; border-radius: 18px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2); }
+/* 🔞 Le rabbin */
+#rabbi { position: absolute; left: 180px; bottom: 40px; width: 260px; height: 390px; z-index: 35; pointer-events: none; }
+#rabbi .rb { width: 100%; height: 100%; overflow: visible; }
+#rabbi.dance { animation: rbWalk 9s ease-in-out infinite alternate; }
+#rabbi.dance .rb-body { animation: rbBounce .38s ease-in-out infinite alternate; transform-origin: 100px 214px; }
+#rabbi.dance .rb-armL { animation: rbArmL .38s ease-in-out infinite alternate; transform-origin: 68px 120px; }
+#rabbi.dance .rb-armR { animation: rbArmR .38s ease-in-out infinite alternate; transform-origin: 132px 120px; }
+#rabbi.dance .rb-legL { animation: rbLegL .38s ease-in-out infinite alternate; transform-origin: 87px 200px; }
+#rabbi.dance .rb-legR { animation: rbLegR .38s ease-in-out infinite alternate; transform-origin: 113px 200px; }
+#rabbi.dance .rb-head { animation: rbHead .76s ease-in-out infinite alternate; transform-origin: 100px 100px; }
+#rabbi.sit .rb-idle { animation: rbIdle 2.4s ease-in-out infinite alternate; transform-origin: 100px 190px; }
+#rabbi.sit .rb-zz { animation: fade 1.6s infinite; }
+@keyframes rbWalk { from { transform: translateX(0); } to { transform: translateX(820px); } }
+@keyframes rbBounce { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-16px) rotate(4deg); } }
+@keyframes rbArmL { from { transform: rotate(40deg); } to { transform: rotate(-70deg); } }
+@keyframes rbArmR { from { transform: rotate(70deg); } to { transform: rotate(-40deg); } }
+@keyframes rbLegL { from { transform: rotate(-28deg); } to { transform: rotate(10deg); } }
+@keyframes rbLegR { from { transform: rotate(-10deg); } to { transform: rotate(28deg); } }
+@keyframes rbHead { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+@keyframes rbIdle { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+#rabbiBtn { position: absolute; left: 24px; bottom: 16px; z-index: 36; background: var(--bt); color: var(--bg); font-size: 20px; padding: 10px 16px; border-radius: 14px; box-shadow: inset 0 -4px 0 rgba(0,0,0,.2); }

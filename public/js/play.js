@@ -163,6 +163,7 @@ function renderRolled() {
 function renderChallenge() {
   const ch = S.ch, t = me();
   const timer = `<span class="cd" data-dl="${ch.deadline}"></span>`;
+  if (ch.held) return html(`<div class="center"><div class="big">📺</div><h1>${esc(ch.fallback ? 'Question de consolation' : ch.label)}</h1><h2>Le maître du jeu va lancer l'épreuve…</h2><p class="msg">${esc(ch.rule || '')}</p></div>`);
   if (gameNow(S) < (ch.startsAt || 0) && ch.kind !== 'buzz10') return html(`<div class="center"><div class="big">👀</div><h1>Regardez la télé !</h1><h2>${esc(ch.fallback ? 'Question de consolation' : ch.label)}</h2></div>`);
   const answered = ch.answers && ch.answers[t.id] !== undefined;
   const wait = (txt, emoji = '⏳') => html(`<div class="center"><div class="big">${emoji}</div><h1>${txt}</h1><p class="msg">${timer}</p></div>`);
@@ -309,6 +310,7 @@ function renderChallenge() {
   }
   if (ch.kind === 'buzz10') {
     if (ch.taps[t.id] !== undefined) return wait(ch.taps[t.id] === -1 ? 'FAUX DÉPART. Bravo les champions.' : 'Enregistré ! Verdict sur la télé.', ch.taps[t.id] === -1 ? '🤦' : '⏱️');
+    if (!ch.goAt) return html(`<div class="center"><div class="big">⏱️</div><h1>Le maître du jeu va lancer le décompte…</h1><p class="msg">Au GO, comptez 10 secondes dans votre tête et appuyez. Avant le GO = éliminé.</p></div>`);
     const go = gameNow(S) >= ch.goAt;
     return html(`<div class="center"><h1>${go ? 'GO ! Appuyez à 10 secondes pile' : 'Attendez le GO…'}</h1>
       <button class="buzzer ${go ? 'go' : ''}" id="bz">${go ? 'STOP' : '…'}</button><p class="msg">${go ? 'Comptez dans votre tête 🤫' : 'Buzzer avant le GO = éliminé'}</p></div>`,
@@ -422,7 +424,7 @@ setInterval(() => { if (S) cdUpdate(S); }, 50);
 setInterval(() => {
   if (!S) return;
   const now = gameNow(S);
-  document.querySelectorAll('[data-dl]').forEach(el => { const s = fmtSec(Number(el.dataset.dl) - now); el.textContent = `⏱ ${s} s`; });
+  document.querySelectorAll('[data-dl]').forEach(el => { const dl = Number(el.dataset.dl); if (!dl) { el.textContent = ''; return; } const s = fmtSec(dl - now); el.textContent = `⏱ ${s} s`; });
   if (keyOf() !== screenKey) render();
   const ap = document.getElementById('affpts');
   if (ap && S.ch && S.ch.kind === 'affiche') { const k = Math.min(4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue)); ap.textContent = `Répondez vite : ${5 - k} pt${k < 4 ? 's' : ''} maintenant`; }

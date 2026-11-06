@@ -35,6 +35,11 @@ check(gm({ action: 'forceCell', cell: cellOf('noix') }) === null, 'forcer la cas
 
 // ── pause : chronos gelés, téléphones bloqués
 gm({ action: 'next' });
+check(s.phase === 'challenge' && s.ch.held && s.deadline === null, 'l\'épreuve attend le lancement du MJ (pas de chrono)');
+check(send(pidOf(A), { t: 'answer', value: 0 }) !== null, 'pas de réponse avant le lancement');
+check(G.view(s, { pid: 'a' }).ch.q === undefined && G.view(s, { role: 'gm', host: true }).ch.q.a !== undefined, 'question visible seulement sur le tél du MJ avant le lancement');
+now += 20000;
+check(gm({ action: 'launch' }) === null && !s.ch.held && s.deadline > now, 'le MJ lance l\'épreuve');
 now = s.ch.startsAt;
 check(s.phase === 'challenge' && s.ch.type === 'noix', 'épreuve À la noix lancée');
 const dl = s.deadline;
@@ -108,6 +113,7 @@ check(!G.view(s, { role: 'gm', host: true }).hist.some(h => h.id >= target.id), 
 // ── blind test : buzz, annuler le buzz, relancer, valider, puis annuler la validation
 MEDIA_INDEX.bt_musique.push({ id: 'test', src: '/media/musique/test.mp3', answer: 'Bohemian Rhapsody — Queen', bonus: '1975' });
 check(gm({ action: 'goto', cell: cellOf('bt_musique') }) === null && s.ch.kind === 'media', 'MJ envoie sur le blind test');
+gm({ action: 'launch' });
 now = s.ch.startsAt + 1000;
 check(send(pidOf(Bt), { t: 'buzz' }) === null && s.ch.stage === 'answer', 'buzz');
 check(gm({ action: 'unbuzz' }) === null && s.ch.stage === 'play' && s.ch.buzzer === null, 'annuler le buzz');
@@ -124,11 +130,11 @@ check(gm({ action: 'addTime', sec: 30 }) === null, 'rallonge de 30 s');
 
 // ── donner la main, choisir à la place des équipes
 check(gm({ action: 'setTurn', teamId: C }) === null && act().id === C && s.phase === 'roll', 'donner la main');
-gm({ action: 'goto', cell: cellOf('vol') }); now = s.ch.startsAt;
+gm({ action: 'goto', cell: cellOf('vol') }); gm({ action: 'launch' }); now = s.ch.startsAt;
 check(s.ch.stage === 'pick' && gm({ action: 'pick', teamId: A }) === null && s.phase === 'reveal', 'choisir la victime à la place de l\'équipe');
-gm({ action: 'goto', cell: cellOf('burger') }); now = s.ch.startsAt;
+gm({ action: 'goto', cell: cellOf('burger') }); gm({ action: 'launch' }); now = s.ch.startsAt;
 check(s.ch.stage === 'theme' && gm({ action: 'theme', i: 0 }) === null && s.ch.stage === 'q', 'choisir le menu du Burger Quiz');
-gm({ action: 'goto', cell: cellOf('millions') }); now = s.ch.startsAt;
+gm({ action: 'goto', cell: cellOf('millions') }); gm({ action: 'launch' }); now = s.ch.startsAt;
 send(pidOf(C), { t: 'answer', value: s.ch.q.a });
 check(s.ch.stage === 'decide' && gm({ action: 'decide', go: false }) === null && s.phase === 'reveal', 'décider à la place (Millionnaire)');
 

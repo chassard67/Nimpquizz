@@ -20,6 +20,7 @@ addEventListener('resize', fit); fit();
 
 let S = null;
 let lastFeed = -1;
+const taunts = [];            // vannes récentes, affichées sur le plateau
 const disp = {};          // position affichée de chaque pion
 let animating = null;
 let lastMoveN = 0, rollAnimUntil = 0;
@@ -51,7 +52,8 @@ function onState(first) {
     lastFeed = f.id;
     if (f.k === 'taunt') {
       const from = team(f.from), to = f.to === 'all' ? null : team(f.to);
-      toast($('#toasts'), { k: 'taunt', text: f.text, from: `${from ? from.name : '?'} → ${to ? to.name : 'tout le monde'}` }, 7000); sfx.taunt();
+      taunts.push({ id: f.id, at: Date.now(), color: from ? from.color : '#888', from: from ? from.name : '?', to: to ? to.name : 'tout le monde', text: f.text });
+      if (!first) sfx.taunt();
     } else if (f.k === 'joker' || f.k === 'curse') { toast($('#toasts'), { k: f.k, text: f.text }, 6000); if (f.k === 'curse') sfx.curse(); }
   }
   for (const id of ['lobby', 'game', 'end']) $('#' + id).classList.add('hidden');
@@ -184,7 +186,8 @@ function renderBoard() {
       ${!rolling && S.phase === 'rolled' ? `<span class="what">On y va ? (ou joker relance…) <b data-dl="${S.deadline}" class="cd"></b></span>` : ''}</div></div>`;
     if (rolling) scheduleRollFrame();
   } else box = '';
-  c.innerHTML = `<div class="logo"><span>Le grand</span><b>N'importe Quiz</b></div>${box}${legend}`;
+  c.innerHTML = `<div class="logo"><span>Le grand</span><b>N'importe Quiz</b></div>${box}${legend}<div class="taunts" id="tauntsBoard"></div>`;
+  renderTaunts(true);
 }
 
 // ── BARRE LATÉRALE ───────────────────────────────────────────
@@ -225,7 +228,9 @@ function renderHostbar() {
   const ch = S.ch, b = [];
   if (S.phase === 'roll') b.push(`<button class="main" data-h="roll">🎲 Lancer le dé pour ${esc(activeTeam().name)}</button><span class="hint">…ou attendre qu'ils lancent depuis leur téléphone.</span>`);
   if (S.phase === 'rolled') b.push(`<button class="main" data-h="next">Avancer le pion ▶</button>`);
-  if (S.phase === 'challenge') {
+  if (S.phase === 'challenge' && ch.held) b.push(`<button class="main" data-h="launch">▶ Lancer l'épreuve</button><span class="hint">La question et la réponse sont déjà sur le téléphone du maître du jeu.</span>`);
+  else if (S.phase === 'challenge' && ch.kind === 'buzz10' && ch.stage === 'ready' && !ch.goAt) b.push(`<button class="main" data-h="go">🔔 Décompte 3, 2, 1… GO</button>`);
+  else if (S.phase === 'challenge') {
     if (ch.kind === 'bac' && ch.stage === 'review') b.push(`<button class="main" data-h="bacValidate">Valider les points ✓</button><span class="hint">Cliquez sur un mot pour le valider / refuser.</span>`);
     else if (ch.kind === 'media' && ch.stage === 'answer') b.push(`<button class="ok" data-h="judge" data-ok="1">✓ Bonne réponse</button><button class="ok" data-h="judge" data-ok="1" data-bonus="1">✓ + bonus</button><button class="ko" data-h="judge" data-ok="0">✗ Raté</button><span class="hint">Bonus +1 : l'année ou le réalisateur en plus.</span>`);
     else if (ch.stage === 'video') b.push(`<button class="main" data-h="mediaDone">Questions ! ▶</button>`);
@@ -236,6 +241,7 @@ function renderHostbar() {
   }
   if (S.phase === 'reveal') {
     b.push(`<button class="main" data-h="next">Tour suivant ▶</button>`);
+    if (ch && ch.item && ch.item.src) b.push(`<button data-h="outro">${ch.outro ? '⏸ Couper la chanson' : '🎵 La suite de la chanson'}</button>`);
     if (ch && ch.kind === 'dcc' && Object.values(ch.modes || {}).includes('cash')) b.push(`<span class="hint">Cliquez sur une réponse cash pour l'accepter ou la refuser.</span>`);
   }
   if (S.test) b.push(`<select id="gotoSel" title="Mode test : aller directement sur une case"><option value="">🧪 Aller à la case…</option>${S.meta.board.map((c, i) => `<option value="${i}">${i} · ${esc(c.label)}</option>`).join('')}</select>`);
@@ -283,7 +289,7 @@ function renderOverlay(stateChanged) {
   const ch = S.ch;
   const show = ch && (S.phase === 'challenge' || S.phase === 'reveal') && ch.kind && (lastOverlayKey !== '' || gameNow(S) >= (ch.startsAt || 0) - 300) && !animating;
   if (!show) { ov.classList.add('hidden'); lastOverlayKey = ''; return; }
-  const key = JSON.stringify([S.phase, ch.type, ch.stage, ch.cell, S.move && S.move.n, ch.i, ch.level, ch.buzzer, (ch.excluded || []).length, JSON.stringify(ch.ok || null)]);
+  const key = JSON.stringify([S.phase, ch.type, ch.stage, ch.cell, S.move && S.move.n, ch.i, ch.level, ch.buzzer, (ch.excluded || []).length, JSON.stringify(ch.ok || null), !!ch.held, ch.goAt || 0, !!ch.outro, ch.done || 0]);
   if (!stateChanged && key === lastOverlayKey) return;
   const appearing = lastOverlayKey === '' || key.split(',')[0] !== lastOverlayKey.split(',')[0];
   if (lastOverlayKey !== key && S.phase === 'reveal') { const gain = Object.values(ch.gains || {}).some(v => v > 0); (gain ? sfx.win : sfx.fail)(); }
@@ -296,10 +302,25 @@ function renderOverlay(stateChanged) {
   const pill = ch.fallback ? `Contenu pas encore chargé · question de consolation${themeLbl}` : `Case ${ch.cell}${themeLbl}`;
   const banner = `<div class="banner g-${ch.group}"><span class="t">${esc(ch.fallback ? 'Culture G' : ch.label)}</span><span class="pill c-${ch.group}">${esc(pill)}</span><span class="who">${dot(t.color)}${esc(t.name)} joue</span></div>`;
   let main = '', side = '';
-  const R = RENDER[ch.kind] || RENDER.info;
+  const R = ch.held ? RENDER.held : (RENDER[ch.kind] || RENDER.info);
   [main, side] = R(ch, rev);
+  // à la révélation d'un blind test : bouton « la suite de la chanson », cliquable sur la télé
+  if (rev && ch.item && ch.item.src && S.host) main += `<button class="outro-btn" data-h="outro">${ch.outro ? '⏸ Couper la chanson' : '🎵 La suite de la chanson'}</button>`;
+  main += `<div class="taunts strip" id="tauntsOv"></div>`;
   ov.innerHTML = banner + `<div class="ov-body"><div class="ov-main">${main}</div>${side ? `<div class="ov-side">${side}</div>` : ''}</div>`;
   tickTimers();
+  renderTaunts(true);
+}
+
+// Vannes des équipes : au centre du plateau, sous la légende (ou en bas de l'épreuve en cours)
+let tauntsShown = '';
+function renderTaunts(force) {
+  const now = Date.now();
+  while (taunts.length && (taunts.length > 4 || now - taunts[0].at > 25000)) taunts.shift();
+  const html = taunts.map(t => `<div class="taunt"><span class="from" style="color:${t.color}">${esc(t.from)} → ${esc(t.to)}</span>${esc(t.text)}</div>`).join('');
+  if (!force && html === tauntsShown) return;
+  tauntsShown = html;
+  for (const id of ['tauntsBoard', 'tauntsOv']) { const el = document.getElementById(id); if (el) el.innerHTML = id === 'tauntsOv' ? taunts.slice(-2).map(t => `<div class="taunt"><span class="from" style="color:${t.color}">${esc(t.from)} → ${esc(t.to)}</span>${esc(t.text)}</div>`).join('') : html; }
 }
 
 function qcmBlock(ch, rev) {
@@ -322,6 +343,11 @@ const revFooter = ch => `<div class="summary">${esc(ch.summary || '')}</div>${ga
 const answeredSide = ch => [ring(ch.deadline, ch.deadline - ch.startsAt), statusList(ch.participants, id => !!ch.answers[id])];
 
 const RENDER = {
+  held(ch) {
+    return [`<div class="big-center"><div class="huge">${{ q: '❓', bt: '🎵', v: '🖼️', bz: '🔔', s: '😈', cm: '🃏' }[ch.group] || '🎲'}</div>
+      <div class="mid" style="max-width:1100px">${esc(ch.rule || '')}</div>
+      <div class="rule">⏳ Le maître du jeu va lancer l'épreuve…</div></div>`, ''];
+  },
   qcm(ch, rev) {
     return [qcmBlock(ch, rev) + (rev ? revFooter(ch) : ''), rev ? '' : answeredSide(ch).join('')];
   },
@@ -378,6 +404,8 @@ const RENDER = {
   buzz10(ch, rev) {
     if (!rev) {
       const now = gameNow(S);
+      if (!ch.goAt) return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center"><div class="huge">⏱️</div><div class="mid">Le maître du jeu va lancer le décompte… Doigts prêts !</div></div>`,
+        statusList(ch.participants, id => ch.taps[id] !== undefined, 'Buzzers')];
       const before = now < ch.goAt;
       return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center" id="b10">
         <div class="huge" data-go="${ch.goAt}">${before ? fmtSec(ch.goAt - now) : 'GO !'}</div>
@@ -426,7 +454,7 @@ RENDER.bmc = (ch, rev) => {
     const teams = Object.keys(ch.teamDone || {}).map(id => { const t = team(id), [d, n] = ch.teamDone[id]; return t ? `<div class="r">${dot(t.color)}<span>${esc(t.name)}</span><span class="s ${d === n ? 'ok' : 'muted'}">${d}/${n}</span></div>` : ''; }).join('');
     return [`<div class="rule">${esc(ch.rule)}</div><div class="bmc-black bmc-big">${bmcSentence(black, [])}</div>
       <div class="big-center"><div class="mid">🃏 Choisissez ${ch.black && ch.black.n > 1 ? `${ch.black.n} cartes (dans l'ordre)` : 'votre carte'} sur votre téléphone</div><div class="rule">${ch.done} / ${ch.total} joueur${ch.total > 1 ? 's ont' : ' a'} joué</div></div>`,
-      [ring(ch.deadline, ch.deadline - ch.startsAt), `<div class="status-list"><span class="h">Cartes jouées</span>${teams}</div>`].join('')];
+      `<div class="status-list"><span class="h">Cartes jouées</span>${teams}</div>`];
   }
   const entries = ch.entries || [];
   const cards = entries.map((e, i) => {
@@ -437,7 +465,7 @@ RENDER.bmc = (ch, rev) => {
       ${t ? `<div class="by">${dot(t.color)}${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${win ? ' 🏆' : ''}</div>` : ''}</div>`;
   }).join('');
   const grid = `<div class="bmc-grid ${entries.length > 6 ? 'many' : ''}">${cards}</div>`;
-  if (!rev) return [`<div class="rule">Le maître du jeu choisit la plus drôle… (c'est anonyme, pas de favoritisme. En théorie.)</div>${grid}`, ring(ch.deadline, ch.deadline - ch.startsAt)];
+  if (!rev) return [`<div class="rule">Le maître du jeu choisit la plus drôle… (c'est anonyme, pas de favoritisme. En théorie.)</div>${grid}`, ''];
   return [`${grid}${revFooter(ch)}`, ''];
 };
 
@@ -524,6 +552,8 @@ RENDER.affiche = (ch, rev) => {
 
 // clic animateur sur une case du Bac
 $('#overlay').addEventListener('click', e => {
+  const oh = e.target.closest('[data-h]');
+  if (oh && S.host) { audioUnlock(); return host(oh.dataset.h); }
   const bm = e.target.closest('[data-bmc]');
   if (bm && S.host && S.phase === 'challenge' && S.ch && S.ch.stage === 'judge') return host('bmcPick', { i: Number(bm.dataset.bmc) });
   const c = e.target.closest('[data-cash]');
@@ -591,10 +621,70 @@ function syncAudio() {
   const src = new URL(ch.item.src, location.href).href;
   if (audio.src !== src) { audio.src = src; audio.currentTime = ch.item.start || 0; }
   // l'extrait ne tourne que pendant l'écoute (30 s max) puis à la révélation ; pas pendant la question bonus
-  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || S.phase === 'reveal';
+  const shouldPlay = (S.phase === 'challenge' && ch.stage === 'play' && gameNow(S) >= ch.startsAt) || (S.phase === 'reveal' && !!ch.outro);
+  if (S.phase === 'reveal' && ch.outro && audio.ended) { audio.currentTime = 0; }
   if (ch.stage === 'answer' && S.phase === 'challenge' && !audio.paused) { audio.pause(); sfx.buzz(); }
   if (shouldPlay && audio.paused) audio.play().catch(() => {});
+  if (!shouldPlay && !audio.paused) audio.pause();
 }
+
+// ── 🔞 Le rabbin qui danse (mode NSFW) ───────────────────────
+// 1er appui : il danse sur le plateau avec la musique ; 2e appui : la musique s'arrête, il s'assoit et attend.
+const rabbiAudio = new Audio('/media/rabbi.mp3'); rabbiAudio.loop = true; rabbiAudio.volume = .75; rabbiAudio.preload = 'none';
+const RABBI_DANCE = `<svg viewBox="0 0 200 300" class="rb">
+  <g class="rb-legs"><g class="rb-legL"><rect x="78" y="200" width="18" height="70" rx="6" fill="#1b1b1b"/><ellipse cx="82" cy="274" rx="18" ry="8" fill="#000"/></g>
+    <g class="rb-legR"><rect x="104" y="200" width="18" height="70" rx="6" fill="#1b1b1b"/><ellipse cx="118" cy="274" rx="18" ry="8" fill="#000"/></g></g>
+  <g class="rb-body">
+    <path d="M62 112 Q100 96 138 112 L150 214 Q100 228 50 214 Z" fill="#111"/>
+    <path d="M90 112 L100 150 L110 112 Z" fill="#fff"/>
+    <g class="rb-armL"><path d="M68 120 Q40 140 30 168" stroke="#111" stroke-width="20" fill="none" stroke-linecap="round"/><circle cx="29" cy="171" r="10" fill="#f1c7a1"/></g>
+    <g class="rb-armR"><path d="M132 120 Q160 140 170 168" stroke="#111" stroke-width="20" fill="none" stroke-linecap="round"/><circle cx="171" cy="171" r="10" fill="#f1c7a1"/></g>
+    <g class="rb-head">
+      <circle cx="100" cy="74" r="28" fill="#f1c7a1"/>
+      <path d="M74 80 Q76 122 100 128 Q124 122 126 80 Q114 98 100 96 Q86 98 74 80 Z" fill="#5a4636"/>
+      <path d="M73 66 q-6 10 0 20 q-6 8 0 16" stroke="#5a4636" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M127 66 q6 10 0 20 q6 8 0 16" stroke="#5a4636" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="90" cy="70" r="3" fill="#222"/><circle cx="110" cy="70" r="3" fill="#222"/>
+      <path d="M92 84 Q100 90 108 84" stroke="#7a3b2b" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="100" cy="50" rx="46" ry="9" fill="#000"/><rect x="74" y="20" width="52" height="32" rx="8" fill="#0d0d0d"/>
+    </g>
+  </g></svg>`;
+const RABBI_SIT = `<svg viewBox="0 0 200 300" class="rb">
+  <rect x="44" y="182" width="112" height="12" rx="4" fill="#8a5a33"/><rect x="50" y="194" width="10" height="80" fill="#6d4526"/><rect x="140" y="194" width="10" height="80" fill="#6d4526"/>
+  <rect x="140" y="96" width="10" height="92" fill="#6d4526"/>
+  <g class="rb-idle">
+    <path d="M66 112 Q100 98 134 112 L140 188 L60 188 Z" fill="#111"/><path d="M90 112 L100 146 L110 112 Z" fill="#fff"/>
+    <rect x="62" y="176" width="70" height="20" rx="8" fill="#1b1b1b"/>
+    <rect x="66" y="190" width="16" height="70" rx="6" fill="#1b1b1b"/><rect x="108" y="190" width="16" height="70" rx="6" fill="#1b1b1b"/>
+    <ellipse cx="72" cy="264" rx="16" ry="7" fill="#000"/><ellipse cx="118" cy="264" rx="16" ry="7" fill="#000"/>
+    <path d="M70 124 Q60 156 84 170" stroke="#111" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="88" cy="170" r="9" fill="#f1c7a1"/>
+    <circle cx="100" cy="74" r="28" fill="#f1c7a1"/>
+    <path d="M74 80 Q76 122 100 128 Q124 122 126 80 Q114 98 100 96 Q86 98 74 80 Z" fill="#5a4636"/>
+    <path d="M86 70 h8 M106 70 h8" stroke="#222" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="100" cy="50" rx="46" ry="9" fill="#000"/><rect x="74" y="20" width="52" height="32" rx="8" fill="#0d0d0d"/>
+  </g>
+  <text x="150" y="40" class="rb-zz" font-size="26" fill="#FFD23F" font-family="Bungee, sans-serif">…</text></svg>`;
+let rabbiShown = '';
+function syncRabbi() {
+  const r = S && S.nsfw ? S.rabbi : null;
+  const mode = r ? r.mode : '';
+  const el = $('#rabbi'), btn = $('#rabbiBtn');
+  btn.classList.toggle('hidden', !(S && S.nsfw && S.host && S.phase !== 'lobby'));
+  btn.textContent = mode === 'dance' ? '🪑 Rabbi, assis !' : '🕺 Rabbi';
+  if (mode !== rabbiShown) {
+    rabbiShown = mode;
+    el.className = mode ? mode : 'hidden';
+    el.innerHTML = mode === 'dance' ? RABBI_DANCE : mode === 'sit' ? RABBI_SIT : '';
+  }
+  if (mode === 'dance' && !S.paused) {
+    if (rabbiAudio.paused) {
+      const d = rabbiAudio.duration || 100;
+      try { rabbiAudio.currentTime = ((serverNow() - r.at) / 1000) % d; } catch {}
+      rabbiAudio.play().catch(() => {});
+    }
+  } else if (!rabbiAudio.paused) rabbiAudio.pause();
+}
+$('#rabbiBtn').addEventListener('click', () => { audioUnlock(); host('rabbi'); });
 
 // ── FIN ──────────────────────────────────────────────────────
 function renderEnd() {
@@ -613,6 +703,7 @@ function renderEnd() {
 function tickTimers() {
   const now = gameNow(S);
   document.querySelectorAll('[data-ring]').forEach(el => {
+    if (!Number(el.dataset.ring)) { el.style.visibility = 'hidden'; return; }
     const dl = Number(el.dataset.ring), total = Number(el.dataset.total) || 30000;
     const rem = Math.max(0, dl - now);
     const pct = Math.max(0, Math.min(100, rem / total * 100));
@@ -623,12 +714,15 @@ function tickTimers() {
     if (sec <= 5 && sec > 0 && lastSec !== sec && el === document.querySelector('[data-ring]')) sfx.tick();
     lastSec = sec;
   });
-  document.querySelectorAll('[data-dl]').forEach(el => { el.textContent = fmtSec(Number(el.dataset.dl) - now) + ' s'; });
+  document.querySelectorAll('[data-dl]').forEach(el => { const dl = Number(el.dataset.dl); el.textContent = dl ? fmtSec(dl - now) + ' s' : ''; });
   const go = document.querySelector('[data-go]');
   if (go) {
     const goAt = Number(go.dataset.go);
-    if (now < goAt) go.textContent = fmtSec(goAt - now);
-    else if (go.textContent !== 'GO !') { go.textContent = 'GO !'; $('#b10t').textContent = 'Comptez dans votre tête… pas à voix haute, bande de tricheurs 🤫'; sfx.buzz(); setTimeout(() => { if (go.isConnected) go.textContent = '🤫'; }, 1500); }
+    if (now < goAt) {
+      const n = fmtSec(goAt - now);
+      if (go.textContent !== String(n)) { go.textContent = n; sfx.bip(); }   // 3… 2… 1…
+    }
+    else if (go.textContent !== 'GO !') { go.textContent = 'GO !'; $('#b10t').textContent = 'Comptez dans votre tête… pas à voix haute, bande de tricheurs 🤫'; sfx.bipGo(); setTimeout(() => { if (go.isConnected) go.textContent = '🤫'; }, 1500); }
   }
   if (S.ch && S.ch.kind === 'affiche' && S.phase === 'challenge') {
     const k = Math.min(S.ch.q.clues ? S.ch.q.clues.length : 4, 1 + Math.floor(Math.max(0, now - S.ch.startsAt) / S.meta.timers.clue));
@@ -655,7 +749,7 @@ function tickTimers() {
     $('#clock').textContent = `${f(el)} / ${f(tot)}${now > S.endAt ? ' · dernier tour !' : ''} · manche ${S.round}${S.gmOnline > 0 ? ' · 🎩 MJ' : ''}`;
   }
 }
-setInterval(() => { if (!S || S.phase === 'lobby' || S.phase === 'end') return; renderOverlay(false); syncAudio(); tickTimers(); }, 200);
+setInterval(() => { if (!S || S.phase === 'lobby' || S.phase === 'end') return; renderOverlay(false); syncAudio(); tickTimers(); renderTaunts(false); syncRabbi(); }, 200);
 
 // ── Décompte « bip bip bip » avant chaque question ou épreuve
 const cdUpdate = countdown({ parent: stage, onTick: n => (n ? sfx.bip : sfx.bipGo)() });

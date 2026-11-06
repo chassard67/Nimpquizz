@@ -58,11 +58,11 @@ const gm = m => G.handle(s, { t: 'host', ...m }, { now, host: true, gm: true, rn
 send('a', { t: 'createTeam', name: 'Alpha', player: 'A' }); send('b', { t: 'createTeam', name: 'Bravo', player: 'B' });
 gm({ action: 'start' });
 check(G.BOARD.filter(t => t === 'bt_musique').length === 2 && G.BOARD.includes('bt_jeux') && !G.BOARD.includes('bt_actuel') && !G.BOARD.includes('bt_intemporel') && G.BOARD.length === 32, 'plateau : 2 cases BT Musique, 1 BT Jeux vidéo, 32 cases');
-gm({ action: 'goto', cell: G.BOARD.indexOf('bt_jeux') }); now = s.ch.startsAt + 1000;
+gm({ action: 'goto', cell: G.BOARD.indexOf('bt_jeux') }); gm({ action: 'launch' }); now = s.ch.startsAt + 1000;
 check(s.ch.kind === 'media' && s.ch.item.answer === 'Tetris', 'BT Jeux vidéo joue le fichier du dossier');
 send('a', { t: 'buzz' }); gm({ action: 'judge', ok: true });
 check(s.teams.find(t => t.name === 'Alpha').score === 2, 'buzz + validation : 2 pts');
-gm({ action: 'goto', cell: G.BOARD.indexOf('bt_ecrans') }); now = s.ch.startsAt;
+gm({ action: 'goto', cell: G.BOARD.indexOf('bt_ecrans') }); gm({ action: 'launch' }); now = s.ch.startsAt;
 check(s.ch.kind === 'media' && s.ch.media === 'audio' && s.ch.playMs === 30000 && s.deadline - now === 30000, 'blind test : 30 s d\'écoute maximum, on buzze d\'abord');
 const A = s.teams.find(t => t.name === 'Alpha').id, Bv = s.teams.find(t => t.name === 'Bravo').id;
 const scoreB = s.teams.find(t => t.id === Bv).score;
@@ -79,7 +79,7 @@ now = s.ch.startsAt;
 send('b', { t: 'answer', value: s.ch.q.a });
 check(s.phase === 'reveal' && s.teams.find(t => t.id === Bv).score === scoreB + 4 && /question bonus/.test(s.ch.summary), 'bonus réussi en carré : +2 (pas de +1 « équipe qui joue »)');
 const pochette = idx.pochette.length;
-gm({ action: 'goto', cell: G.BOARD.indexOf('pochette') }); now = s.ch.startsAt;
+gm({ action: 'goto', cell: G.BOARD.indexOf('pochette') }); gm({ action: 'launch' }); now = s.ch.startsAt;
 check(s.ch.kind === 'media' && s.ch.media === 'image' && s.ch.item.img && s.ch.playMs === 20000, `Pochette floutée : images du dossier pochettes (${pochette}), 20 s maximum`);
 
 console.log(fails.length ? `❌ Médias : ${fails.length} échec(s)` : `✅ Médias : ${ok} vérifications OK`);

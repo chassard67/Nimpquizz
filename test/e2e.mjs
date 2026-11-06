@@ -25,9 +25,9 @@ function client(name, hello) {
       if (m.s.bmc || (ch && ch.kind === 'bmc' && (ch.picks || ch.players))) leaks.push(`${name} voit les mains des autres (Blanc Manger Coco)`);
       for (const f of m.s.feed) if (f.k === 'taunt' && !c.done.has('t' + f.id)) { c.done.add('t' + f.id); if (m.s.me && f.to === m.s.me.teamId) taunted.push(`${name} a reçu « ${f.text} »`); }
     }
-    if (m.t === 'error') { c.errors.push(m.text); errors.push(`${name}: ${m.text}`); }
+    if (m.t === 'error') { c.errors.push(m.text); errors.push(`${name}: ${m.text}${process.env.DEBUG ? ' ← ' + c.last : ''}`); }
   });
-  c.send = m => c.ws.send(JSON.stringify(m));
+  c.send = m => { c.last = JSON.stringify(m); c.ws.send(JSON.stringify(m)); };
   c.now = () => Date.now() + (c.offset || 0);
   return c;
 }
@@ -79,7 +79,7 @@ function bot(c) {
     if (t.jokers.relance && Math.random() < .3) once(c, 'rel' + turnKey, () => c.send({ t: 'joker', kind: 'relance' }));
     else once(c, 'go' + turnKey, () => setTimeout(() => c.send({ t: 'go' }), 300));
   }
-  if (s.phase !== 'challenge' || !ch) return;
+  if (s.phase !== 'challenge' || !ch || ch.held) return;
   const k = turnKey + ch.type + ch.stage;
   if (now < (ch.startsAt || 0)) return;
   const part = !ch.participants || ch.participants.includes(my);
@@ -103,17 +103,21 @@ function bot(c) {
   if (ch.kind === 'open' && ch.stage === 'vote' && !ch.votes[my]) once(c, 'v' + k, () => { const o = Object.keys(ch.answers).filter(id => id !== my); if (o.length) c.send({ t: 'vote', teamId: o[0] }); });
   if (ch.kind === 'bac' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.cats.map((_, i) => i % 2 ? ch.letter + 'ouette' : '') }));
   if (ch.kind === 'bmc' && ch.stage === 'write' && ch.inGame && !ch.mine && s.bmcHand) once(c, 'bmc' + k, () => setTimeout(() => c.send({ t: 'bmc', cards: s.bmcHand.slice(0, ch.black.n).map(x => x.i) }), 300 + Math.random() * 1500));
-  if (ch.kind === 'buzz10' && ch.taps[my] === undefined && now >= ch.goAt) once(c, 'b' + k, () => setTimeout(() => c.send({ t: 'buzz' }), 9000 + Math.random() * 2000));
+  if (ch.kind === 'buzz10' && ch.goAt && ch.taps[my] === undefined && now >= ch.goAt) once(c, 'b' + k, () => setTimeout(() => c.send({ t: 'buzz' }), 9000 + Math.random() * 2000));
   if ((ch.kind === 'duel' || ch.kind === 'target') && ch.stage === 'pick' && ch.teamId === my) once(c, 'p' + k, () => c.send({ t: 'pick', teamId: pickOther(s, my) }));
   if (ch.kind === 'media' && ch.stage === 'play') once(c, 'bz' + k, () => c.send({ t: 'buzz' }));
 }
 
 function animateur() {
   const s = tv.s; if (!s) return;
-  const key = (s.move ? s.move.n : 'x') + s.phase + (s.ch ? s.ch.stage : '');
+  const key = (s.move ? s.move.n : 'x') + s.phase + (s.ch ? s.ch.stage : '') + (s.ch && s.ch.held ? 'H' : '');
   if (s.phase === 'reveal') {
     once(tv, 'n' + key, () => { seenTypes.add(s.ch.fallback ? s.ch.type + '*' : s.ch.type); console.log(`  [${s.teams.find(t => t.id === s.ch.teamId).name}] ${s.ch.fallback ? s.ch.type + ' (consolation)' : s.ch.label} → ${s.ch.summary}`); setTimeout(() => tv.send({ t: 'host', action: 'next' }), 400); });
   }
+  // le maître du jeu (ici l'écran télé) lance chaque épreuve, puis le décompte du Buzzer 10 s
+  if (s.phase === 'challenge' && s.ch.held) once(tv, 'L' + key, () => setTimeout(() => tv.send({ t: 'host', action: 'launch' }), 300));
+  if (s.phase === 'challenge' && !s.ch.held && s.ch.kind === 'buzz10' && s.ch.stage === 'ready' && !s.ch.goAt) once(tv, 'G' + key, () => setTimeout(() => tv.send({ t: 'host', action: 'go' }), 300));
+  // question bonus d'un blind test
   if (s.phase === 'challenge' && s.ch.kind === 'bac' && s.ch.stage === 'review') once(tv, 'bv' + key, () => { tv.send({ t: 'host', action: 'bacToggle', teamId: s.teams[0].id, i: 1 }); setTimeout(() => tv.send({ t: 'host', action: 'bacValidate' }), 300); });
   if (s.phase === 'challenge' && s.ch.kind === 'media' && s.ch.stage === 'answer') once(tv, 'j' + key, () => tv.send({ t: 'host', action: 'judge', ok: true }));
   if (s.phase === 'challenge' && s.ch.kind === 'bmc' && s.ch.stage === 'judge') once(tv, 'bmc' + key, () => { if (s.ch.entries.some(e => e.teamId || e.name)) leaks.push('cartes du Blanc Manger Coco pas anonymes'); setTimeout(() => tv.send({ t: 'host', action: 'bmcPick', i: 0 }), 500); });

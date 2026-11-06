@@ -7,22 +7,22 @@
 
 | Case | Épreuve | Case | Épreuve |
 |---|---|---|---|
-| 0 | Départ | 16 | Culture G |
-| 1 | Culture G | 17 | Duel |
-| 2 | BT Musique | 18 | Affiche mystère |
-| 3 | Emojis | 19 | BT Séries & films |
-| 4 | Vol de points | 20 | A contrario |
-| 5 | BT Séries & films | 21 | Le Bac |
-| 6 | Plus ou moins | 22 | Emojis |
-| 7 | Millionnaire | 23 | Donne-moi l'expression |
-| 8 | Buzzer 10 s | 24 | Culture G |
-| 9 | Pochette floutée | 25 | Une seule note |
-| 10 | Blanc Manger Coco | 26 | Réplique culte |
-| 11 | Échange de place | 27 | Blanc Manger Coco |
-| 12 | Burger Quiz | 28 | Couche par couche |
-| 13 | Grand mensonge | 29 | BT Jeux vidéo |
-| 14 | BT Musique | 30 | À la noix |
-| 15 | Vidéo culte | 31 | Titre débile |
+| 0 | Départ | 16 | Vidéo culte |
+| 1 | Culture G | 17 | Burger Quiz |
+| 2 | BT Musique | 18 | Duel |
+| 3 | Emojis | 19 | À la noix |
+| 4 | Vol de points | 20 | BT Jeux vidéo |
+| 5 | Plus ou moins | 21 | A contrario |
+| 6 | Pochette floutée | 22 | Échange de place |
+| 7 | A contrario | 23 | Le Bac |
+| 8 | BT Séries & films | 24 | Réplique culte |
+| 9 | Millionnaire | 25 | Culture G |
+| 10 | Buzzer 10 s | 26 | Blanc Manger Coco |
+| 11 | Culture G | 27 | Emojis |
+| 12 | Blanc Manger Coco | 28 | Une seule note |
+| 13 | Grand mensonge | 29 | Titre débile |
+| 14 | BT Musique | 30 | BT Séries & films |
+| 15 | Double Sens | 31 | Double Sens |
 
 ## Culture G — Duo, carré ou cash (72 questions)
 
@@ -628,7 +628,7 @@ _Cinq questions de plus en plus dures, seule l'équipe qui joue répond. 1, 2, 3
 
 ## Donne-moi l'expression (27 sujets, 2 cases)
 
-_Chaque équipe propose son expression, puis vote pour la meilleure des autres équipes : 2 pts._ Les deux sortes de sujets tombent en alternance.
+_Une phrase qui marche dans deux situations opposées. Chaque équipe écrit la sienne, puis on vote pour la meilleure des autres : 2 pts._ Les deux sortes de sujets tombent en alternance.
 
 ### Une phrase qui marche dans les deux situations
 1. À **un repas de famille** et à **une soirée échangiste** _(ex. « C'est toi qui as farci la dinde ? »)_

@@ -36,6 +36,8 @@ L'ordi reste branché à la télé (plateau, son, vidéos) ; le maître du jeu p
 
 **Changer le code secret** (conseillé, le dépôt est public) : Cloudflare → Workers & Pages → `nimpquizz` → Settings → Variables and Secrets → ajouter un **Secret** `GM_PIN` avec votre code. Il est conservé aux déploiements suivants.
 
+**Chaque épreuve attend le maître du jeu** : quand un pion arrive sur une case, la télé affiche le nom de l'épreuve et sa règle, le téléphone du maître du jeu affiche déjà la question et la réponse ; rien ne démarre (question, son, chronos) avant « ▶ Lancer l'épreuve ». Buzzer 10 s : le maître du jeu déclenche ensuite le décompte 3, 2, 1 (avec les bips). Blind test trouvé : « 🎵 La suite de la chanson » sur la télé ou le téléphone. Toutes les heures de jeu, le téléphone propose une pause. Mode NSFW : bouton 🕺 Rabbi (il danse sur le plateau ; un 2e appui coupe la musique et il s'assoit).
+
 Ce que voit et peut faire le maître du jeu :
 
 - **En cours** : la **réponse attendue** (bonne réponse, bonus, toutes les questions d'un Burger Quiz / Millionnaire, carte noire du Blanc Manger Coco, lettre du Bac…), la réponse de chaque équipe en direct, et les actions du moment : lancer le dé à la place d'une équipe ou **choisir sa valeur**, relancer le dé, corriger la case d'arrivée, envoyer sur n'importe quelle case, donner la main à une autre équipe, valider ✓ / ✓ + bonus / ✗ un buzz, **annuler un buzz**, **relancer l'extrait** (ou reflouter la pochette), choisir la cible / le menu / « je continue » à la place d'une équipe, corriger le Bac, accepter ou refuser un cash, **choisir la carte la plus drôle** au Blanc Manger Coco, **effacer la réponse** d'une équipe (elle peut répondre à nouveau), **écarter ou réintégrer** une équipe de l'épreuve, +15 s / +30 s, révéler maintenant, passer, **rejouer l'épreuve** (même question, réponses et points remis à zéro) ou **autre question** sur la même case, ±1 pt après la révélation.
@@ -48,10 +50,10 @@ Ce que voit et peut faire le maître du jeu :
 
 Le plateau compte 32 cases, prévu pour 1,5 à 2 tours en 2 à 3 h avec 3 ou 4 équipes. La liste complète des questions et réponses est dans [`QUESTIONS.md`](QUESTIONS.md).
 
-- **Questions** : Culture G en *Duo, carré ou cash* ×3 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis ×2 · Grand mensonge · A contrario · Plus ou moins · Donne-moi l'expression ×2 et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
+- **Questions** : Culture G en *Duo, carré ou cash* ×3 (thèmes qui tournent : général, manga, dessins animés, chanson française, chanson étrangère, chansons paillardes, ciné & séries) · À la noix · Emojis ×2 · Grand mensonge · A contrario · Plus ou moins · Double Sens ×2 et Titre débile (on écrit, puis on vote) · Le Bac · Burger Quiz (3 menus dont 1 taré) · Millionnaire (5 marches, on peut s'arrêter)
 - **Cartes** : Blanc Manger Coco ×2 (voir plus bas)
-- **Blind tests** : actuel, intemporel, séries & films ×2 · Réplique culte · Une seule note · Couche par couche (batterie, basse, etc.)
-- **Visuel** : Pochette floutée · Affiche mystère (indices un par un) · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
+- **Blind tests** : actuel, intemporel, séries & films ×2 · Réplique culte · Une seule note
+- **Visuel** : Pochette floutée · Vidéo culte (la vidéo s'arrête, puis questions + bonus)
 - **Buzzer** : Buzzer 10 s
 - **Pièges** : Duel · Vol de points · Échange de place
 - Repasser par **Départ** rapporte 2 pts. Sur les blind tests, l'animateur peut valider « ✓ + bonus » (+1) si l'équipe donne aussi l'année ou le réalisateur.

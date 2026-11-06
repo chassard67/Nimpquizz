@@ -16,6 +16,7 @@ function setup() {
   send('b', { t: 'createTeam', name: 'Bravo', player: 'B' });
   gm({ action: 'start' });
   gm({ action: 'goto', cell });
+  gm({ action: 'launch' });
   now = s.ch.startsAt;
   const pts = id => s.teams.find(t => t.id === id).score;
   const idOf = pid => s.players[pid].teamId;

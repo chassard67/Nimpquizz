@@ -7,10 +7,11 @@ import { QCM, NUMBERS, BAC, MEDIA, TAUNTS, TEAM_NAMES, CULTURE_THEMES, CONTRARIO
 
 // 32 cases : 10 en haut, 6 à droite, 10 en bas, 6 à gauche
 export const BOARD = [
-  'depart', 'culture', 'bt_musique', 'emojis', 'vol', 'bt_ecrans', 'plusoumoins', 'millions', 'buzz10', 'pochette',
-  'bmc', 'echange', 'burger', 'mensonge', 'bt_musique', 'video',
-  'culture', 'duel', 'affiche', 'bt_ecrans', 'contrario', 'bac', 'emojis', 'expression', 'culture', 'unenote',
-  'replique', 'bmc', 'instruments', 'bt_jeux', 'noix', 'titredebile'
+  // une case sur deux est une question (bleue) : jamais deux couleurs identiques côte à côte
+  'depart', 'culture', 'bt_musique', 'emojis', 'vol', 'plusoumoins', 'pochette', 'contrario', 'bt_ecrans', 'millions',
+  'buzz10', 'culture', 'bmc', 'mensonge', 'bt_musique', 'expression',
+  'video', 'burger', 'duel', 'noix', 'bt_jeux', 'contrario', 'echange', 'bac', 'replique', 'culture',
+  'bmc', 'emojis', 'unenote', 'titredebile', 'bt_ecrans', 'expression'
 ];
 
 export const TYPES = {
@@ -27,7 +28,7 @@ export const TYPES = {
   emojis:        { label: 'Emojis', group: 'q', kind: 'qcm', rule: 'Devinez le titre ou l\'expression. 2 pts pour l\'équipe qui joue, 1 pt pour les autres.' },
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
   plusoumoins:   { label: 'Plus ou moins', group: 'q', kind: 'number', rule: 'Donnez un nombre. L\'équipe la plus proche prend 2 pts, +1 si pile poil.' },
-  expression:    { label: 'Donne-moi l\'expression', group: 'q', kind: 'open', rule: 'Chaque équipe propose son expression, puis vote pour la meilleure des autres équipes : 2 pts.' },
+  expression:    { label: 'Double Sens', group: 'q', kind: 'open', rule: 'Une phrase qui marche dans deux situations opposées. Chaque équipe écrit la sienne, puis on vote pour la meilleure des autres : 2 pts.' },
   titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Glissez UN mot n\'importe où dans le titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
   bac:           { label: 'Le Bac', group: 'q', kind: 'bac', rule: 'Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d\'autre ne l\'a.' },
   bmc:           { label: 'Blanc Manger Coco', group: 'cm', kind: 'bmc', rule: 'Complétez la carte noire avec une de vos cartes blanches. Le maître du jeu choisit la plus drôle : 2 pts pour l\'équipe du joueur.' },
@@ -56,7 +57,7 @@ export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#
 export const T = {
   grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
   bac: 75000, review: 120000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
-  media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000,
+  media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000, b10cd: 3000,
   audio: 30000,              // blind test musical : 30 s d'écoute maximum
   image: 20000,              // pochette floutée : 20 s maximum
   mode: 15000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
@@ -79,7 +80,7 @@ const MAX_TEAMS = 6;
 const META = {
   board: BOARD.map(type => ({ type, label: TYPES[type].label, group: TYPES[type].group })),
   jokers: JOKERS, colors: COLORS, taunts: TAUNTS, teamNames: TEAM_NAMES,
-  timers: { media: 45000, audio: 30000, image: 20000, buzzMax: 20000, clue: 7000, layer: 8000, hint: 10000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
+  timers: { media: 45000, audio: 30000, image: 20000, b10cd: 3000, buzzMax: 20000, clue: 7000, layer: 8000, hint: 10000, hop: HOP_MS, roll: ROLL_ANIM_MS, cd: CD_MS },
   ladder: LADDER, dcc: DCC_PTS, bmcPts: BMC_PTS,
   cultureThemes: { gen: 'Général', ...Object.fromEntries(Object.entries(CULTURE_THEMES).map(([k, v]) => [k, v.label])) }
 };
@@ -91,11 +92,8 @@ const POOLS = {
 // Épreuves où l'on écrit puis l'on vote
 const OPEN_POOLS = {
   // les deux sortes de sujets en alternance
-  expression: (() => {
-    const a = DOUBLESENS.map(d => ({ q: `Donne-moi une phrase qui marche aussi bien à ${d.a} qu'à ${d.b}`, sub: d.ex ? `Exemple : ${d.ex}` : '' }));
-    const b = INVENTE.map(d => ({ q: `Donne-moi une expression pour définir ${d.q}`, sub: d.ex ? `Exemple : ${d.ex}` : '' }));
-    const out = []; for (let i = 0; i < Math.max(a.length, b.length); i++) { if (b[i]) out.push(b[i]); if (a[i]) out.push(a[i]); } return out;
-  })(),
+  // Double Sens : une phrase qui marche dans deux situations opposées
+  expression: DOUBLESENS.map(d => ({ q: `Une phrase qui marche aussi bien à ${d.a} qu'à ${d.b}`, sub: d.ex ? `Exemple : ${d.ex}` : '' })),
   // le titre est découpé en mots : le joueur glisse son mot entre deux mots, au début ou à la fin
   titredebile: TITRES.map(t => ({ q: `« ${t} »`, words: t.split(/\s+/).filter(Boolean), sub: 'Glissez UN seul mot où vous voulez. Ex. : Star Wars → Star Wars Zazat · Le Parrain → Le Parrain Charcutier' }))
 };
@@ -107,9 +105,15 @@ const bmcBlanks = t => Math.max(1, String(t).split(BLANK).length - 1);
 const bmcOk = (s, card) => !card.nsfw || !!s.nsfw;
 function bmcState(s) { return (s.bmc = s.bmc || { hands: {}, played: [] }); }
 // Tire une carte blanche : d'abord une jamais jouée et dans aucune main, puis on remélange la défausse
-function bmcDraw(s, rng, mine = []) {
+function bmcDraw(s, rng, mine = [], onlyNsfw = false) {
   const st = bmcState(s);
-  const all = BMC.blanches.map((c, i) => i).filter(i => bmcOk(s, BMC.blanches[i]));
+  let all = BMC.blanches.map((c, i) => i).filter(i => bmcOk(s, BMC.blanches[i]));
+  // mode NSFW : une carte sur deux tirée parmi les cartes NSFW (sinon elles se noient dans les gentilles)
+  if (s.nsfw && (onlyNsfw || rng() < 0.5)) {
+    const inHands = new Set(Object.values(st.hands).flat());
+    const x = all.filter(i => BMC.blanches[i].nsfw && !inHands.has(i) && !st.played.includes(i));
+    if (x.length) all = x; else if (onlyNsfw) { const y = all.filter(i => BMC.blanches[i].nsfw && !mine.includes(i)); if (y.length) all = y; }
+  }
   if (!all.length) return -1;
   const inHands = new Set(Object.values(st.hands).flat());
   let free = all.filter(i => !inHands.has(i) && !st.played.includes(i));
@@ -117,6 +121,28 @@ function bmcDraw(s, rng, mine = []) {
   if (!free.length) free = all.filter(i => !mine.includes(i)); // plus de joueurs que de cartes : on accepte les doublons
   if (!free.length) free = all;
   return free[Math.floor(rng() * free.length)];
+}
+// Carte noire : jamais la même dans une partie (tant qu'il en reste) ; en NSFW, les cartes NSFW passent en priorité
+function bmcBlack(s, rng) {
+  const used = s.used.bmcB = s.used.bmcB || [];
+  let pool = BMC.noires.map((c, i) => i).filter(i => bmcOk(s, BMC.noires[i]) && !used.includes(i));
+  if (!pool.length) { s.used.bmcB = []; return bmcBlack(s, rng); }
+  if (s.nsfw && rng() < 0.6) { const x = pool.filter(i => BMC.noires[i].nsfw); if (x.length) pool = x; }
+  const i = pool[Math.floor(rng() * pool.length)];
+  used.push(i);
+  return i;
+}
+// En passant en NSFW : chaque main reçoit au moins 2 cartes NSFW tout de suite
+function bmcSpice(s, pid, rng) {
+  const st = bmcState(s), hand = st.hands[pid] || [];
+  for (let guard = 0; guard < 6 && hand.filter(i => BMC.blanches[i].nsfw).length < 2; guard++) {
+    const soft = hand.filter(i => !BMC.blanches[i].nsfw);
+    const i = bmcDraw(s, rng, hand, true);
+    if (i < 0 || !BMC.blanches[i].nsfw) break;
+    if (hand.length >= BMC_HAND && soft.length) { const k = soft[Math.floor(rng() * soft.length)]; hand.splice(hand.indexOf(k), 1); st.played.push(k); }
+    hand.push(i);
+  }
+  st.hands[pid] = hand;
 }
 // Complète la main d'un joueur à 5 cartes (et retire les cartes NSFW si le mode n'est plus actif)
 function bmcFill(s, pid, rng) {
@@ -141,10 +167,13 @@ const team = (s, id) => s.teams.find(t => t.id === id);
 const active = s => s.teams[s.turn];
 const others = (s, id) => s.teams.filter(t => t.id !== id);
 
-function pickIndex(s, key, len, rng) {
-  if (!len) return -1;
+// Jamais deux fois la même question dans une partie : une banque épuisée lève EXHAUSTED
+// (la case donne alors une question de consolation), sauf la Culture G qui se remélange.
+const EXHAUSTED = new Error('banque épuisée');
+function pickIndex(s, key, len, rng, reuse = false) {
+  if (!len) throw EXHAUSTED;
   let used = s.used[key] || [];
-  if (used.length >= len) used = [];
+  if (used.length >= len) { if (!reuse) throw EXHAUSTED; used = []; }
   const free = [];
   for (let i = 0; i < len; i++) if (!used.includes(i)) free.push(i);
   const i = free[Math.floor(rng() * free.length)];
@@ -168,7 +197,7 @@ function culturePick(s, rng) {
   if (!cand.length) cand = themes;
   const th = cand[Math.floor(rng() * cand.length)];
   s.used.cultRecent = [...recent, th].slice(-Math.min(3, themes.length - 1));
-  const i = pickIndex(s, 'c_' + th, CULTURE_ALL[th].length, rng);
+  const i = pickIndex(s, 'c_' + th, CULTURE_ALL[th].length, rng, true);
   return { ...shuffleQ(CULTURE_ALL[th][i], rng), theme: th };
 }
 
@@ -291,6 +320,7 @@ function handleInner(s, msg, ctx) {
 
   if (!myTeam) return 'Rejoignez d\'abord une équipe.';
   if (s.paused && t !== 'taunt') return '⏸ Pause ! On attend le maître du jeu.';
+  if (s.phase === 'challenge' && s.ch && s.ch.held && ['answer', 'buzz', 'mode', 'theme', 'decide', 'pick', 'vote', 'bmc'].includes(t)) return 'Patience : le maître du jeu va lancer l\'épreuve.';
 
   if (t === 'taunt') {
     const last = s.lastTaunt[ctx.pid] || 0;
@@ -339,11 +369,9 @@ function hostAction(s, msg, ctx, rng) {
     if (on === !!s.nsfw) return null;
     s.nsfw = on;
     const st = bmcState(s);
-    for (const pid of Object.keys(st.hands)) {
-      // en cours de partie, on remplace 2 cartes de chaque main pour que le changement se sente tout de suite
-      if (on) for (let k = 0; k < 2 && st.hands[pid].length; k++) st.played.push(...st.hands[pid].splice(Math.floor(rng() * st.hands[pid].length), 1));
-      bmcFill(s, pid, rng);
-    }
+    // en cours de partie : les mains reçoivent tout de suite des cartes NSFW (ou les perdent)
+    for (const pid of Object.keys(st.hands)) { bmcFill(s, pid, rng); if (on) bmcSpice(s, pid, rng); }
+    if (!on) s.rabbi = null;
     feed(s, 'info', s.nsfw ? '🔞 Mode NSFW activé : on ne répond plus de rien.' : '😇 Mode NSFW désactivé : retour aux cartes gentilles.');
     return null;
   }
@@ -395,6 +423,37 @@ function hostAction(s, msg, ctx, rng) {
     s.move = { at: ctx.now - ROLL_ANIM_MS, teamId: tm.id, from: tm.pos, roll: 0, to: i, passed: false, n: ++s.moveSeq, test: true };
     feed(s, 'info', `Mode test : ${tm.name} est téléportée sur « ${TYPES[BOARD[i]].label} ».`);
     applyMove(s, ctx, rng);
+    return null;
+  }
+  // ── le maître du jeu lance l'épreuve (question, chrono, son : tout démarre maintenant)
+  if (a === 'launch' || (a === 'next' && s.phase === 'challenge' && s.ch && s.ch.held)) {
+    const ch = s.ch;
+    if (s.phase !== 'challenge' || !ch || !ch.held) return 'Pas d\'épreuve en attente.';
+    const d = Math.max(0, ctx.now - (ch.heldAt || ctx.now));
+    delete ch.held; delete ch.heldAt;
+    shiftTimes(ch, d);
+    s.deadline = ch.deadline || null;
+    return null;
+  }
+  // ── Buzzer 10 s : décompte 3, 2, 1 puis GO
+  if (a === 'go') {
+    const ch = s.ch;
+    if (s.phase !== 'challenge' || !ch || ch.kind !== 'buzz10' || ch.held || ch.stage !== 'ready') return 'Pas de décompte à lancer.';
+    if (ch.goAt) return 'Décompte déjà lancé.';
+    ch.goAt = ctx.now + T.b10cd; ch.deadline = ch.goAt + T.buzzMax; s.deadline = ch.deadline;
+    return null;
+  }
+  // ── blind test trouvé : la suite de la chanson (la télé ou le téléphone du maître du jeu)
+  if (a === 'outro') {
+    const ch = s.ch;
+    if (s.phase !== 'reveal' || !ch || !ch.item || !ch.item.src) return 'Pas de chanson à écouter.';
+    ch.outro = !ch.outro; ch.outroN = (ch.outroN || 0) + 1;
+    return null;
+  }
+  // ── 🔞 le rabbin danse (mode NSFW) ; deuxième appui : il s'assoit et la musique s'arrête
+  if (a === 'rabbi') {
+    if (!s.nsfw) return 'Seulement en mode NSFW.';
+    s.rabbi = s.rabbi && s.rabbi.mode === 'dance' ? { mode: 'sit', at: ctx.now } : { mode: 'dance', at: ctx.now };
     return null;
   }
   if (a === 'roll') {
@@ -502,13 +561,14 @@ function snap(s) {
 }
 function stageKey(s) {
   const ch = s.ch;
-  return [s.phase, s.turn, s.move && s.move.n, ch && ch.cell, ch && ch.stage, ch && ch.i, ch && ch.level].join('|');
+  return [s.phase, s.turn, s.move && s.move.n, ch && ch.cell, ch && ch.stage, ch && ch.i, ch && ch.level, ch && ch.held ? 'H' : ''].join('|');
 }
 function describe(s) {
   const tm = active(s), n = tm ? tm.name : '?';
   const ch = s.ch;
   if (s.phase === 'roll') return `Tour de ${n} : avant le lancer de dé`;
   if (s.phase === 'rolled' && s.move) return `${n} a fait ${s.move.roll} → case ${s.move.to} (${TYPES[BOARD[s.move.to]].label})`;
+  if (s.phase === 'challenge' && ch && ch.held) return `${ch.label} (case ${ch.cell}) : avant le lancement`;
   if (s.phase === 'challenge' && ch) return `${ch.label} (case ${ch.cell}) en cours${STAGE_LBL[ch.stage] ? ' · ' + STAGE_LBL[ch.stage] : ''}${ch.i ? ' · question ' + (ch.i + 1) : ''}`;
   if (s.phase === 'reveal' && ch) return `Résultat : ${ch.label || 'épreuve'} (case ${ch.cell ?? '?'})`;
   return s.phase;
@@ -531,7 +591,9 @@ function shiftTimes(o, d) {
 // Remet le jeu dans un état mémorisé, comme si on y était à l'instant
 function restore(s, data, at, now) {
   const old = s;
-  const keep = { feed: old.feed, seq: old.seq, players: old.players, lastTaunt: old.lastTaunt, hist: old.hist, histSeq: old.histSeq, chSnap: old.chSnap, hostKey: old.hostKey };
+  const keep = { feed: old.feed, seq: old.seq, players: old.players, lastTaunt: old.lastTaunt, hist: old.hist, histSeq: old.histSeq, chSnap: old.chSnap, hostKey: old.hostKey,
+    // questions déjà tirées et réglages de soirée : on ne revient pas dessus
+    used: old.used, nsfw: old.nsfw, bmc: old.bmc, rabbi: old.rabbi, pausedMs: old.pausedMs };
   const extraTeams = old.teams;
   const st = JSON.parse(data);
   for (const k of Object.keys(s)) delete s[k];
@@ -569,6 +631,7 @@ function gmAction(s, a, msg, ctx, rng) {
       shiftTimes(s.ch, d); shiftTimes(s.move, d);
       if (s.deadline) s.deadline += d;
       if (s.endAt) s.endAt += d;
+      s.pausedMs = (s.pausedMs || 0) + d;   // temps de pause cumulé (pour proposer une pause toutes les heures de jeu)
       feed(s, 'info', '▶️ On reprend !');
       return null;
     }
@@ -806,6 +869,24 @@ const QCM_Q = { bt_musique: 'Quel est ce morceau ?', bt_ecrans: 'De quelle séri
 
 // ─── démarrage d'une case ────────────────────────────────────
 function startCell(s, type, ctx, rng, gains = {}) {
+  const usedBefore = JSON.stringify(s.used);
+  try { startCellInner(s, type, ctx, rng, gains); }
+  catch (e) {
+    if (e !== EXHAUSTED) throw e;
+    // toutes les questions de cette case ont déjà servi : question de Culture G à la place
+    s.used = JSON.parse(usedBefore);
+    const meta = TYPES[type], tm = active(s), now = ctx.now;
+    s.ch = { type, kind: 'qcm', label: meta.label, group: meta.group, teamId: tm.id, gains, startsAt: now + T.grace, cell: tm.pos,
+      fallback: type, q: culturePick(s, rng), participants: s.teams.map(x => x.id), answers: {}, fifty: {}, deadline: now + T.grace + T.qcm,
+      rule: 'Toutes les questions de cette case ont déjà été jouées. Question de consolation, 2 pts / 1 pt.' };
+    s.phase = 'challenge'; s.deadline = s.ch.deadline;
+  }
+  // chaque épreuve attend que le maître du jeu la lance (il a déjà la question et la réponse sur son téléphone)
+  if (s.phase === 'challenge' && s.ch && !s.ch.held) {
+    s.ch.held = true; s.ch.heldAt = (s.ch.startsAt || ctx.now) - T.grace; s.deadline = null;
+  }
+}
+function startCellInner(s, type, ctx, rng, gains = {}) {
   const now = ctx.now;
   const meta = TYPES[type];
   const tm = active(s);
@@ -870,17 +951,16 @@ function startCell(s, type, ctx, rng, gains = {}) {
     s.ch = { ...base, letter, cats, stage: 'write', participants: all, answers: {}, valid: {}, deadline: now + T.grace + T.bac };
   } else if (meta.kind === 'bmc') {
     // carte noire tirée parmi celles autorisées (gentilles, ou toutes en mode NSFW)
-    const pool = BMC.noires.filter(c => bmcOk(s, c));
-    const black = pool[pickIndex(s, 'bmc' + (s.nsfw ? 'X' : 'N'), pool.length, rng)];
+    const black = BMC.noires[bmcBlack(s, rng)];
     // joueurs : ceux qui sont connectés (ou tous les inscrits si on ne sait pas)
     const online = Array.isArray(ctx.online) ? ctx.online : null;
     const pids = Object.keys(s.players).filter(p => !online || online.includes(p));
     for (const p of pids) bmcFill(s, p, rng);
-    s.ch = { ...base, black: { t: black.t, n: bmcBlanks(black.t) }, stage: 'write', players: pids, picks: {}, deadline: now + T.grace + T.bmcWrite };
+    s.ch = { ...base, black: { t: black.t, n: bmcBlanks(black.t) }, stage: 'write', players: pids, picks: {}, deadline: null };
     if (!pids.length) { s.ch.entries = []; return toReveal(s, ctx, 'Personne n\'a de cartes en main (aucun joueur connecté). On passe.'); }
   } else if (meta.kind === 'buzz10') {
-    const go = now + T.grace + T.buzzReady;
-    s.ch = { ...base, stage: 'ready', goAt: go, participants: all, taps: {}, deadline: go + T.buzzMax };
+    // pas de GO automatique : le maître du jeu déclenche le décompte 3, 2, 1 (action « go »)
+    s.ch = { ...base, stage: 'ready', goAt: null, participants: all, taps: {}, deadline: null };
   } else if (meta.kind === 'duel' || meta.kind === 'target') {
     if (!others(s, tm.id).length) { s.ch = base; return toReveal(s, ctx, 'Pas d\'adversaire à cette table (mode test) : on passe. Allez, au suivant.'); }
     s.ch = { ...base, stage: 'pick', target: null, deadline: now + T.grace + T.pick };
@@ -1016,7 +1096,7 @@ function bmcToJudge(s, ctx, rng = Math.random) {
   for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [entries[i], entries[j]] = [entries[j], entries[i]]; }
   ch.entries = entries;
   if (!entries.length) return toReveal(s, ctx, 'Personne n\'a joué de carte. Un grand moment de solitude.');
-  ch.stage = 'judge'; ch.deadline = ctx.now + T.bmcJudge; s.deadline = ch.deadline;
+  ch.stage = 'judge'; ch.deadline = null; s.deadline = null;   // pas de chrono : le maître du jeu prend le temps de rire
 }
 
 // ─── Duo, carré ou cash ──────────────────────────────────────
@@ -1134,6 +1214,7 @@ function buzz(s, tm, ctx, rng) {
   if (s.phase !== 'challenge' || !ch) return 'Rien à buzzer.';
   if (ch.kind === 'buzz10') {
     if (ch.taps[tm.id] !== undefined) return 'Déjà buzzé.';
+    if (!ch.goAt) return 'Attendez le décompte du maître du jeu !';
     if (ctx.now < ch.goAt) { ch.taps[tm.id] = -1; feed(s, 'info', `${tm.name} a buzzé avant le GO. Faux départ, éliminés. 🤦`); }
     else ch.taps[tm.id] = ctx.now - ch.goAt;
     if (ch.participants.every(id => ch.taps[id] !== undefined)) resolve(s, ctx, rng);
@@ -1439,7 +1520,7 @@ function timeout(s, ctx, rng) {
 
 export function nextDeadline(s) {
   if (s.paused) return null;
-  if (s.phase === 'challenge' && s.ch && s.ch.kind === 'buzz10' && s.ch.stage === 'ready') return s.ch.goAt;
+  if (s.phase === 'challenge' && s.ch && s.ch.kind === 'buzz10' && s.ch.stage === 'ready') return s.ch.held ? null : s.ch.goAt;
   return s.deadline;
 }
 
@@ -1484,8 +1565,13 @@ export function view(s, viewer = {}, extra = {}) {
   v.me = me ? { pid: viewer.pid, teamId: me.teamId, name: me.name } : null;
   v.host = !!viewer.host;
   v.players = Object.values(s.players).reduce((acc, p) => { acc[p.teamId] = (acc[p.teamId] || 0) + 1; return acc; }, {});
+  // épreuve pas encore lancée : la télé et les joueurs ne voient que le nom de la case et la règle
+  if (v.ch && s.phase === 'challenge' && s.ch.held && !gm) {
+    const c = v.ch;
+    v.ch = { type: c.type, kind: c.kind, label: c.label, group: c.group, rule: c.rule, teamId: c.teamId, cell: c.cell, gains: c.gains || {}, fallback: c.fallback, held: true };
+  }
   const ch = v.ch;
-  if (ch && s.phase === 'challenge' && !gm) {
+  if (ch && s.phase === 'challenge' && !gm && !ch.held) {
     if (ch.q) { delete ch.q.a; delete ch.q.f; delete ch.q.k; delete ch.q.n; if (ch.q.r) ch.q.r = ch.q.r.map(() => null); }
     if (ch.q && s.ch.q && s.ch.q.n !== undefined) ch.q.isNumber = true;
     delete ch.qs; delete ch.ladder;

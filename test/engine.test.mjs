@@ -26,8 +26,14 @@ const seen = new Set();
 let turns = 0;
 
 function playChallenge() {
+  if (!s.ch || s.phase !== 'challenge') return;
+  // l'épreuve attend le maître du jeu
+  if (s.ch.held) {
+    check(G.view(s, { pid: 'p2' }).ch.held && !G.view(s, { pid: 'p2' }).ch.q, `épreuve en attente : rien de visible sur les téléphones (${s.ch.type})`);
+    check(G.view(s, { role: 'gm', host: true, gm: true }).ch.held !== undefined, 'le MJ voit l\'épreuve en attente');
+    check(host({ action: 'launch' }) === null && !s.ch.held, `lancement (${s.ch.type})`);
+  }
   const ch = s.ch;
-  if (!ch || s.phase !== 'challenge') return;
   seen.add(ch.fallback ? ch.type + '(fallback)' : ch.type);
   now = Math.max(now, ch.startsAt || now);
   // la vue téléphone ne doit jamais contenir la réponse
@@ -138,6 +144,8 @@ function playChallenge() {
     const vr = G.view(s, { role: 'tv' });
     check(vr.ch.entries[1].teamId === win.teamId && !vr.ch.entries[1].pid, 'bmc : auteurs dévoilés à la révélation, sans identifiant');
   } else if (ch.kind === 'buzz10') {
+    check(send(pidOf(ids[0]), { t: 'buzz' }) !== null && ch.taps[ids[0]] === undefined, 'buzzer 10 s : pas de buzz avant le décompte');
+    check(host({ action: 'go' }) === null && ch.goAt === now + G.T.b10cd, 'buzzer 10 s : le MJ lance le décompte 3-2-1');
     send(pidOf(ids[0]), { t: 'buzz' }); // faux départ
     now = ch.goAt; G.tick(s, now, rng);
     now += 9800; send(pidOf(ids[1]), { t: 'buzz' });
