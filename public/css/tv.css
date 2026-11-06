@@ -336,3 +336,12 @@ body.rabbion #center { padding-bottom: 150px; }
 #soundGate span { font-family: var(--display); font-size: 30px; }
 #soundGate small { font-size: 18px; font-weight: 800; }
 .question.quote { font-size: 64px; text-align: center; font-style: italic; line-height: 1.25; }
+.cards.many { grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.cards.many .card { font-size: 22px; padding: 16px 20px; }
+.card.dim, .bmc-entry.dim { opacity: .35; }
+.bmc-entry { position: relative; }
+.bmc-entry .votes { position: absolute; top: -14px; right: -10px; background: var(--yellow); color: var(--bg); border-radius: 999px; padding: 4px 14px; font-family: var(--display); font-size: 22px; }
+.tally { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; margin-top: 16px; font-size: 24px; }
+.tally span { display: flex; align-items: center; gap: 8px; }
+.tally b { color: var(--yellow); font-family: var(--display); font-size: 30px; }
+.cards { row-gap: 30px; }

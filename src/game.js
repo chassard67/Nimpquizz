@@ -28,10 +28,10 @@ export const TYPES = {
   emojis:        { label: 'Emojis', group: 'q', kind: 'dcc', emo: true, rule: 'Tapez le titre en CASH (4 pts), ou prenez le carré pour voir 4 propositions (2 pts). +1 pour l\'équipe qui joue.' },
   mensonge:      { label: 'Grand mensonge', group: 'q', kind: 'qcm', rule: 'Deux affirmations sont vraies. Trouvez le mensonge. 2 pts / 1 pt.' },
   plusoumoins:   { label: 'Plus ou moins', group: 'q', kind: 'number', rule: 'Donnez un nombre. L\'équipe la plus proche prend 2 pts, +1 si pile poil.' },
-  expression:    { label: 'Double Sens', group: 'q', kind: 'open', rule: 'Une phrase qui marche dans deux situations opposées. Chaque équipe écrit la sienne, puis on vote pour la meilleure des autres : 2 pts.' },
-  titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Glissez UN mot n\'importe où dans le titre pour le rendre débile. Écrivez, puis votez pour le meilleur des autres : 2 pts.' },
+  expression:    { label: 'Double Sens', group: 'q', kind: 'open', rule: 'Une phrase qui marche dans deux situations opposées. Chaque joueur écrit la sienne, puis vote pour celle d\'une autre équipe. Les votes s\'additionnent : l\'équipe la plus votée prend 2 pts.' },
+  titredebile:   { label: 'Titre débile', group: 'q', kind: 'open', rule: 'Glissez UN mot n\'importe où dans le titre pour le rendre débile. Chaque joueur écrit, puis vote pour le titre d\'une autre équipe. L\'équipe la plus votée prend 2 pts.' },
   bac:           { label: 'Le Bac', group: 'q', kind: 'bac', rule: 'Une lettre, 5 catégories. 1 pt par mot validé, +1 si personne d\'autre ne l\'a.' },
-  bmc:           { label: 'Blanc Manger Coco', group: 'cm', kind: 'bmc', rule: 'Complétez la carte noire avec une de vos cartes blanches. Le maître du jeu choisit la plus drôle : 2 pts pour l\'équipe du joueur.' },
+  bmc:           { label: 'Blanc Manger Coco', group: 'cm', kind: 'bmc', rule: 'Complétez la carte noire avec une de vos cartes blanches. Puis chacun vote pour la plus drôle d\'une autre équipe. L\'équipe la plus votée prend 2 pts.' },
   bt_musique:    { label: 'BT Musique', group: 'bt', kind: 'media', media: 'audio', rule: 'Buzzez dès que vous reconnaissez. Bonne réponse : 2 pts (+1 avec le bonus).' },
   bt_jeux:       { label: 'BT Jeux vidéo', group: 'bt', kind: 'media', media: 'audio', rule: 'Une musique de jeu vidéo : buzzez dès que vous reconnaissez le jeu. 2 pts (+1 avec le bonus).' },
   bt_ecrans:     { label: 'BT Séries & films', group: 'bt', kind: 'media', media: 'audio', rule: 'Générique de série ou musique de film : buzzez dès que vous reconnaissez. 2 pts.' },
@@ -55,14 +55,14 @@ export const JOKERS = {
 export const COLORS = ['#FF5A36', '#2EC4FF', '#F15BFF', '#9BE564', '#FFB020', '#00E0C6'];
 
 export const T = {
-  grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 30000,
+  grace: 2500, rolled: 14000, qcm: 25000, duel: 20000, number: 30000, write: 60000, vote: 45000,
   bac: 75000, review: 120000, pick: 20000, buzzReady: 3000, buzzMax: 20000,
   media: 45000, mediaAnswer: 15000, reveal: 120000, hint: 10000, b10cd: 3000,
   audio: 30000,              // blind test musical : 30 s d'écoute maximum
   image: 20000,              // pochette floutée : 20 s maximum
   mode: 15000, emo: 35000, series: 20000, millions: 40000, decide: 25000, clue: 7000, layer: 8000, video: 90000,
   cd: 2200,                  // décompte « bip bip bip » (2 s) avant une question qui s'enchaîne
-  bmcWrite: 60000, bmcJudge: 120000
+  bmcWrite: 60000, bmcJudge: 120000, bmcVote: 45000
 };
 export const CD_MS = 2000;   // durée du décompte affiché avant chaque question ou épreuve
 export const BMC_HAND = 5;   // cartes blanches en main par joueur
@@ -351,7 +351,7 @@ function handleInner(s, msg, ctx) {
   }
   if (t === 'pick') return pickTarget(s, myTeam, msg.teamId, ctx, rng);
   if (t === 'answer') return answer(s, myTeam, msg.value, ctx, rng);
-  if (t === 'vote') return vote(s, myTeam, msg.teamId, ctx, rng);
+  if (t === 'vote') return vote(s, ctx.pid, msg.i, ctx, rng);
   if (t === 'buzz') return buzz(s, myTeam, ctx, rng);
   if (t === 'mode') return chooseMode(s, myTeam, msg.mode, ctx, rng);
   if (t === 'theme') return chooseTheme(s, myTeam, Number(msg.i), ctx, rng);
@@ -493,12 +493,15 @@ function hostAction(s, msg, ctx, rng) {
     ch.bonus = !!msg.bonus;
     judgeMedia(s, !!msg.ok, ctx, rng); return null;
   }
-  if (a === 'bmcPick') {
+  // égalité au vote (Double Sens, Titre débile, Blanc Manger Coco) : le maître du jeu choisit l'équipe gagnante
+  if (a === 'tieBreak' || a === 'bmcPick') {
     const ch = s.ch;
-    if (s.phase !== 'challenge' || !ch || ch.kind !== 'bmc' || ch.stage !== 'judge') return 'Pas de carte à choisir.';
-    const i = Number(msg.i);
-    if (!Number.isInteger(i) || !ch.entries[i]) return 'Carte inconnue.';
-    ch.winner = i;
+    if (s.phase !== 'challenge' || !ch || (ch.kind !== 'open' && ch.kind !== 'bmc') || (ch.stage !== 'tie' && ch.stage !== 'vote')) return 'Pas d\'égalité à départager.';
+    const id = a === 'bmcPick' ? (ch.entries[Number(msg.i)] || {}).teamId : msg.teamId;
+    if (!id || !team(s, id)) return 'Équipe inconnue.';
+    if (ch.stage === 'tie' && !ch.tied.includes(id)) return 'Cette équipe n\'est pas à égalité.';
+    if (ch.stage === 'vote') countVotesOnly(ch);
+    ch.winnerTeam = id; ch.tieBroken = ch.stage === 'tie';
     resolve(s, ctx, rng); return null;
   }
   if (a === 'mediaDone') {
@@ -549,10 +552,11 @@ const EDIT_LABEL = {
   theme: () => 'thème choisi par le maître du jeu',
   decide: m => (m.go ? 'on continue (Millionnaire)' : 'on s\'arrête (Millionnaire)'),
   bmcPick: () => 'carte la plus drôle choisie',
+  tieBreak: (m, s) => `égalité départagée : ${tn(s, m.teamId)}`,
   setNsfw: m => `mode NSFW ${m.on ? 'activé' : 'désactivé'}`
 };
 const ARMED = { double: 'Points ×2', shield: 'Bouclier', halve: 'Points ÷2 (malédiction)' };
-const STAGE_LBL = { mode: 'choix duo/carré/cash', q: 'question', pick: 'choix de la cible', theme: 'choix du thème', video: 'vidéo', write: 'écriture', vote: 'vote', review: 'correction', play: 'écoute', answer: 'réponse au buzz', ready: 'prêts', running: 'compte', decide: 'on continue ?', judge: 'choix de la plus drôle' };
+const STAGE_LBL = { mode: 'choix duo/carré/cash', q: 'question', pick: 'choix de la cible', theme: 'choix du thème', video: 'vidéo', write: 'écriture', vote: 'vote', review: 'correction', play: 'écoute', answer: 'réponse au buzz', ready: 'prêts', running: 'compte', decide: 'on continue ?', judge: 'choix de la plus drôle', tie: 'départage du maître du jeu' };
 
 // État sans l'historique ni le fil d'actu (ce qu'on restaure)
 function snap(s) {
@@ -792,10 +796,9 @@ function gmAction(s, a, msg, ctx, rng) {
     let done = false;
     if (ch.answers && ch.answers[id] !== undefined && !(ch.kind === 'bac' && ch.stage === 'review')) { delete ch.answers[id]; done = true; }
     if (ch.kind === 'dcc' && ch.stage === 'mode' && ch.modes[id]) { delete ch.modes[id]; done = true; }
-    if (ch.kind === 'open' && ch.stage === 'vote') {
-      if (ch.votes[id]) { delete ch.votes[id]; done = true; }
-      for (const [voter, target] of Object.entries(ch.votes)) if (target === id && !ch.answers[id]) delete ch.votes[voter];
-    }
+    // vote par joueur : on efface ce qu'ont écrit (ou voté) les joueurs de l'équipe
+    if (ch.kind === 'open' && ch.stage === 'write') for (const p of Object.keys(ch.texts)) if (s.players[p] && s.players[p].teamId === id) { delete ch.texts[p]; done = true; }
+    if ((ch.kind === 'open' || ch.kind === 'bmc') && ch.stage === 'vote') for (const p of Object.keys(ch.pv)) if (s.players[p] && s.players[p].teamId === id) { delete ch.pv[p]; done = true; }
     if (ch.taps && ch.taps[id] !== undefined) { delete ch.taps[id]; done = true; }
     if (ch.fifty && ch.fifty[id]) delete ch.fifty[id];
     return done ? null : 'Cette équipe n\'a rien à effacer.';
@@ -949,7 +952,9 @@ function startCellInner(s, type, ctx, rng, gains = {}) {
   } else if (meta.kind === 'open') {
     const pool = OPEN_POOLS[type];
     const i = pickIndex(s, type, pool.length, rng);
-    s.ch = { ...base, q: { ...pool[i] }, stage: 'write', participants: all, answers: {}, votes: {}, deadline: now + T.grace + T.write };
+    // chaque joueur connecté écrit sa proposition (ch.texts[pid]), puis vote (voir toVote)
+    s.ch = { ...base, q: { ...pool[i] }, stage: 'write', participants: all, players: onlinePids(s, ctx), texts: {}, answers: {}, deadline: now + T.grace + T.write };
+    if (!s.ch.players.length) return toReveal(s, ctx, 'Aucun joueur connecté : on passe.');
   } else if (meta.kind === 'bac') {
     const letter = BAC.letters[Math.floor(rng() * BAC.letters.length)];
     const cats = [...BAC.cats].sort(() => rng() - 0.5).slice(0, 5);
@@ -958,8 +963,7 @@ function startCellInner(s, type, ctx, rng, gains = {}) {
     // carte noire tirée parmi celles autorisées (gentilles, ou toutes en mode NSFW)
     const black = BMC.noires[bmcBlack(s, rng)];
     // joueurs : ceux qui sont connectés (ou tous les inscrits si on ne sait pas)
-    const online = Array.isArray(ctx.online) ? ctx.online : null;
-    const pids = Object.keys(s.players).filter(p => !online || online.includes(p));
+    const pids = onlinePids(s, ctx);
     for (const p of pids) bmcFill(s, p, rng);
     s.ch = { ...base, black: { t: black.t, n: bmcBlanks(black.t) }, stage: 'write', players: pids, picks: {}, deadline: null };
     if (!pids.length) { s.ch.entries = []; return toReveal(s, ctx, 'Personne n\'a de cartes en main (aucun joueur connecté). On passe.'); }
@@ -1018,19 +1022,25 @@ function answer(s, tm, value, ctx, rng) {
     if (!Number.isFinite(v)) return 'Il faut un nombre.';
     ch.answers[tm.id] = { v };
   } else if (ch.kind === 'open') {
+    // une proposition par JOUEUR
     if (ch.stage !== 'write') return 'Trop tard pour écrire, place au vote.';
+    const pid = ctx.pid;
+    if (!pid || !ch.players.includes(pid)) return 'Arrivé en cours de route : pas de proposition pour celle-là. Profitez du spectacle 🍿';
+    if (ch.texts[pid]) return 'Vous avez déjà envoyé votre proposition.';
     if (ch.q.words && value && typeof value === 'object') {
       // Titre débile : { pos, word } = le mot glissé à la position pos (0 = avant le premier mot)
       const words = ch.q.words, pos = Number(value.pos);
       const w = clampText(value.word, 30);
       if (!w) return 'Écrivez votre mot dans un des trous.';
       if (!Number.isInteger(pos) || pos < 0 || pos > words.length) return 'Position invalide.';
-      ch.answers[tm.id] = { v: [...words.slice(0, pos), w, ...words.slice(pos)].join(' '), ins: pos, w };
+      ch.texts[pid] = { v: [...words.slice(0, pos), w, ...words.slice(pos)].join(' '), ins: pos, w };
     } else {
       const v = clampText(value, 140);
       if (!v) return 'Écrivez quelque chose, même une bêtise.';
-      ch.answers[tm.id] = { v };
+      ch.texts[pid] = { v };
     }
+    if (livePlayers(s, ch).every(p => ch.texts[p] || !isParticipant(ch, s.players[p].teamId))) toVote(s, ctx, rng);
+    return null;
   } else if (ch.kind === 'bac') {
     if (ch.stage !== 'write') return 'Trop tard, stylos posés !';
     const arr = Array.isArray(value) ? value : [];
@@ -1046,11 +1056,7 @@ function closeAnswers(s, ctx, rng) {
   const ch = s.ch;
   if (ch.kind === 'series') return closeSeriesQ(s, ctx, rng);
   if (ch.kind === 'millions') return millionsAnswered(s, ctx, rng);
-  if (ch.kind === 'open' && ch.stage === 'write') {
-    const n = Object.keys(ch.answers).length;
-    if (n >= 2) { ch.stage = 'vote'; ch.deadline = ctx.now + T.vote; s.deadline = ch.deadline; return; }
-    return resolve(s, ctx, rng);
-  }
+  if (ch.kind === 'open' && ch.stage === 'write') return toVote(s, ctx, rng);
   if (ch.kind === 'bac' && ch.stage === 'write') {
     ch.stage = 'review';
     for (const id of ch.participants) {
@@ -1064,23 +1070,72 @@ function closeAnswers(s, ctx, rng) {
   resolve(s, ctx, rng);
 }
 
-function vote(s, tm, target, ctx, rng) {
+// ─── Vote par joueur : Double Sens, Titre débile, Blanc Manger Coco ───
+// Chaque joueur propose, puis vote pour UNE proposition d'une AUTRE équipe (les siennes ne lui sont pas montrées).
+// Les votes s'additionnent par équipe ; l'équipe la plus votée gagne. Égalité (ou aucun vote) : le maître du jeu départage.
+function onlinePids(s, ctx) {
+  const online = Array.isArray(ctx.online) ? ctx.online : null;
+  return Object.keys(s.players).filter(p => !online || online.includes(p));
+}
+const livePlayers = (s, ch) => (ch.players || []).filter(p => s.players[p]);
+function toVote(s, ctx, rng = Math.random) {
   const ch = s.ch;
-  if (s.phase !== 'challenge' || !ch || ch.kind !== 'open' || ch.stage !== 'vote') return 'Pas de vote en cours.';
-  if (target === tm.id) return 'Voter pour soi-même ? La honte. Refusé.';
-  if (!ch.answers[target]) return 'Cette équipe n\'a rien proposé.';
-  if (ch.votes[tm.id]) return 'Déjà voté.';
-  ch.votes[tm.id] = target;
-  const voters = s.teams.filter(x => Object.keys(ch.answers).some(id => id !== x.id));
-  if (voters.every(x => ch.votes[x.id])) resolve(s, ctx, rng);
+  const bmc = ch.kind === 'bmc';
+  const src = (bmc ? ch.picks : ch.texts) || {};
+  const entries = Object.entries(src).filter(([pid]) => s.players[pid] && isParticipantTeam(ch, s.players[pid].teamId)).map(([pid, x]) => ({
+    pid, teamId: s.players[pid].teamId, name: s.players[pid].name || '', ...(bmc ? { parts: x.map(i => BMC.blanches[i].t) } : x)
+  }));
+  for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [entries[i], entries[j]] = [entries[j], entries[i]]; }
+  ch.entries = entries; ch.pv = {}; ch.ev = entries.map(() => 0); ch.tally = {};
+  if (!entries.length) return toReveal(s, ctx, bmc ? 'Personne n\'a joué de carte. Un grand moment de solitude.' : 'Personne n\'a rien écrit. L\'inspiration a pris des vacances.');
+  // votants : les joueurs du départ qui ont au moins une proposition d'une autre équipe à lire
+  ch.voters = livePlayers(s, ch).filter(p => isParticipantTeam(ch, s.players[p].teamId) && entries.some(e => e.teamId !== s.players[p].teamId));
+  if (!ch.voters.length) {
+    const teams = [...new Set(entries.map(e => e.teamId))];
+    if (!bmc && teams.length === 1) { ch.courage = teams[0]; return resolve(s, ctx, rng); }
+    return toTie(s, teams);
+  }
+  ch.stage = 'vote'; ch.deadline = ctx.now + (bmc ? T.bmcVote : T.vote); s.deadline = ch.deadline;
+}
+const isParticipantTeam = (ch, id) => !ch.participants || ch.participants.includes(id);
+function toTie(s, teams) {
+  const ch = s.ch;
+  ch.tied = teams; ch.stage = 'tie'; ch.deadline = null; s.deadline = null;   // pas de chrono : le maître du jeu tranche
+}
+function vote(s, pid, i, ctx, rng) {
+  const ch = s.ch;
+  if (s.phase !== 'challenge' || !ch || (ch.kind !== 'open' && ch.kind !== 'bmc') || ch.stage !== 'vote') return 'Pas de vote en cours.';
+  if (!pid || !ch.voters.includes(pid)) return 'Vous ne votez pas pour celle-là.';
+  const k = Number(i), e = ch.entries[k];
+  if (!Number.isInteger(k) || !e) return 'Proposition inconnue.';
+  if (e.teamId === s.players[pid].teamId) return 'Voter pour son équipe ? La honte. Refusé.';
+  if (ch.pv[pid] !== undefined) return 'Déjà voté.';
+  ch.pv[pid] = k;
+  if (ch.voters.every(p => ch.pv[p] !== undefined || !s.players[p])) countVotes(s, ctx, rng);
   return null;
+}
+function countVotesOnly(ch) {
+  const tally = {}; ch.ev = ch.entries.map(() => 0);
+  for (const k of Object.values(ch.pv)) { ch.ev[k]++; const t = ch.entries[k].teamId; tally[t] = (tally[t] || 0) + 1; }
+  ch.tally = tally;
+}
+function countVotes(s, ctx, rng) {
+  const ch = s.ch;
+  countVotesOnly(ch);
+  const tally = ch.tally;
+  const max = Math.max(0, ...Object.values(tally));
+  const top = (max ? Object.keys(tally).filter(id => tally[id] === max) : [...new Set(ch.entries.map(e => e.teamId))]).filter(id => team(s, id));
+  if (top.length === 1) { ch.winnerTeam = top[0]; return resolve(s, ctx, rng); }
+  if (!top.length) return resolve(s, ctx, rng);
+  feed(s, 'info', max ? `⚖️ Égalité (${max} vote${max > 1 ? 's' : ''}) : le maître du jeu départage.` : '⚖️ Aucun vote : le maître du jeu tranche.');
+  toTie(s, top);
 }
 
 // ─── Blanc Manger Coco : chacun joue ses cartes, puis le maître du jeu choisit ───
 function bmcPlay(s, pid, cards, ctx, rng) {
   const ch = s.ch;
   if (s.phase !== 'challenge' || !ch || ch.kind !== 'bmc') return 'Pas de Blanc Manger Coco en cours.';
-  if (ch.stage !== 'write') return 'Trop tard, le maître du jeu est déjà en train de choisir.';
+  if (ch.stage !== 'write') return 'Trop tard, on est déjà au vote.';
   if (ctx.now < ch.startsAt) return 'Attendez que la carte noire s\'affiche !';
   if (!ch.players.includes(pid)) return 'Vous n\'avez pas de cartes pour celle-là (arrivé en cours de route ?).';
   if (ch.picks[pid]) return 'Vous avez déjà joué.';
@@ -1094,18 +1149,28 @@ function bmcPlay(s, pid, cards, ctx, rng) {
   st.hands[pid] = hand.filter(i => !arr.includes(i));
   st.played.push(...arr);
   bmcFill(s, pid, rng);
-  if (ch.players.every(p => ch.picks[p] || !s.players[p])) bmcToJudge(s, ctx, rng);
+  if (ch.players.every(p => ch.picks[p] || !s.players[p] || !isParticipantTeam(ch, s.players[p].teamId))) toVote(s, ctx, rng);
   return null;
 }
-function bmcToJudge(s, ctx, rng = Math.random) {
-  const ch = s.ch;
-  const entries = Object.entries(ch.picks).filter(([pid]) => s.players[pid]).map(([pid, arr]) => ({
-    pid, teamId: s.players[pid].teamId, name: s.players[pid].name || '', parts: arr.map(i => BMC.blanches[i].t)
-  }));
-  for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [entries[i], entries[j]] = [entries[j], entries[i]]; }
-  ch.entries = entries;
-  if (!entries.length) return toReveal(s, ctx, 'Personne n\'a joué de carte. Un grand moment de solitude.');
-  ch.stage = 'judge'; ch.deadline = null; s.deadline = null;   // pas de chrono : le maître du jeu prend le temps de rire
+// Points et phrase de fin d'un vote par joueur
+function voteSummary(s, ch) {
+  const bmc = ch.kind === 'bmc';
+  if (ch.courage && team(s, ch.courage)) {
+    award(s, team(s, ch.courage), 1); ch.winners = [ch.courage];
+    return `Seule ${team(s, ch.courage).name} a osé répondre : 1 pt pour le courage.`;
+  }
+  const wt = ch.winnerTeam && team(s, ch.winnerTeam);
+  if (!wt) { ch.winners = []; return bmc ? 'Personne ne marque. Tout le monde est vexé.' : 'Personne ne marque. Vous êtes tous des lâches.'; }
+  award(s, wt, bmc ? BMC_PTS : 2); ch.winners = [wt.id];
+  // la proposition gagnante mise en avant : la plus votée de l'équipe gagnante
+  let best = -1;
+  (ch.entries || []).forEach((e, i) => { if (e.teamId === wt.id && (best < 0 || (ch.ev[i] || 0) > (ch.ev[best] || 0))) best = i; });
+  ch.winner = best >= 0 ? best : undefined;
+  const n = (ch.tally || {})[wt.id] || 0;
+  const e = ch.entries[best];
+  const who = bmc && e && e.name ? `${e.name} (${wt.name})` : wt.name;
+  if (ch.tieBroken) return `Égalité, le maître du jeu a tranché : ${who} ! ${bmc ? '🃏' : ''}`;
+  return bmc ? `La plus drôle selon vous : ${who}, avec ${n} vote${n > 1 ? 's' : ''}. Vous avez mauvais goût. 🃏` : `Le public a parlé : ${who}, avec ${n} vote${n > 1 ? 's' : ''}.`;
 }
 
 // ─── Duo, carré ou cash ──────────────────────────────────────
@@ -1419,20 +1484,8 @@ function resolve(s, ctx, rng) {
       for (const id of ch.closest) award(s, team(s, id), best === 0 ? 3 : 2);
       summary = `${ch.closest.map(id => team(s, id).name).join(' et ')} ${ch.closest.length > 1 ? 'sont' : 'est'} le plus proche${best === 0 ? ' — PILE POIL !' : '.'}`;
     } else summary = 'Aucune réponse. Les maths, ce n\'est pas pour tout le monde.';
-  } else if (ch.kind === 'open') {
-    const tally = {};
-    for (const v of Object.values(ch.votes)) tally[v] = (tally[v] || 0) + 1;
-    ch.tally = tally;
-    const ids = Object.keys(ch.answers);
-    if (ids.length === 1 && !Object.keys(tally).length) {
-      award(s, team(s, ids[0]), 1); ch.winners = ids;
-      summary = `Seule ${team(s, ids[0]).name} a osé répondre : 1 pt pour le courage.`;
-    } else {
-      const max = Math.max(0, ...Object.values(tally));
-      ch.winners = max ? Object.keys(tally).filter(id => tally[id] === max) : [];
-      for (const id of ch.winners) award(s, team(s, id), 2);
-      summary = ch.winners.length ? `Le public a parlé : ${ch.winners.map(id => team(s, id).name).join(' et ')}.` : 'Aucun vote. Vous êtes tous des lâches.';
-    }
+  } else if (ch.kind === 'open' || ch.kind === 'bmc') {
+    summary = voteSummary(s, ch);
   } else if (ch.kind === 'bac') {
     ch.unique = {};
     for (const id of ch.participants) {
@@ -1447,13 +1500,6 @@ function resolve(s, ctx, rng) {
       if (pts) award(s, team(s, id), pts);
     }
     summary = 'Les copies sont corrigées. Certaines sont gênantes.';
-  } else if (ch.kind === 'bmc') {
-    const w = ch.entries && ch.entries[ch.winner];
-    const wt = w && team(s, w.teamId);
-    if (wt) {
-      award(s, wt, BMC_PTS);
-      summary = `La plus drôle : ${w.name ? w.name + ' (' + wt.name + ')' : wt.name}. Le jury a parlé, et le jury a mauvais goût. 🃏`;
-    } else summary = 'Le maître du jeu n\'a pas su choisir. Personne ne marque, tout le monde est vexé.';
   } else if (ch.kind === 'buzz10') {
     const valid = Object.entries(ch.taps).filter(([, ms]) => ms >= 0).map(([id, ms]) => [id, Math.abs(ms - 10000)]);
     if (valid.length) {
@@ -1532,7 +1578,8 @@ function timeout(s, ctx, rng) {
   if (ch.kind === 'media' && ch.stage === 'answer') return judgeMedia(s, false, ctx, rng);
   if (ch.kind === 'open' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
   if (ch.kind === 'bac' && ch.stage === 'write') return closeAnswers(s, ctx, rng);
-  if (ch.kind === 'bmc' && ch.stage === 'write') return bmcToJudge(s, ctx, rng);
+  if (ch.kind === 'bmc' && ch.stage === 'write') return toVote(s, ctx, rng);
+  if ((ch.kind === 'open' || ch.kind === 'bmc') && ch.stage === 'vote') return countVotes(s, ctx, rng);
   return resolve(s, ctx, rng);
 }
 
@@ -1616,20 +1663,34 @@ export function view(s, viewer = {}, extra = {}) {
   delete v.bmc;
   const hand = viewer.pid && s.bmc && s.bmc.hands[viewer.pid];
   if (me && hand) v.bmcHand = hand.map(i => ({ i, t: BMC.blanches[i].t, nsfw: !!BMC.blanches[i].nsfw }));
-  if (ch && ch.kind === 'bmc') {
-    const sc = s.ch;
-    ch.total = (sc.players || []).length;
-    ch.done = (sc.players || []).filter(p => sc.picks[p]).length;
+  // Vote par joueur (Double Sens, Titre débile, Blanc Manger Coco) : les identifiants des joueurs ne sortent jamais ;
+  // pendant le vote, les propositions sont anonymes, chaque téléphone sait seulement lesquelles sont de son équipe (« own »)
+  if (ch && (ch.kind === 'open' || ch.kind === 'bmc')) {
+    const sc = s.ch, bmc = sc.kind === 'bmc';
+    const live = livePlayers(s, sc), src = (bmc ? sc.picks : sc.texts) || {};
+    ch.total = live.length;
+    ch.done = live.filter(p => src[p]).length;
     ch.teamDone = {};
-    for (const p of sc.players || []) {
-      const tid = s.players[p] && s.players[p].teamId; if (!tid) continue;
-      const r = ch.teamDone[tid] = ch.teamDone[tid] || [0, 0];
-      r[1]++; if (sc.picks[p]) r[0]++;
+    for (const p of live) { const tid = s.players[p].teamId; const r = ch.teamDone[tid] = ch.teamDone[tid] || [0, 0]; r[1]++; if (src[p]) r[0]++; }
+    ch.inGame = !!(viewer.pid && live.includes(viewer.pid));
+    const mine = viewer.pid && src[viewer.pid];
+    ch.mine = mine ? (bmc ? mine.map(i => BMC.blanches[i].t) : mine) : null;
+    if (sc.stage === 'vote') {
+      const voters = (sc.voters || []).filter(p => s.players[p]);
+      ch.nVoters = voters.length; ch.nVoted = voters.filter(p => sc.pv[p] !== undefined).length;
+      ch.teamVoted = {};
+      for (const p of voters) { const tid = s.players[p].teamId; const r = ch.teamVoted[tid] = ch.teamVoted[tid] || [0, 0]; r[1]++; if (sc.pv[p] !== undefined) r[0]++; }
+      ch.canVote = !!(viewer.pid && voters.includes(viewer.pid));
+      ch.myVote = viewer.pid && sc.pv[viewer.pid] !== undefined ? sc.pv[viewer.pid] : null;
     }
-    ch.inGame = !!(viewer.pid && (sc.players || []).includes(viewer.pid));
-    ch.mine = viewer.pid && sc.picks[viewer.pid] ? sc.picks[viewer.pid].map(i => BMC.blanches[i].t) : null;
-    delete ch.players; delete ch.picks;
-    if (ch.entries) ch.entries = ch.entries.map(e => s.phase === 'reveal' ? { teamId: e.teamId, name: e.name, parts: e.parts, me: e.pid === viewer.pid } : { parts: e.parts, me: e.pid === viewer.pid });
+    const open = s.phase === 'reveal' || sc.stage === 'tie';
+    if (sc.entries) ch.entries = sc.entries.map((e, i) => ({
+      i, parts: e.parts, v: e.v, ins: e.ins, w: e.w,
+      own: !!(me && e.teamId === me.teamId), me: !!viewer.pid && e.pid === viewer.pid,
+      ...(open ? { teamId: e.teamId, votes: (sc.ev || [])[i] || 0 } : {}), ...(s.phase === 'reveal' ? { name: e.name } : {})
+    }));
+    if (!open) delete ch.tally;
+    delete ch.players; delete ch.picks; delete ch.texts; delete ch.voters; delete ch.pv; delete ch.ev;
   }
   v.now = s._now || Date.now();
   v.meta = META;

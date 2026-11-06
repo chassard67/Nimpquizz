@@ -42,11 +42,20 @@ check(s.ch.stage === 'write' && !G.view(s, { role: 'tv' }).ch.entries, 'BMC : ri
 now += 600000; G.tick(s, now, rng);
 check(s.ch.stage === 'write', 'BMC : on attend même 10 min');
 play('c');
-check(s.ch.stage === 'judge' && s.ch.entries.length === 3 && s.deadline === null, 'BMC : tout le monde a joué → cartes affichées, sans chrono');
+check(s.ch.stage === 'vote' && s.ch.entries.length === 3, 'BMC : tout le monde a joué → vote sur les téléphones');
+const vA = G.view(s, { pid: 'a' }), tvV = G.view(s, { role: 'tv' });
+check(vA.ch.canVote && vA.ch.entries.filter(e => !e.own).length === 1, 'BMC : sur le téléphone, seules les cartes des autres équipes');
+check(tvV.ch.entries.length === 3 && tvV.ch.entries.every(e => !e.teamId), 'BMC : la télé montre toutes les cartes, anonymes');
+const TA = s.teams[0].id, TB = s.teams[1].id, idxOf = tid => s.ch.entries.findIndex(e => e.teamId === tid);
+check(send('a', { t: 'vote', i: idxOf(TA) }) !== null, 'BMC : on ne vote pas pour son équipe');
+send('a', { t: 'vote', i: idxOf(TB) }); send('b', { t: 'vote', i: idxOf(TA) });
+now += G.T.bmcVote + 1000; G.tick(s, now, rng);
+check(s.ch.stage === 'tie' && s.ch.tied.length === 2 && G.nextDeadline(s) === null, 'BMC : égalité 1-1 → le MJ départage, sans chrono');
 now += 600000; G.tick(s, now, rng);
-check(s.ch.stage === 'judge', 'BMC : le MJ prend le temps de choisir');
-gm({ action: 'bmcPick', i: 0 });
-check(s.phase === 'reveal', 'BMC : le MJ choisit la plus drôle');
+check(s.ch.stage === 'tie', 'BMC : le MJ prend le temps de départager');
+check(gm({ action: 'tieBreak', teamId: 'zzz' }) !== null, 'BMC : départage refusé pour une équipe inconnue');
+gm({ action: 'tieBreak', teamId: TB });
+check(s.phase === 'reveal' && s.ch.winners[0] === TB && /tranché/.test(s.ch.summary), 'BMC : le MJ départage l\'égalité');
 gm({ action: 'next' });
 
 // NSFW activé en cours de partie

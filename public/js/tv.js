@@ -206,8 +206,10 @@ function renderSide() {
     ].join('');
     let status = '';
     if (ch && ch.answers && ch.participants && ch.participants.includes(t.id)) status = ch.answers[t.id] ? '<span class="status" style="color:var(--ok)">✓ répondu</span>' : '<span class="status muted">réfléchit…</span>';
-    if (ch && ch.kind === 'open' && ch.stage === 'vote') status = ch.votes[t.id] ? '<span class="status" style="color:var(--ok)">✓ voté</span>' : '<span class="status muted">vote…</span>';
-    if (ch && ch.kind === 'bmc' && ch.stage === 'write' && ch.teamDone && ch.teamDone[t.id]) { const [d, n] = ch.teamDone[t.id]; status = `<span class="status" style="color:${d === n ? 'var(--ok)' : 'var(--muted)'}">🃏 ${d}/${n}</span>`; }
+    if (ch && (ch.kind === 'open' || ch.kind === 'bmc')) {
+      const r = ch.stage === 'write' ? (ch.teamDone || {})[t.id] : ch.stage === 'vote' ? (ch.teamVoted || {})[t.id] : null;
+      status = r ? `<span class="status" style="color:${r[0] === r[1] ? 'var(--ok)' : 'var(--muted)'}">${ch.stage === 'vote' ? '🗳️' : ch.kind === 'bmc' ? '🃏' : '✍️'} ${r[0]}/${r[1]}</span>` : '';
+    }
     if (ch && ch.taps) status = ch.taps[t.id] === -1 ? '<span class="status" style="color:var(--ko)">faux départ</span>' : ch.taps[t.id] !== undefined ? '<span class="status" style="color:var(--ok)">✓ buzzé</span>' : '';
     const bump = prevScores[t.id] !== undefined && prevScores[t.id] !== t.score;
     return `<div class="score ${S.teams[S.turn] && S.teams[S.turn].id === t.id && S.phase !== 'end' ? 'active' : ''}">
@@ -340,6 +342,10 @@ function qcmBlock(ch, rev) {
     ${rev && q.f ? `<div class="fun"><b>Le saviez-vous ?</b>${esc(q.f)}</div>` : ''}`;
 }
 const revFooter = ch => `<div class="summary">${esc(ch.summary || '')}</div>${gainsHTML(ch)}`;
+// vote par joueur : compteurs « 2/3 » par équipe, égalité, total des votes
+const countList = (counts, title) => `<div class="status-list"><span class="h">${title}</span>${Object.keys(counts || {}).map(id => { const t = team(id); if (!t) return ''; const [d, n] = counts[id]; return `<div class="r">${dot(t.color)}<span>${esc(t.name)}</span><span class="s ${d === n ? 'ok' : 'muted'}">${d}/${n}</span></div>`; }).join('')}</div>`;
+const tieLine = ch => `<div class="mid" style="text-align:center;color:var(--yellow)">⚖️ Égalité entre ${(ch.tied || []).map(id => esc((team(id) || {}).name || '?')).join(' et ')} : le maître du jeu départage !</div>`;
+const tallyLine = ch => ch.tally && Object.keys(ch.tally).length ? `<div class="tally">${Object.keys(ch.tally).filter(id => team(id)).sort((a, b) => ch.tally[b] - ch.tally[a]).map(id => `<span>${dot(team(id).color)} ${esc(team(id).name)} <b>${ch.tally[id]}</b></span>`).join('')}</div>` : '';
 const answeredSide = ch => [ring(ch.deadline, ch.deadline - ch.startsAt), statusList(ch.participants, id => !!ch.answers[id])];
 
 const RENDER = {
@@ -373,19 +379,21 @@ const RENDER = {
     const titleHTML = words ? `<div class="title-slots">${words.map(w => `<i></i><span>${esc(w)}</span>`).join('')}<i></i></div>` : '';
     const q = words && !rev && ch.stage === 'write' ? titleHTML : `<div class="question" style="font-size:${words ? 64 : 42}px">${esc(ch.q.q)}</div>`;
     const sub = ch.q.sub && !rev ? `<div class="rule" style="font-size:26px">${esc(ch.q.sub)}</div>` : '';
-    if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div>${q}${sub}<div class="big-center"><div class="mid">✍️ ${words ? 'Glissez votre mot dans un des trous, sur les téléphones' : 'Écrivez votre meilleure connerie sur les téléphones'}</div></div>`, answeredSide(ch).join('')];
-    const ids = Object.keys(ch.answers);
-    const order = [...ids].sort((a, b) => (ch.answers[a].v || '').length - (ch.answers[b].v || '').length);
-    const cards = order.map((id, i) => {
-      const t = team(id), votes = rev && ch.tally ? ch.tally[id] || 0 : null;
-      const a = ch.answers[id];
-      const txt = words && a.w !== undefined ? [...words.slice(0, a.ins).map(esc), `<mark>${esc(a.w)}</mark>`, ...words.slice(a.ins).map(esc)].join(' ') : esc(a.v);
-      return `<div class="card ${rev && (ch.winners || []).includes(id) ? 'win' : ''}" style="--r:${(i % 2 ? 1 : -1) * (1 + i % 3)}deg">${txt}
-        ${rev ? `<div class="by">${dot(t.color)}${esc(t.name)}</div>` : ''}${votes !== null ? `<span class="votes">${votes} vote${votes > 1 ? 's' : ''}</span>` : ''}</div>`;
+    if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div>${q}${sub}<div class="big-center"><div class="mid">✍️ ${words ? 'Chacun glisse son mot dans un des trous, sur son téléphone' : 'Chacun écrit sa meilleure connerie sur son téléphone'}</div><div class="rule">${ch.done} / ${ch.total} joueur${ch.total > 1 ? 's ont' : ' a'} écrit</div></div>`,
+      [ring(ch.deadline, ch.deadline - ch.startsAt), countList(ch.teamDone, 'Propositions')].join('')];
+    const entries = ch.entries || [];
+    const cards = entries.map((e, k) => {
+      const t = e.teamId ? team(e.teamId) : null;
+      const txt = words && e.w !== undefined ? [...words.slice(0, e.ins).map(esc), `<mark>${esc(e.w)}</mark>`, ...words.slice(e.ins).map(esc)].join(' ') : esc(e.v);
+      const dim = !rev && ch.stage === 'tie' && !(ch.tied || []).includes(e.teamId);
+      return `<div class="card ${rev && ch.winner === e.i ? 'win' : ''} ${dim ? 'dim' : ''}" style="--r:${(k % 2 ? 1 : -1) * (1 + k % 3)}deg">${txt}
+        ${t ? `<div class="by">${dot(t.color)}${rev && e.name ? esc(e.name) + ' · ' : ''}${esc(t.name)}</div>` : ''}${e.votes !== undefined ? `<span class="votes">${e.votes} vote${e.votes > 1 ? 's' : ''}</span>` : ''}</div>`;
     }).join('');
-    if (!rev) return [`${q}${sub}<div class="rule">Votez pour la meilleure sur votre téléphone. Pas pour vous-mêmes, tricheurs.</div><div class="cards">${cards}</div>`,
-      [ring(ch.deadline, 30000), statusList(S.teams.map(t => t.id), id => !!ch.votes[id], 'Votes')].join('')];
-    return [`${q}<div class="cards">${cards}</div>${revFooter(ch)}`, ''];
+    const grid = `<div class="cards ${entries.length > 6 ? 'many' : ''}">${cards}</div>`;
+    if (!rev && ch.stage === 'tie') return [`${q}${tieLine(ch)}${grid}${tallyLine(ch)}`, ''];
+    if (!rev) return [`${q}${sub}<div class="rule">Votez sur votre téléphone pour la meilleure d'une AUTRE équipe. Les votes s'additionnent par équipe.</div>${grid}`,
+      [ring(ch.deadline, 45000), countList(ch.teamVoted, `Votes · ${ch.nVoted || 0}/${ch.nVoters || 0}`)].join('')];
+    return [`${q}${grid}${tallyLine(ch)}${revFooter(ch)}`, ''];
   },
   bac(ch, rev) {
     if (!rev && ch.stage === 'write') return [`<div class="rule">${esc(ch.rule)}</div><div class="big-center"><div class="mid">Lettre</div><div class="bac-letter">${esc(ch.letter)}</div><div class="bac-cats">${ch.cats.map(c => `<span>${esc(c)}</span>`).join('')}</div></div>`, answeredSide(ch).join('')];
@@ -457,26 +465,22 @@ RENDER.bmc = (ch, rev) => {
       `<div class="status-list"><span class="h">Cartes jouées</span>${teams}</div>`];
   }
   const entries = ch.entries || [];
-  const cards = entries.map((e, i) => {
-    const t = rev && e.teamId ? team(e.teamId) : null;
-    const win = rev && ch.winner === i;
-    return `<div class="bmc-black bmc-entry ${win ? 'win' : ''} ${!rev && S.host ? 'toggle' : ''}" data-bmc="${i}" style="--r:${(i % 2 ? 1 : -1) * (0.5 + i % 3 * .6)}deg">
-      ${rev ? '' : `<span class="no">${i + 1}</span>`}${bmcSentence(black, e.parts)}
-      ${t ? `<div class="by">${dot(t.color)}${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${win ? ' 🏆' : ''}</div>` : ''}</div>`;
+  const cards = entries.map((e, k) => {
+    const t = e.teamId ? team(e.teamId) : null;
+    const win = rev && ch.winner === e.i;
+    const tie = !rev && ch.stage === 'tie';
+    const pick = tie && S.host && (ch.tied || []).includes(e.teamId);
+    return `<div class="bmc-black bmc-entry ${win ? 'win' : ''} ${tie && !(ch.tied || []).includes(e.teamId) ? 'dim' : ''} ${pick ? 'toggle' : ''}" data-bmc="${pick ? e.teamId : ''}" style="--r:${(k % 2 ? 1 : -1) * (0.5 + k % 3 * .6)}deg">
+      ${rev || tie ? '' : `<span class="no">${k + 1}</span>`}${bmcSentence(black, e.parts)}
+      ${t ? `<div class="by">${dot(t.color)}${esc(rev && e.name ? e.name + ' · ' : '')}${esc(t.name)}${win ? ' 🏆' : ''}</div>` : ''}${e.votes !== undefined ? `<span class="votes">${e.votes} vote${e.votes > 1 ? 's' : ''}</span>` : ''}</div>`;
   }).join('');
   const grid = `<div class="bmc-grid ${entries.length > 6 ? 'many' : ''}">${cards}</div>`;
-  if (!rev) return [`<div class="rule">Le maître du jeu choisit la plus drôle… (c'est anonyme, pas de favoritisme. En théorie.)</div>${grid}`, ''];
-  return [`${grid}${revFooter(ch)}`, ''];
+  if (!rev && ch.stage === 'tie') return [`${tieLine(ch)}${grid}${tallyLine(ch)}`, ''];
+  if (!rev) return [`<div class="rule">Votez sur votre téléphone pour la plus drôle d'une AUTRE équipe (c'est anonyme). Les votes s'additionnent par équipe.</div>${grid}`,
+    [ring(ch.deadline, 45000), countList(ch.teamVoted, `Votes · ${ch.nVoted || 0}/${ch.nVoters || 0}`)].join('')];
+  return [`${grid}${tallyLine(ch)}${revFooter(ch)}`, ''];
 };
 
-// ── Duo, carré ou cash
-// Son ou image d'une fiche QCM (dossiers public/media)
-function dccMedia(ch, rev) {
-  if (!ch.item || !ch.media) return '';
-  if (ch.media === 'image') return `<img class="pochette mini" id="poch" src="${esc(ch.item.img)}" alt="" style="filter:blur(${rev ? 0 : 40}px)">`;
-  if (rev && ch.item.cover) return `<img class="pochette mini" src="${esc(ch.item.cover)}" alt="">`;
-  return `<div class="media-vis mini">${Array.from({ length: 24 }, (_, i) => `<i style="background:${OPT_COLORS[i % 4]};animation-delay:${-(i * 137 % 900)}ms"></i>`).join('')}</div>`;
-}
 RENDER.dcc = (ch, rev) => {
   const q = ch.q;
   // question bonus d'un blind test : la chanson est trouvée, on l'affiche avec sa pochette
@@ -556,7 +560,7 @@ $('#overlay').addEventListener('click', e => {
   const oh = e.target.closest('[data-h]');
   if (oh && S.host) { audioUnlock(); return host(oh.dataset.h); }
   const bm = e.target.closest('[data-bmc]');
-  if (bm && S.host && S.phase === 'challenge' && S.ch && S.ch.stage === 'judge') return host('bmcPick', { i: Number(bm.dataset.bmc) });
+  if (bm && bm.dataset.bmc && S.host && S.phase === 'challenge' && S.ch && S.ch.stage === 'tie') return host('tieBreak', { teamId: bm.dataset.bmc });
   const c = e.target.closest('[data-cash]');
   if (c && c.dataset.cash && S.host) return host('cashToggle', { teamId: c.dataset.cash });
   const td = e.target.closest('td.toggle'); if (!td || !S.host) return;

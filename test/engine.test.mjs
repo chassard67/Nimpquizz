@@ -113,21 +113,37 @@ function playChallenge() {
   } else if (ch.kind === 'number') {
     for (const id of ids) send(pidOf(id), { t: 'answer', value: String(Math.round(ch.q.a * (0.5 + rng()))) });
   } else if (ch.kind === 'open') {
+    // une proposition par joueur, puis chacun vote pour une proposition d'une autre équipe
+    const pids = Object.keys(s.players);
+    check(ch.players.length === pids.length, 'vote par joueur : tous les joueurs écrivent');
     if (ch.q.words) {
       // Titre débile : le mot est glissé n'importe où dans le titre
-      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 0, word: '' } }) !== null, 'titre débile : mot vide refusé');
-      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 99, word: 'Zazat' } }) !== null, 'titre débile : position hors du titre refusée');
-      check(send(pidOf(ids[0]), { t: 'answer', value: { pos: 1, word: 'Zazat' } }) === null, 'titre débile : mot inséré');
+      check(send('p1', { t: 'answer', value: { pos: 0, word: '' } }) !== null, 'titre débile : mot vide refusé');
+      check(send('p1', { t: 'answer', value: { pos: 99, word: 'Zazat' } }) !== null, 'titre débile : position hors du titre refusée');
+      check(send('p1', { t: 'answer', value: { pos: 1, word: 'Zazat' } }) === null, 'titre débile : mot inséré');
       const w = ch.q.words;
-      check(s.ch.answers[ids[0]].v === [w[0], 'Zazat', ...w.slice(1)].join(' ') && s.ch.answers[ids[0]].ins === 1, 'titre débile : mot au bon endroit');
-      send(pidOf(ids[1]), { t: 'answer', value: { pos: 0, word: 'Mega' } });
-      send(pidOf(ids[2]), { t: 'answer', value: { pos: w.length, word: 'Zizi' } });
-      check(s.ch.answers[ids[2]].v.endsWith(' Zizi'), 'titre débile : mot à la fin');
-    } else for (const id of ids) send(pidOf(id), { t: 'answer', value: 'Une blague nulle de ' + id });
-    check(s.ch.stage === 'vote', 'passage au vote');
-    const own = send(pidOf(ids[0]), { t: 'vote', teamId: ids[0] });
-    check(own !== null, 'vote pour soi refusé');
-    ids.forEach((id, i) => send(pidOf(id), { t: 'vote', teamId: ids[(i + 1) % ids.length] }));
+      check(s.ch.texts.p1.v === [w[0], 'Zazat', ...w.slice(1)].join(' ') && s.ch.texts.p1.ins === 1, 'titre débile : mot au bon endroit');
+      send('p2', { t: 'answer', value: { pos: 0, word: 'Mega' } });
+      send('p3', { t: 'answer', value: { pos: w.length, word: 'Zizi' } });
+      check(s.ch.texts.p3.v.endsWith(' Zizi'), 'titre débile : mot à la fin');
+      check(s.ch.stage === 'write', 'on attend tous les joueurs, pas une réponse par équipe');
+      send('p4', { t: 'answer', value: { pos: 2, word: 'Prout' } });
+    } else {
+      for (const p of pids.slice(0, -1)) send(p, { t: 'answer', value: 'Une blague nulle de ' + p });
+      check(send('p1', { t: 'answer', value: 'encore' }) !== null && s.ch.stage === 'write', 'une seule proposition par joueur');
+      send(pids[pids.length - 1], { t: 'answer', value: 'La dernière' });
+    }
+    check(s.ch.stage === 'vote' && s.ch.entries.length === pids.length, 'passage au vote');
+    const vp = G.view(s, { pid: 'p1', role: 'phone' }), vt = G.view(s, { role: 'tv' });
+    check(vp.ch.entries.filter(e => e.own).length === 2 && vp.ch.entries.every(e => !e.teamId && !e.pid && !e.name) && vp.ch.canVote, 'vote : propositions anonymes, celles de son équipe repérées');
+    check(vt.ch.entries.length === pids.length && vt.ch.entries.every(e => !e.teamId && !e.own), 'vote : la télé affiche toutes les propositions, anonymes');
+    check(send('p1', { t: 'vote', i: vp.ch.entries.find(e => e.own).i }) !== null, 'vote pour son équipe refusé');
+    const idx = tid => s.ch.entries.findIndex(e => e.teamId === tid);
+    // Castors : 3 votes (p1, p3, p4) · Licornes : 1 vote (p2) → Castors gagne
+    for (const p of pids) send(p, { t: 'vote', i: idx(s.players[p].teamId === ids[1] ? ids[2] : ids[1]) });
+    check(s.phase === 'reveal' && s.ch.winners[0] === ids[1] && s.ch.tally[ids[1]] === 3, 'vote : les votes s\'additionnent, l\'équipe la plus votée gagne');
+    const vr = G.view(s, { role: 'tv' });
+    check(vr.ch.entries.every(e => e.teamId && e.votes !== undefined && !e.pid), 'révélation : auteurs et votes dévoilés, sans identifiant');
   } else if (ch.kind === 'bac') {
     for (const id of ids) send(pidOf(id), { t: 'answer', value: ch.cats.map((_, i) => i % 2 ? ch.letter + 'truc' : 'zzz') });
     check(s.ch.stage === 'review', 'bac en correction');
@@ -150,15 +166,18 @@ function playChallenge() {
     check(send(p0, { t: 'bmc', cards: pick }) !== null, 'bmc : on ne joue qu\'une fois');
     check(s.bmc.hands[p0].length === 5 && pick.every(i => !s.bmc.hands[p0].includes(i)), 'bmc : la main est complétée à 5');
     for (const p of pids.slice(1)) send(p, { t: 'bmc', cards: s.bmc.hands[p].slice(0, ch.black.n) });
-    check(s.ch.stage === 'judge' && s.ch.entries.length === pids.length, 'bmc : toutes les cartes jouées, au tour du jury');
-    const vj = G.view(s, { role: 'tv', host: true }), vg = G.view(s, { role: 'gm', host: true, gm: true }, {});
-    check(vj.ch.entries.every(e => !e.teamId && !e.pid && !e.name) && vg.ch.entries.every(e => !e.teamId && !e.pid), 'bmc : cartes anonymes pendant le choix');
-    const win = s.ch.entries[1], wt = s.teams.find(t => t.id === win.teamId), before = wt.score;
-    check(host({ action: 'bmcPick', i: 99 }) !== null, 'bmc : carte inconnue refusée');
-    check(host({ action: 'bmcPick', i: 1 }) === null && s.phase === 'reveal', 'bmc : le jury choisit');
+    check(s.ch.stage === 'vote' && s.ch.entries.length === pids.length, 'bmc : toutes les cartes jouées, place au vote');
+    const vj = G.view(s, { role: 'tv', host: true }), vg = G.view(s, { role: 'gm', host: true, gm: true }, {}), vp = G.view(s, { pid: 'p1', role: 'phone' });
+    check(vj.ch.entries.every(e => !e.teamId && !e.pid && !e.name) && vg.ch.entries.every(e => !e.teamId && !e.pid), 'bmc : cartes anonymes pendant le vote');
+    check(vp.ch.entries.filter(e => e.own).length === 2, 'bmc : le téléphone sait quelles cartes sont de son équipe (pour les cacher)');
+    check(host({ action: 'tieBreak', teamId: 'zzz' }) !== null, 'bmc : équipe inconnue refusée');
+    const idx = tid => s.ch.entries.findIndex(e => e.teamId === tid);
+    const wt = s.teams.find(t => t.id === ids[2]), before = wt.score;
+    for (const p of pids) send(p, { t: 'vote', i: idx(s.players[p].teamId === ids[2] ? ids[1] : ids[2]) });
+    check(s.phase === 'reveal' && s.ch.winners[0] === ids[2], 'bmc : la plus votée gagne');
     check(wt.score > before, 'bmc : points pour l\'équipe du gagnant');
     const vr = G.view(s, { role: 'tv' });
-    check(vr.ch.entries[1].teamId === win.teamId && !vr.ch.entries[1].pid, 'bmc : auteurs dévoilés à la révélation, sans identifiant');
+    check(vr.ch.entries[s.ch.winner].teamId === ids[2] && !vr.ch.entries[s.ch.winner].pid, 'bmc : auteurs dévoilés à la révélation, sans identifiant');
   } else if (ch.kind === 'buzz10') {
     check(send(pidOf(ids[0]), { t: 'buzz' }) !== null && ch.taps[ids[0]] === undefined, 'buzzer 10 s : pas de buzz avant le décompte');
     check(host({ action: 'go' }) === null && ch.goAt === now + G.T.b10cd, 'buzzer 10 s : le MJ lance le décompte 3-2-1');

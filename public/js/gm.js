@@ -226,12 +226,17 @@ function expectHTML(ch) {
     body = `<div class="bmc-black bmc-sm">${bmcSentence(black, [])}</div>`;
     if (S.phase === 'challenge' && ch.stage === 'write') body += `<div class="sub">${ch.done} / ${ch.total} joueur(s) ont joué. ${S.nsfw ? '🔞 Mode NSFW' : '😇 Cartes gentilles'}</div>`;
     else if (ch.entries && ch.entries.length) body += `<div class="olist">${ch.entries.map((e, i) => { const t = e.teamId ? team(e.teamId) : null;
-      return `<div class="${S.phase === 'reveal' && ch.winner === i ? 'good' : ''}" style="flex-direction:column;align-items:stretch"><span>${i + 1}. ${bmcSentence(black, e.parts)}</span>${t ? `<small>${dot(t.color)} ${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${ch.winner === i ? ' 🏆' : ''}</small>` : ''}</div>`; }).join('')}</div>`;
+      return `<div class="${S.phase === 'reveal' && ch.winner === e.i ? 'good' : ''}" style="flex-direction:column;align-items:stretch"><span>${i + 1}. ${bmcSentence(black, e.parts)}</span>${t ? `<small>${dot(t.color)} ${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${e.votes !== undefined ? ` · ${e.votes} vote(s)` : ''}${ch.winner === e.i ? ' 🏆' : ''}</small>` : ''}</div>`; }).join('')}</div>`;
     return `<div class="p expect"><h3>🃏 Carte noire</h3>${body}</div>`;
   } else if (k === 'bac') {
     body = `<div class="ans">Lettre ${esc(ch.letter)}</div><div class="sub">${ch.cats.map(esc).join(' · ')}</div>`;
   } else if (k === 'open') {
-    body = `<div class="q">${esc(ch.q.q)}</div>${ch.q.sub ? `<div class="sub">${esc(ch.q.sub)}</div>` : ''}<div class="sub">Pas de bonne réponse : les équipes votent.</div>`;
+    body = `<div class="q">${esc(ch.q.q)}</div>${ch.q.sub ? `<div class="sub">${esc(ch.q.sub)}</div>` : ''}<div class="sub">Pas de bonne réponse : chaque joueur écrit, puis vote pour une autre équipe.</div>`;
+    if (S.phase === 'challenge' && ch.stage === 'write') body += `<div class="sub">${ch.done} / ${ch.total} joueur(s) ont écrit.</div>`;
+    if (ch.stage === 'vote' && S.phase === 'challenge') body += `<div class="sub">🗳️ ${ch.nVoted} / ${ch.nVoters} vote(s).</div>`;
+    if (ch.entries && ch.entries.length && (S.phase === 'reveal' || ch.stage !== 'write')) body += `<div class="olist">${ch.entries.map(e => { const t = e.teamId ? team(e.teamId) : null;
+      const txt = ch.q.words && e.w !== undefined ? [...ch.q.words.slice(0, e.ins).map(esc), `<mark>${esc(e.w)}</mark>`, ...ch.q.words.slice(e.ins).map(esc)].join(' ') : esc(e.v);
+      return `<div class="${S.phase === 'reveal' && ch.winner === e.i ? 'good' : ''}" style="flex-direction:column;align-items:stretch"><span>${txt}</span>${t ? `<small>${dot(t.color)} ${esc(e.name ? e.name + ' · ' : '')}${esc(t.name)}${e.votes !== undefined ? ` · ${e.votes} vote(s)` : ''}</small>` : ''}</div>`; }).join('')}</div>`;
   } else if (k === 'buzz10') {
     body = `<div class="ans">10,00 s</div><div class="sub">Le plus proche de 10 secondes gagne 2 pts (3 si à 0,15 s près).</div>`;
   } else if (k === 'affiche') {
@@ -256,7 +261,11 @@ function teamStatus(ch, id) {
     if (ch.winner === id) return ['✓ a trouvé', 'good'];
     return ['peut buzzer', ''];
   }
-  if (k === 'bmc') { const r = (ch.teamDone || {})[id]; return r ? [`🃏 ${r[0]} / ${r[1]} joueur(s) ont joué`, r[0] === r[1] ? 'good' : ''] : ['aucun joueur connecté', '']; }
+  if (k === 'bmc' || k === 'open') {
+    if (ch.stage === 'tie') return (ch.tied || []).includes(id) ? [`⚖️ à égalité (${(ch.tally || {})[id] || 0} vote(s))`, 'good'] : [`${(ch.tally || {})[id] || 0} vote(s)`, ''];
+    if (ch.stage === 'vote') { const r = (ch.teamVoted || {})[id]; return r ? [`🗳️ ${r[0]} / ${r[1]} ont voté`, r[0] === r[1] ? 'good' : ''] : ['ne vote pas', '']; }
+    const r = (ch.teamDone || {})[id]; return r ? [`${k === 'bmc' ? '🃏' : '✍️'} ${r[0]} / ${r[1]} joueur(s) ont ${k === 'bmc' ? 'joué' : 'écrit'}`, r[0] === r[1] ? 'good' : ''] : ['aucun joueur connecté', ''];
+  }
   if (k === 'buzz10') { const ms = ch.taps[id]; return ms === undefined ? ['n\'a pas buzzé', ''] : ms < 0 ? ['faux départ', 'bad'] : [`${(ms / 1000).toFixed(2).replace('.', ',')} s`, Math.abs(ms - 10000) <= 1000 ? 'good' : '']; }
   if (k === 'dcc' && ch.stage === 'mode') return [ch.modes[id] ? `a choisi ${ch.modes[id]}` : 'choisit…', ''];
   if (ch.participants && !ch.participants.includes(id)) return ['ne joue pas', ''];
@@ -304,11 +313,14 @@ function stageActions(ch) {
   if (ch.stage === 'pick') out.push(`<h3>Choisir à sa place</h3>${teamsChips('pick', ch.teamId)}`);
   if (ch.kind === 'series' && ch.stage === 'theme') out.push(`<h3>Choisir le menu à sa place</h3><div class="btns">${ch.themes.map((th, i) => B(esc(th.name), 'theme', { i })).join('')}</div>`);
   if (ch.kind === 'millions' && ch.stage === 'decide') out.push(`<div class="btns">${B('💰 Continuer', 'decide', { go: true }, 'ok')}${B('✋ S\'arrêter', 'decide', { go: false }, 'ko')}</div>`);
-  if (ch.kind === 'bmc' && ch.stage === 'judge') {
-    out.push(`<h3>🏆 Touchez la plus drôle (cartes anonymes)</h3>${(ch.entries || []).map((e, i) => `<button class="b bmc-pick" data-a="bmcPick" data-p="${esc(JSON.stringify({ i }))}"><b>${i + 1}</b><span>${bmcSentence(ch.black.t, e.parts)}</span></button>`).join('')}
+  // vote par joueur : égalité → le MJ départage
+  if ((ch.kind === 'bmc' || ch.kind === 'open') && ch.stage === 'tie') {
+    const fmt = e => ch.kind === 'bmc' ? bmcSentence(ch.black.t, e.parts) : esc(e.v);
+    out.push(`<h3>⚖️ Égalité : à toi de départager</h3>${(ch.tied || []).map(id => { const t = team(id); return `<button class="b bmc-pick" data-a="tieBreak" data-p="${esc(JSON.stringify({ teamId: id }))}"><b>${dot(t.color)}</b><span><b>${esc(t.name)}</b> · ${(ch.tally || {})[id] || 0} vote(s)<br>${(ch.entries || []).filter(e => e.teamId === id).map(fmt).join('<br>')}</span></button>`; }).join('')}
       <div class="btns">${B('Personne ne gagne', 'next', {}, '', { confirm: 'Ne donner les points à personne ?' })}</div>`);
   }
-  if (ch.kind === 'bmc' && ch.stage === 'write') out.push(`<div class="btns">${B('▶ Passer au choix sans attendre', 'next', {}, 'y')}</div>`);
+  if ((ch.kind === 'bmc' || ch.kind === 'open') && ch.stage === 'write') out.push(`<div class="btns">${B('▶ Passer au vote sans attendre', 'next', {}, 'y')}</div>`);
+  if ((ch.kind === 'bmc' || ch.kind === 'open') && ch.stage === 'vote') out.push(`<div class="btns">${B('▶ Clore le vote maintenant', 'next', {}, 'y')}</div>`);
   if (ch.kind === 'dcc' && ch.stage === 'mode') out.push(`<div class="btns">${B('Passer à la question ▶ (carré par défaut)', 'next', {}, 'y')}</div>`);
   if (ch.kind === 'bac' && ch.stage === 'review') {
     out.push(`<h3>Correction : touchez un mot pour le valider / refuser</h3><table class="bac"><tr><th></th>${ch.cats.map(c => `<th>${esc(c)}</th>`).join('')}</tr>

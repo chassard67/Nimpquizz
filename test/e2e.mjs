@@ -101,8 +101,8 @@ function bot(c) {
   if (ch.kind === 'millions' && ch.teamId === my && ch.stage === 'decide') once(c, 'd' + k + ch.level, () => c.send({ t: 'decide', go: Math.random() < .6 }));
   if (ch.kind === 'affiche' && !answered) once(c, 'a' + k, () => setTimeout(() => c.send({ t: 'answer', value: Math.floor(Math.random() * 4) }), Math.random() * 9000));
   if (ch.kind === 'number' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: String(Math.floor(Math.random() * 2000)) }));
-  if (ch.kind === 'open' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.q.words ? { pos: Math.floor(Math.random() * (ch.q.words.length + 1)), word: 'Saucisse' } : `${c.name} propose : une saucisse en tutu` }));
-  if (ch.kind === 'open' && ch.stage === 'vote' && !ch.votes[my]) once(c, 'v' + k, () => { const o = Object.keys(ch.answers).filter(id => id !== my); if (o.length) c.send({ t: 'vote', teamId: o[0] }); });
+  if (ch.kind === 'open' && ch.stage === 'write' && ch.inGame && !ch.mine) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.q.words ? { pos: Math.floor(Math.random() * (ch.q.words.length + 1)), word: 'Saucisse' } : `${c.name} propose : une saucisse en tutu` }));
+  if ((ch.kind === 'open' || ch.kind === 'bmc') && ch.stage === 'vote' && ch.canVote && ch.myVote === null) once(c, 'v' + k, () => { if (ch.entries.some(e => e.teamId)) leaks.push(`${c.name} voit les auteurs pendant le vote`); const o = ch.entries.filter(e => !e.own); if (o.length) setTimeout(() => c.send({ t: 'vote', i: o[Math.floor(Math.random() * o.length)].i }), 200 + Math.random() * 1500); });
   if (ch.kind === 'bac' && ch.stage === 'write' && !answered) once(c, 'a' + k, () => c.send({ t: 'answer', value: ch.cats.map((_, i) => i % 2 ? ch.letter + 'ouette' : '') }));
   if (ch.kind === 'bmc' && ch.stage === 'write' && ch.inGame && !ch.mine && s.bmcHand) once(c, 'bmc' + k, () => setTimeout(() => c.send({ t: 'bmc', cards: s.bmcHand.slice(0, ch.black.n).map(x => x.i) }), 300 + Math.random() * 1500));
   if (ch.kind === 'buzz10' && ch.goAt && ch.taps[my] === undefined && now >= ch.goAt) once(c, 'b' + k, () => setTimeout(() => c.send({ t: 'buzz' }), 9000 + Math.random() * 2000));
@@ -122,7 +122,8 @@ function animateur() {
   // question bonus d'un blind test
   if (s.phase === 'challenge' && s.ch.kind === 'bac' && s.ch.stage === 'review') once(tv, 'bv' + key, () => { tv.send({ t: 'host', action: 'bacToggle', teamId: s.teams[0].id, i: 1 }); setTimeout(() => tv.send({ t: 'host', action: 'bacValidate' }), 300); });
   if (s.phase === 'challenge' && s.ch.kind === 'media' && s.ch.stage === 'answer') once(tv, 'j' + key, () => tv.send({ t: 'host', action: 'judge', ok: true }));
-  if (s.phase === 'challenge' && s.ch.kind === 'bmc' && s.ch.stage === 'judge') once(tv, 'bmc' + key, () => { if (s.ch.entries.some(e => e.teamId || e.name)) leaks.push('cartes du Blanc Manger Coco pas anonymes'); setTimeout(() => tv.send({ t: 'host', action: 'bmcPick', i: 0 }), 500); });
+  if (s.phase === 'challenge' && (s.ch.kind === 'bmc' || s.ch.kind === 'open') && s.ch.stage === 'vote') once(tv, 'vt' + key, () => { if (s.ch.entries.some(e => e.teamId || e.name)) leaks.push('propositions pas anonymes pendant le vote'); });
+  if (s.phase === 'challenge' && (s.ch.kind === 'bmc' || s.ch.kind === 'open') && s.ch.stage === 'tie') once(tv, 'tie' + key, () => setTimeout(() => tv.send({ t: 'host', action: 'tieBreak', teamId: s.ch.tied[0] }), 500));
 }
 
 // ── forçage de quelques cases pour être sûr de tout voir passer : on ne triche pas sur le serveur,

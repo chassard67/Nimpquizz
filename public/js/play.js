@@ -70,7 +70,7 @@ function keyOf() {
   const k = [S.phase, t ? t.id : '-', S.turn, S.move && S.move.n, S.move && S.move.roll];
   if (!t) k.push(JSON.stringify(S.teams.map(x => [x.id, x.name, S.players[x.id]])));
   if (ch) k.push(ch.type, ch.stage, ch.cell, ch.target, ch.buzzer, (ch.excluded || []).length, ch.answers && t && ch.answers[t.id] ? 'A' : '', ch.votes && t && ch.votes[t.id] ? 'V' : '',
-    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', gameNow(S) >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && gameNow(S) >= ch.goAt ? 'G' : '', ch.mine ? 'M' : '', ch.inGame ? 'I' : '');
+    ch.taps && t && ch.taps[t.id] !== undefined ? 'T' : '', ch.fifty && t && ch.fifty[t.id] ? 'F' : '', ch.i, ch.level, ch.modes && t ? ch.modes[t.id] : '', gameNow(S) >= (ch.startsAt || 0) ? 'S' : 'w', ch.goAt && gameNow(S) >= ch.goAt ? 'G' : '', ch.mine ? 'M' : '', ch.inGame ? 'I' : '', ch.canVote ? 'C' : '', ch.myVote !== undefined && ch.myVote !== null ? 'V' + ch.myVote : '', (ch.tied || []).join());
   if (S.phase === 'end') k.push(JSON.stringify(S.ranking));
   return k.join('|');
 }
@@ -246,9 +246,19 @@ function renderChallenge() {
       <input id="num" inputmode="decimal" autocomplete="off" placeholder="Ex : 1 234" data-auto="number"></label>
       <button class="btn" id="val">Valider ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
   }
+  // vote par joueur (Double Sens, Titre débile, Blanc Manger Coco) : les propositions de son équipe ne sont pas montrées
+  const voteUI = (fmt, title) => {
+    if (ch.stage === 'tie') return wait('Égalité ! Le maître du jeu départage… 🤔', '⚖️');
+    if (!ch.canVote) return wait('Les autres votent… 🗳️', '🍿');
+    if (ch.myVote !== null && ch.myVote !== undefined) return wait('Vote enregistré. Vous avez du goût. Ou pas.', '🗳️');
+    const list = (ch.entries || []).filter(e => !e.own);
+    return html(`<h1>${title}</h1><p class="msg">Votre équipe n'est pas dans la liste, pas de triche · ${timer}</p><div class="opts">${list.map(e => fmt(e)).join('')}</div>`,
+      () => main.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { buzz(40); send({ t: 'vote', i: Number(b.dataset.v) }); }));
+  };
   if (ch.kind === 'open') {
     if (ch.stage === 'write') {
-      if (answered) return wait('Proposition envoyée. On espère que c\'est drôle.', '✍️');
+      if (!ch.inGame) return wait('Arrivé en cours de route : pas de proposition pour celle-là. Profitez du spectacle 🍿', '✍️');
+      if (ch.mine) return wait('Proposition envoyée. On espère que c\'est drôle. On attend les autres…', '✍️');
       if (ch.q.words) {
         // Titre débile : un trou entre chaque mot, on écrit son mot dans UN seul trou
         const w = ch.q.words;
@@ -272,12 +282,8 @@ function renderChallenge() {
         <textarea id="txt" rows="4" maxlength="140" placeholder="Lâchez-vous…" data-auto="open"></textarea></label>
         <button class="btn" id="val">Envoyer ${timer}</button>`, () => { $('#val').onclick = () => submitAuto(); });
     }
-    if (ch.votes[t.id]) return wait('Vote enregistré. Vous avez du goût. Ou pas.', '🗳️');
-    const others = Object.keys(ch.answers).filter(id => id !== t.id);
-    if (!others.length) return wait('Personne d\'autre n\'a répondu, pas de vote pour vous.', '🤷');
     const txt = a => ch.q.words && a.w !== undefined ? [...ch.q.words.slice(0, a.ins).map(esc), `<mark>${esc(a.w)}</mark>`, ...ch.q.words.slice(a.ins).map(esc)].join(' ') : esc(a.v);
-    return html(`<h1>Votez pour la meilleure</h1><p class="msg">${timer}</p><div class="opts">${others.map(id => `<button class="card" data-v="${id}">${txt(ch.answers[id])}</button>`).join('')}</div>`,
-      () => main.querySelectorAll('[data-v]').forEach(b => b.onclick = () => send({ t: 'vote', teamId: b.dataset.v })));
+    return voteUI(e => `<button class="card" data-v="${e.i}">${txt(e)}</button>`, 'Votez pour la meilleure');
   }
   if (ch.kind === 'bac') {
     if (ch.stage === 'review') return wait('L\'animateur corrige les copies… sans pitié.', '📝');
@@ -288,9 +294,7 @@ function renderChallenge() {
   }
   if (ch.kind === 'bmc') {
     const black = ch.black.t, n = ch.black.n;
-    if (ch.stage === 'judge') {
-      return html(`<h1>Le maître du jeu choisit… 🃏</h1><p class="msg">${timer}</p><div class="opts">${(ch.entries || []).map(e => `<div class="bmc-black bmc-sm ${e.me ? 'mine' : ''}">${bmcSentence(black, e.parts)}${e.me ? '<small>← la vôtre</small>' : ''}</div>`).join('')}</div>`);
-    }
+    if (ch.stage === 'vote' || ch.stage === 'tie') return voteUI(e => `<button class="bmc-black bmc-sm vote" data-v="${e.i}">${bmcSentence(black, e.parts)}</button>`, 'La plus drôle ? 🃏');
     if (!ch.inGame) return wait('Arrivé en cours de route : pas de cartes pour celle-là. Profitez du spectacle 🍿', '🃏');
     if (ch.mine) return html(`<div class="center"><div class="big">🃏</div><h1>Carte jouée !</h1><div class="bmc-black bmc-sm">${bmcSentence(black, ch.mine)}</div><p class="msg">On attend les autres… ${timer}</p></div>`);
     const hand = S.bmcHand || [];
@@ -356,7 +360,7 @@ const QUIPS_ZERO = ['Zéro. Pointé. 🥚', 'Vos parents auraient honte.', 'Au m
 function renderReveal() {
   const t = me(), ch = S.ch;
   const g = (ch && ch.gains && ch.gains[t.id]) || 0;
-  const involved = ch && (ch.teamId === t.id || ch.target === t.id || (ch.participants || []).includes(t.id) || (ch.kind === 'bmc' && (ch.entries || []).some(e => e.teamId === t.id)));
+  const involved = ch && (ch.teamId === t.id || ch.target === t.id || (ch.participants || []).includes(t.id) || ((ch.kind === 'bmc' || ch.kind === 'open') && (ch.entries || []).some(e => e.teamId === t.id)));
   if (g > 0) buzz([60, 40, 60, 40, 200]);
   const quip = g > 0 ? QUIPS_WIN[S.round % QUIPS_WIN.length] : g < 0 ? 'Aïe. Ça pique.' : involved ? QUIPS_ZERO[S.round % QUIPS_ZERO.length] : 'Pas concernés cette fois. Profitez du spectacle 🍿';
   html(`<div class="center"><div class="gain ${g > 0 ? 'pos' : g < 0 ? 'neg' : 'zero'}">${g > 0 ? '+' : involved ? '' : '·'}${involved || g ? g : ''}</div>
