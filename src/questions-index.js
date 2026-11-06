@@ -66,6 +66,115 @@ export const EXTRA = {
    {
     "t": "Une nuit torride au camping des Flots Bleus",
     "nsfw": true
+   },
+   {
+    "t": "Le DJ qui passe Gims pour la 5e fois"
+   },
+   {
+    "t": "Le pote qui raconte sa rupture à 2 h"
+   },
+   {
+    "t": "Faire la chenille entre les tables"
+   },
+   {
+    "t": "Finir la soirée au kebab"
+   },
+   {
+    "t": "Le mojito à 14 €"
+   },
+   {
+    "t": "Le « dernier verre » qui en fait cinq"
+   },
+   {
+    "t": "Un épisode des Feux de l'amour"
+   },
+   {
+    "t": "Un clip de Francky Vincent"
+   },
+   {
+    "t": "Le téléachat à 4 h du matin"
+   },
+   {
+    "t": "Koh-Lanta version camping"
+   },
+   {
+    "t": "La chorégraphie du Ketchup Song"
+   },
+   {
+    "t": "Le générique de Dragon Ball Z"
+   },
+   {
+    "t": "Un tuto maquillage de 45 minutes"
+   },
+   {
+    "t": "« Fais ce que tu veux » (mais en vrai, non)"
+   },
+   {
+    "t": "Les pieds froids sous la couette"
+   },
+   {
+    "t": "Le chéri qui « sait où il va » sans GPS"
+   },
+   {
+    "t": "Les 400 coussins décoratifs du lit"
+   },
+   {
+    "t": "Le premier pet devant l'autre"
+   },
+   {
+    "t": "Le texto « il faut qu'on parle »"
+   },
+   {
+    "t": "Ranger le lave-vaisselle « mal »"
+   },
+   {
+    "t": "Un week-end romantique chez IKEA"
+   },
+   {
+    "t": "Le cousin qui vend des compléments alimentaires"
+   },
+   {
+    "t": "Tata qui demande « et toi, c'est pour quand ? »"
+   },
+   {
+    "t": "Les enfants debout à 6 h un samedi"
+   },
+   {
+    "t": "Le pot de départ de Gérard"
+   },
+   {
+    "t": "Un open space à 28 °C"
+   },
+   {
+    "t": "La machine à café en panne un lundi"
+   },
+   {
+    "t": "Un flamant rose en tongs"
+   },
+   {
+    "t": "Une chèvre qui crie comme un humain"
+   },
+   {
+    "t": "Un hamster dépressif"
+   },
+   {
+    "t": "Un canard qui fait du stand-up"
+   },
+   {
+    "t": "Des menottes en fourrure rose",
+    "nsfw": true
+   },
+   {
+    "t": "Un strip-tease en charentaises",
+    "nsfw": true
+   },
+   {
+    "t": "Les voisins trop bruyants à 23 h",
+    "nsfw": true
+   },
+   {
+    "t": "Une soirée « tenue légère exigée »",
+    "nsfw": true
    }
   ]
  },
