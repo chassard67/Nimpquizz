@@ -1,0 +1,299 @@
+[
+  {
+    "o": [
+      "Les pandas roux ont été appelés « pandas » avant les pandas géants",
+      "Si vous touchez un oisillon, sa mère l'abandonnera à cause de votre odeur",
+      "Élisabeth II a connu 15 Premiers ministres britanniques pendant son règne"
+    ],
+    "a": 1,
+    "f": "La plupart des oiseaux ont un odorat extrêmement rudimentaire et ne rejetteront absolument pas leur petit à cause d'une odeur humaine."
+  },
+  {
+    "o": [
+      "Les caméléons changent de couleur principalement pour se camoufler dans leur environnement",
+      "Le Soleil représente plus de 99 % de la masse du système solaire",
+      "Les koalas dorment jusqu'à 20 heures par jour"
+    ],
+    "a": 0,
+    "f": "Le changement de couleur du caméléon sert avant tout à réguler sa température corporelle et à exprimer ses émotions ou intentions sociales."
+  },
+  {
+    "o": [
+      "Le plus long vol d'une poule jamais enregistré a duré 13 secondes",
+      "Les papillons goûtent la nourriture avec leurs pattes",
+      "La mémoire de poisson rouge ne dépasse pas trois secondes"
+    ],
+    "a": 2,
+    "f": "Les poissons rouges ont une excellente mémoire capable de stocker des souvenirs, d'apprendre des parcours et de reconnaître des visages pendant des mois."
+  },
+  {
+    "o": [
+      "Le mont Everest est la montagne la plus haute du monde par rapport au niveau de la mer",
+      "Le Mauna Kea à Hawaï est plus haut que l'Everest si on mesure depuis sa base sous-marine",
+      "Le mont Blanc s'élève de dix mètres chaque année à cause du mouvement des plaques tectoniques"
+    ],
+    "a": 2,
+    "f": "Le socle rocheux ne bouge que de quelques millimètres par an. Sa hauteur varie de quelques mètres selon l'épaisseur de neige au sommet."
+  },
+  {
+    "o": [
+      "Raser un poil le fait repousser plus épais, plus foncé et plus vite",
+      "L'ananas contient une enzyme qui essaye de vous décomposer pendant que vous le mangez",
+      "Les ongles des mains poussent plus vite que ceux des pieds"
+    ],
+    "a": 0,
+    "f": "Le rasoir coupe le poil net : la pointe émoussée paraît plus dure au toucher, mais la repousse est identique."
+  },
+  {
+    "o": [
+      "La nourriture lâchée par terre est consommable sans risque si elle y reste moins de 5 secondes",
+      "Les paresseux peuvent mettre jusqu'à un mois pour digérer une seule feuille",
+      "Un hippopotame court plus vite qu'un être humain"
+    ],
+    "a": 0,
+    "f": "Les bactéries contaminent une nourriture instantanément dès le premier contact avec le sol, peu importe le temps d'exposition."
+  },
+  {
+    "o": [
+      "Les grenouilles s'aident de leurs yeux pour avaler",
+      "Les ongles et les cheveux continuent de pousser après la mort d'un individu",
+      "Le requin du Groenland peut vivre plus de 300 ans"
+    ],
+    "a": 1,
+    "f": "La déshydratation post-mortem rétracte la peau autour des ongles et des cheveux, ce qui donne cette fausse impression visuelle de pousse."
+  },
+  {
+    "o": [
+      "Le ketchup a été commercialisé comme médicament contre la diarrhée au XIXe siècle",
+      "L'eau chaude peut geler plus rapidement que l'eau froide dans certaines conditions",
+      "Craquer ses doigts provoque inévitablement de l'arthrite à l'âge adulte"
+    ],
+    "a": 2,
+    "f": "Le craquement vient d'une bulle de gaz qui se forme dans le liquide des articulations. Aucune étude n'a montré de lien avec l'arthrose."
+  },
+  {
+    "o": [
+      "Le drapeau des États-Unis actuel a été conçu par un élève de lycée pour un projet scolaire",
+      "Les cheveux et les ongles sont constitués de la même protéine : la kératine",
+      "Le fait de lire dans le noir détruit définitivement et de façon irréversible les cellules de la rétine"
+    ],
+    "a": 2,
+    "f": "Lire dans une faible luminosité fatigue temporairement les muscles oculaires et donne des maux de tête, mais n'abîme pas la vue."
+  },
+  {
+    "o": [
+      "Les flamants roses naissent avec un plumage totalement blanc ou grisâtre",
+      "La Chine n'a qu'un seul fuseau horaire officiel sur tout son territoire",
+      "L'alcool réchauffe le corps humain en cas de grand froid glacial"
+    ],
+    "a": 2,
+    "f": "L'alcool dilate les vaisseaux sanguins en surface, ce qui donne une sensation de chaleur mais accélère la chute de la température interne du corps."
+  },
+  {
+    "o": [
+      "Si vous coupez un ver de terre en deux, les deux parties repousseront pour former deux vers vivants",
+      "Les pingouins n'existent que dans l'hémisphère nord, tandis que les manchots vivent dans l'hémisphère sud",
+      "Une brique Lego standard peut supporter plus de 400 kg de pression avant d'être écrasée"
+    ],
+    "a": 0,
+    "f": "Seule la partie tête contenant les organes vitaux a une chance de survivre et de se régénérer partiellement ; la partie queue meurt toujours."
+  },
+  {
+    "o": [
+      "Le sel de table était autrefois utilisé comme monnaie d'échange à l'Empire romain",
+      "Manger de la dinde rend particulièrement somnolent à cause de son taux massif de tryptophane",
+      "Les requins sont apparus sur Terre avant la formation des premiers arbres"
+    ],
+    "a": 1,
+    "f": "La dinde ne contient pas plus de tryptophane que le poulet ou le fromage ; la somnolence du repas vient surtout des excès de glucides et d'alcool."
+  },
+  {
+    "o": [
+      "Le Canada compte plus de lacs que tout le reste du monde réuni",
+      "La foudre ne frappe jamais deux fois au même endroit",
+      "La ville de Rome se situe plus au nord que la ville de New York"
+    ],
+    "a": 1,
+    "f": "La foudre frappe souvent plusieurs fois les mêmes structures élevées ; l'Empire State Building est touché une vingtaine de fois par an."
+  },
+  {
+    "o": [
+      "Le corps humain contient assez de carbone pour fabriquer environ 9 000 crayons à papier",
+      "Manger des carottes améliore de façon spectaculaire la vision nocturne des humains",
+      "La boisson Fanta a été créée en Allemagne pendant la Seconde Guerre mondiale"
+    ],
+    "a": 1,
+    "f": "Cette légende a été créée par l'armée britannique pendant la Seconde Guerre mondiale pour masquer l'invention de leur nouveau radar secret."
+  },
+  {
+    "o": [
+      "La panthère noire est une espèce de félin totalement distincte du léopard et du jaguar",
+      "Le criquet peut sauter jusqu'à 20 fois la longueur de son corps",
+      "Il existe une espèce de méduse physiquement immortelle qui peut rajeunir ses cellules"
+    ],
+    "a": 0,
+    "f": "La panthère noire n'est pas une espèce : c'est simplement un jaguar ou un léopard atteint de mélanisme."
+  },
+  {
+    "o": [
+      "Les escargots ont une langue couverte de milliers de microscopiques dents",
+      "Avaler un chewing-gum demande 7 ans d'effort à votre estomac pour le digérer",
+      "Les yeux de l'autruche sont plus gros que son propre cerveau"
+    ],
+    "a": 1,
+    "f": "Le chewing-gum n'est pas digéré, mais il est rejeté naturellement par le système digestif en quelques jours comme n'importe quel résidu."
+  },
+  {
+    "o": [
+      "Les morses se servent de leurs défenses comme crampons pour sortir de l'eau",
+      "Le mot 'robot' vient d'un mot tchèque signifiant 'travail forcé' ou 'corvée'",
+      "Si vous réveillez un somnambule, vous risquez de lui provoquer un arrêt cardiaque"
+    ],
+    "a": 2,
+    "f": "Réveiller un somnambule peut le désorienter ou le surprendre, mais cela ne présente absolument aucun danger mortel."
+  },
+  {
+    "o": [
+      "La queue d'un castor sert de gouvernail et de réserve de graisse",
+      "Sortir avec les cheveux mouillés en hiver donne immédiatement un rhume",
+      "Sous leur fourrure blanche, les ours polaires ont la peau noire"
+    ],
+    "a": 1,
+    "f": "Le rhume est provoqué uniquement par des virus transmis entre individus, et non par le froid ou les cheveux mouillés."
+  },
+  {
+    "o": [
+      "Les éléphants sont incapables de sauter",
+      "Le produit WD-40 tire son nom du fait qu'il a réussi à sa 40e tentative de formule",
+      "Le jus de pamplemousse annule l'effet de la pilule contraceptive et de la plupart des médicaments en accélérant leur évacuation"
+    ],
+    "a": 2,
+    "f": "Le jus de pamplemousse bloque des enzymes intestinales, ce qui augmente dangereusement la concentration des médicaments dans le sang au lieu de l'annuler."
+  },
+  {
+    "o": [
+      "Toucher un crapaud ou une grenouille donne des verrues sur la main",
+      "Le diamant est entièrement constitué d'atomes de carbone",
+      "Certains requins doivent nager en permanence pour pouvoir respirer"
+    ],
+    "a": 0,
+    "f": "Les verrues humaines sont causées par le papillomavirus humain (HPV) et non par la peau rugueuse des amphibiens."
+  },
+  {
+    "o": [
+      "La tomate est biologiquement et botaniquement un fruit et non un légume",
+      "Sans sérum, la morsure du mamba noir peut tuer un humain en quelques heures",
+      "La plupart de la poussière domestique est composée à 90 % de peau humaine morte"
+    ],
+    "a": 2,
+    "f": "La poussière vient surtout des fibres textiles, de la terre rapportée par les chaussures et du pollen. La peau morte n'en est qu'une petite partie."
+  },
+  {
+    "o": [
+      "Les dauphins donnent un prénom sous forme de sifflement unique à chaque membre de leur groupe",
+      "Le son ne peut pas se propager dans le vide de l'espace",
+      "Mettre du beurre sur une brûlure calme la douleur et accélère la guérison"
+    ],
+    "a": 2,
+    "f": "Le corps gras emprisonne la chaleur dans la peau et favorise les infections. Il faut de l'eau tiède pendant 15 à 20 minutes."
+  },
+  {
+    "o": [
+      "Un violon Stradivarius doit sa sonorité unique à un vernis alchimique au sang de dragon",
+      "Il n'y a pas de serpents à l'état sauvage en Irlande",
+      "Les pandas géants passent jusqu'à 12 heures par jour à manger du bambou"
+    ],
+    "a": 0,
+    "f": "Le secret du son des Stradivarius reste débattu (densité du bois, traitements chimiques), mais aucun sang de dragon là-dedans."
+  },
+  {
+    "o": [
+      "Les chiens voient le monde exclusivement en noir et blanc",
+      "Les hippopotames produisent leur propre crème solaire de couleur rouge-orange",
+      "La fusée Saturn V était plus haute que la statue de la Liberté"
+    ],
+    "a": 0,
+    "f": "Les chiens voient les couleurs, mais leur vision est dichromate : ils perçoivent principalement le bleu et le jaune, mais pas le rouge ni le vert."
+  },
+  {
+    "o": [
+      "Les canards ont un pénis en forme de tire-bouchon",
+      "L'inventeur de la guillotine est mort exécuté par sa propre invention",
+      "La planète Uranus tourne sur son axe de manière complètement couchée sur le côté"
+    ],
+    "a": 1,
+    "f": "Le docteur Guillotin n'a pas inventé la machine : il a milité pour son adoption, et il est mort de maladie dans son lit en 1814."
+  },
+  {
+    "o": [
+      "Les piranhas s'attaquent systématiquement aux humains vivants dès qu'ils entrent dans l'eau",
+      "Le miel trouvé dans les pyramides d'Égypte était encore parfaitement consommable",
+      "Les gorilles peuvent attraper le rhume et la grippe des humains"
+    ],
+    "a": 0,
+    "f": "Les piranhas sont des poissons charognards et craintifs qui ne s'attaquent aux grands animaux qu'en cas d'extrême famine ou d'eau stagnante asséchée."
+  },
+  {
+    "o": [
+      "Le drapeau du Népal est le seul drapeau national qui n'est pas rectangulaire",
+      "Manger des épinards donne une force surhumaine grâce à leur teneur massive en fer",
+      "Le venin du platypus ou ornithorynque mâle peut provoquer une douleur atroce chez l'humain"
+    ],
+    "a": 1,
+    "f": "Les épinards ne contiennent pas plus de fer que bien d'autres légumes, et ce fer est mal absorbé par le corps. Popeye a fait le reste."
+  },
+  {
+    "o": [
+      "La mer Morte est si salée qu'il est quasiment impossible d'y couler",
+      "Les girafes ont le même nombre de vertèbres cervicales dans le cou que les êtres humains",
+      "Les taureaux sauvages attaquent les gens parce qu'ils détestent la musique classique"
+    ],
+    "a": 2,
+    "f": "Les taureaux réagissent uniquement aux mouvements brusques et aux menaces perçues dans leur champ de vision."
+  },
+  {
+    "o": [
+      "Le nom complet de Barbie la poupée est Barbara Millicent Roberts",
+      "Les mouches domestiques vivent en moyenne pendant environ 24 heures seulement",
+      "Un squelette de bébé compte près de 100 os de plus que celui d'un adulte"
+    ],
+    "a": 1,
+    "f": "Les mouches domestiques vivent généralement entre 15 et 30 jours, ce sont les éphémères qui ne vivent que 24 heures."
+  },
+  {
+    "o": [
+      "Les manchots offrent un galet parfait à leur partenaire pour lui faire la cour",
+      "Les bananes poussent sur de grands arbres à tronc en bois massif",
+      "Le cœur d'un colibri peut battre jusqu'à 1 200 fois par minute en vol"
+    ],
+    "a": 1,
+    "f": "Le bananier n'est pas un arbre mais une plante herbacée géante dont le pseudo-tronc est formé par l'enroulement des tiges des feuilles."
+  },
+  {
+    "o": [
+      "Les chameaux stockent des réserves d'eau pure dans leurs bosses",
+      "Le record de l'apnée la plus longue sous l'eau dépasse 24 minutes",
+      "L'invention du décapsuleur à boîte de conserve a eu lieu 48 ans après l'invention de la boîte"
+    ],
+    "a": 0,
+    "f": "Les bosses des chameaux sont des réserves de graisse, qu'ils transforment en énergie (et un peu en eau) selon leurs besoins."
+  },
+  {
+    "o": [
+      "Les serpents sentent les odeurs avec leur langue",
+      "Il n'y a aucune maternité au Vatican",
+      "Boire du café stoppe net la croissance osseuse des adolescents"
+    ],
+    "a": 2,
+    "f": "Aucune étude scientifique ne démontre un lien entre la consommation modérée de caféine et un arrêt de la croissance des os chez les jeunes."
+  },
+  {
+    "o": [
+      "La tour de Pise a été construite penchée dès l'origine sur ordre de l'architecte",
+      "Les poissons clowns peuvent changer de sexe pour devenir les femelles dominantes du groupe",
+      "L'œil d'un calmar géant peut atteindre la taille d'un ballon de basket"
+    ],
+    "a": 0,
+    "f": "La tour a commencé à pencher pendant sa construction en raison de fondations trop faibles sur un sol trop meuble et argileux."
+  }
+]
